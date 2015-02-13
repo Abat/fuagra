@@ -1,0 +1,24 @@
+{% load staticfiles %}
+
+
+<html>
+    <head>
+        <title> Tagged - {% block title %}Base{% endblock %} </title>
+        <link rel="stylesheet" type="text/css" href="{% static 'siteModel/style.css' %}" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="header">
+            </div>
+
+            <div id="content">
+            {% block content %} this is base template {% endblock %}
+            </div>
+
+            <div id="footer">
+                <a href="about">Tagged</a>, 2015
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,16 +1,9 @@
-{% load staticfiles %}
+{% extends "siteModel/base.html" %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'siteModel/style.css' %}" />
+{% block title %} Index Page {% endblock %}
 
-<div id="wrapper">
-    <div id="header">
-    </div>
+{% block content %}
 
-    <div id="content">
-    Hello Mello, this is first html page
-    </div>
+Hello Mello, this is first html page
 
-    <div id="footer">
-        <a href="about">Tagged</a>, 2015
-    </div>
-</div>
+{% endblock %}
