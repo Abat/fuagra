@@ -1,10 +1,10 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from siteModel import views
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'TaggedNews.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-    url(r'^main/', include('siteModel.urls')),
+    #url(r'^$', include('siteModel.urls')),
+    url(r'^$', views.index, name='index'),
+    url(r'^about/', views.about, name='about'),
     url(r'^admin/', include(admin.site.urls))
 )

@@ -11,8 +11,20 @@ body {
 }
 
 #header {
-    padding:10px;
+    height: 60px;
+    /* padding:10px; */
     background:#5ee;
+}
+
+#header-top {
+    height: 20px;
+    background:#225f5f;
+}
+
+.tabmenu li {
+    display: inline;
+    font-weight: bold;
+    margin: 0px 3px;
 }
 
 #content {

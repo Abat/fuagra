@@ -8,17 +8,26 @@
     </head>
 
     <body>
-        <div id="wrapper">
-            <div id="header">
+    <div id="wrapper">
+        <div id="header">
+            <div id="header-top">
+	            Tagged
             </div>
-
-            <div id="content">
-            {% block content %} this is base template {% endblock %}
-            </div>
-
-            <div id="footer">
-                <a href="about">Tagged</a>, 2015
-            </div>
+            <div id="header-bottom">
+                <ul class="tabmenu">
+                    <li> <a href="#"> Hot </a> </li>
+                    <li> <a href="#"> Latest </a> </li>
+                </ul>
+	        </div>
         </div>
+
+        <div id="content">
+            {% block content %} this is base template {% endblock %}
+        </div>
+
+        <div id="footer">
+            <a href="about">Tagged</a>, 2015
+        </div>
+    </div>
     </body>
 </html>
