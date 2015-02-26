@@ -1,9 +1,11 @@
 from django.db import models
+from datetime import datetime
 
 # Create your models here.
 class News(models.Model):
     news_id = models.IntegerField(default=-1)
     date_created = models.DateTimeField('Date Created')
+    date_updated = models.DateTimeField('Date Updated', default=datetime.now)
     # web url of a news
     source = models.CharField(max_length=200)
     num_comments = models.IntegerField(default=0)
@@ -12,7 +14,7 @@ class News(models.Model):
 
 class Comments(models.Model):
     comment_id = models.IntegerField(default=-1)
-    partent_id = models.IntegerField(default=-1)
+    parent_id = models.IntegerField(default=-1)
     child_id = models.IntegerField(default=-1)
     user_id = models.IntegerField(default=-1)
     thumbs_up = models.IntegerField(default=0)
