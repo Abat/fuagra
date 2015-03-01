@@ -1,0 +1,21 @@
+{% extends "siteModel/base.html" %}
+
+{% block title %} Register {% endblock %}
+
+{% block content %}
+
+	{% if registered %}
+	<strong>Thank you for registering!</strong>
+	{% else %}
+	<strong>Register here!</strong><br />
+
+	<form id="user_form" method="POST" action="/register/" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ user_form.as_p }}
+		{{ profile_form.as_p }}
+
+		<input type="submit" nam"submit" value="Register" />
+	</form>
+	{% endif %}
+
+{% endblock %}

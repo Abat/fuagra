@@ -1,0 +1,14 @@
+{% extends "siteModel/base.html" %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+	<strong>Login</strong>
+	
+	<form id="login_form" method="POST" action="/login/">
+		{% csrf_token %}
+		Username: <input type="text" name="username" value="" size="50"<br />
+		Password: <input type="password" name="password" value="" size="50"<br />
+		<input type="submit" value="submit" />
+	</form>
+{% endblock %}

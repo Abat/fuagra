@@ -4,6 +4,14 @@
 
 {% block content %}
 
-Hello Mello, this is first html page
+	Hello Mello, this is first html page<br />
+
+	{% if user.is_authenticated %}
+	<!-- add logout link -->
+	<a href="/logout/">Logout</a><br />
+	{% else %}
+	<a href="/register/">Register</a><br />
+	<a href="/login/">Login</a><br />
+	{% endif %}
 
 {% endblock %}

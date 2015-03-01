@@ -1,23 +1,38 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 
 # Create your models here.
 class News(models.Model):
-    news_id = models.IntegerField(default=-1)
+    title = models.CharField(max_length=100)
     date_created = models.DateTimeField('Date Created')
     date_updated = models.DateTimeField('Date Updated', default=datetime.now)
     # web url of a news
-    source = models.CharField(max_length=200)
+    likes = models.IntegerField(default=0)
+    views = models.IntegerField(default=0)
+    url = models.URLField()
     num_comments = models.IntegerField(default=0)
-    num_accesses = models.IntegerField(default=0)
-    contents_link = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
 
 class Comments(models.Model):
-    comment_id = models.IntegerField(default=-1)
-    parent_id = models.IntegerField(default=-1)
-    child_id = models.IntegerField(default=-1)
-    user_id = models.IntegerField(default=-1)
+    news_id = models.ForeignKey(News)
+    parent = models.ForeignKey('self', related_name='parent_comment')
+    child = models.ForeignKey('self', related_name='child_comment')
+    user_id = models.IntegerField()
     thumbs_up = models.IntegerField(default=0)
     thumbs_down = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
-    content = models.CharField(max_length=2000) 
+    content = models.CharField(max_length=2000)
+
+    def __str__(self):
+        return self.content
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+
+    avatar = models.ImageField(upload_to='profile_pictures', blank=True)
+
+    def __str__(self):
+        return self.user.username
