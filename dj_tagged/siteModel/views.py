@@ -9,10 +9,37 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+from datetime import datetime
 
 # Create your views here.
 def index(request):
     context = {} 
+
+    # Get the number of visits to the site.
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    # check if last_visit cookie exists
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+        
+        # cookie is more than a day old
+        if (datetime.now() - last_visit_time).seconds > 5:
+            visits = visits + 1
+            reset_last_visit_time = True
+    else:
+        # Cookie doesn't exist
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+    context['visits'] = visits
+
     return render(request, 'siteModel/index.html', context)
 
 def about(request):
