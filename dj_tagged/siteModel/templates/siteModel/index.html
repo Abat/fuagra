@@ -5,7 +5,7 @@
 {% block content %}
 
 	{% if user.is_authenticated %}
-	<h1>Rango says... hello {{ user.username }}!</h1>
+	<h1>Hello, {{ user.username }}!</h1>
 	<div>
 		Hello {{ user.username }}, you are visiting us {{ visits }} time!
 	</div>
