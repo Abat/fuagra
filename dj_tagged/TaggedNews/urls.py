@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
     # api starts here
-    url(r'^api/news/$', views.news_list),
-    url(r'^api/news/(?P<pk>[0-9]+)/$', views.news_detail),
+    url(r'^api/news/$', views.NewsList.as_view()),
+    url(r'^api/news/(?P<pk>[0-9]+)/$', views.NewsDetail.as_view()),
+    url(r'^api/users/$', views.UserList.as_view()),
+    url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
 )

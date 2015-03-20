@@ -1,12 +1,11 @@
 from django.shortcuts import render
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import generics
 from siteModel.models import News
-from siteModel.serializers import NewsSerializer
+from siteModel.serializers import NewsSerializer, UserSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 
@@ -79,46 +78,24 @@ def user_logout(request):
 
 # JSON starts here
 
-@api_view(['GET', 'POST'])
-def news_list(request):
+class NewsList(generics.ListCreateAPIView):
     """
     List all news or create a new news.
     """
-    if request.method == 'GET':
-        news = News.objects.all()
-        serializer = NewsSerializer(news, many=True)
-        return Response(serializer.data)
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
 
-    elif request.method == 'POST':
-        serializer = NewsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def news_detail(request, pk):
+class NewsDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a code snippet.
     """
-    try:
-        news = News.objects.get(pk=pk)
-    except News.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
 
-    if request.method == 'GET':
-        serializer = NewsSerializer(news)
-        return Response(serializer.data)
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    elif request.method == 'PUT':
-        serializer = NewsSerializer(news, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        news.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
