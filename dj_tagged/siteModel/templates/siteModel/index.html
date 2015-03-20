@@ -4,14 +4,16 @@
 
 {% block content %}
 
-	Hello Mello, this is first html page<br />
-
 	{% if user.is_authenticated %}
-	<!-- add logout link -->
-	<a href="/logout/">Logout</a><br />
+	<h1>Hello, {{ user.username }}!</h1>
+	<div>
+		Hello {{ user.username }}, you are visiting us {{ visits }} time!
+	</div>
+	<a href="{% url 'logout' %}">Logout</a><br />
 	{% else %}
-	<a href="/register/">Register</a><br />
-	<a href="/login/">Login</a><br />
+	Hello Mello, this is first html page<br />
+	<a href="{% url 'register' %}">Register</a><br />
+	<a href="{% url 'login' %}">Login</a><br />
 	{% endif %}
 
 {% endblock %}
