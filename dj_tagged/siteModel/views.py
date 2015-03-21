@@ -15,6 +15,9 @@ from datetime import datetime
 def index(request):
     context = {} 
 
+    # Get all News (write better solution later)
+    news_list = News.objects.all()
+
     # Get the number of visits to the site.
     visits = request.session.get('visits')
     if not visits:
@@ -38,6 +41,7 @@ def index(request):
         request.session['last_visit'] = str(datetime.now())
         request.session['visits'] = visits
     context['visits'] = visits
+    context['news_list'] = news_list
 
     return render(request, 'siteModel/index.html', context)
 

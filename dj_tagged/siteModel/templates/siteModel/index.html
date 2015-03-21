@@ -16,4 +16,10 @@
 	<a href="{% url 'login' %}">Login</a><br />
 	{% endif %}
 
+	<ul>
+	{% for news_item in news_list %}
+		<li><a href="{{ news_item.url }}" target="_blank"> {{ news_item.title }} </a></li>
+	{% endfor %}
+	</ul>
+
 {% endblock %}
