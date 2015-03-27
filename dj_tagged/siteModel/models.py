@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class News(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     date_created = models.DateTimeField('Date Created', default=datetime.now)
     date_updated = models.DateTimeField('Date Updated', default=datetime.now)
     # web url of a news
