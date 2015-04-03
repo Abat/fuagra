@@ -12,4 +12,5 @@ class CrawlerPipeline(object):
         try:
             item.save()
         except:
-            print "Could not save an item"
+            print "Could not save " + item["url"] 
+        return item
