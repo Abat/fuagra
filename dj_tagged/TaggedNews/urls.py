@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^api/news/(?P<pk>[0-9]+)/$', views.NewsDetail.as_view()),
     url(r'^api/users/$', views.UserList.as_view()),
     url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+    url(r'^like_news/$', views.like_news, name='like_news'),
 )
