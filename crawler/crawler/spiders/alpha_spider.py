@@ -17,4 +17,4 @@ class AlphaSpider(scrapy.Spider):
             item = NewsItem()
             item['title'] = sel.xpath('span[@class="name"]/text()').extract()[0]
             item['url'] = self.allowed_domains[0] + sel.xpath('@href')[0].extract()
-            item.save()
+            return item
