@@ -9,7 +9,7 @@
 #
 
 import sys
-sys.path.insert(0, '/home/abat/tagged/dj_tagged')
+sys.path.insert(0, '/home/baglan/TaggedNews/dj_tagged')
 
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'TaggedNews.settings'

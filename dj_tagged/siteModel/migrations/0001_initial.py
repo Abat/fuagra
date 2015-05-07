@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import datetime
 from django.conf import settings
+from django.utils.timezone import utc
 
 
 class Migration(migrations.Migration):
@@ -32,12 +33,12 @@ class Migration(migrations.Migration):
             name='News',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('title', models.CharField(max_length=200)),
-                ('date_created', models.DateTimeField(default=datetime.datetime.now, verbose_name=b'Date Created')),
-                ('date_updated', models.DateTimeField(default=datetime.datetime.now, verbose_name=b'Date Updated')),
+                ('title', models.CharField(max_length=400)),
+                ('date_created', models.DateTimeField(default=datetime.datetime(2015, 5, 7, 4, 19, 19, 623850, tzinfo=utc), verbose_name=b'Date Created')),
+                ('date_updated', models.DateTimeField(default=datetime.datetime(2015, 5, 7, 4, 19, 19, 623918, tzinfo=utc), verbose_name=b'Date Updated')),
                 ('likes', models.IntegerField(default=0)),
                 ('views', models.IntegerField(default=0)),
-                ('url', models.URLField()),
+                ('url', models.URLField(unique=True)),
                 ('num_comments', models.IntegerField(default=0)),
             ],
             options={
