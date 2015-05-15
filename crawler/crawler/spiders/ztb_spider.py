@@ -25,4 +25,4 @@ class ZtbSpider(scrapy.Spider):
 		# sort in descending order by number of comments
 		items.sort(key=getComments, reverse=True)
 		for item in items[:5]:
-			item.save()
+			yield(item)
