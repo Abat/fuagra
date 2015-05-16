@@ -16,21 +16,7 @@
 	<a href="{% url 'login' %}">Login</a><br />
 	{% endif %}
 
-	<ul>
-	{% for news_item in news_list %}
-		<li>
-			<a href="{{ news_item.url }}" target="_blank"> {{ news_item.title }}
-			</a> 
-			<strong class="like_count" news_id="{{ news_item.id }}">{{ news_item.likes }} likes
-			</strong>
-		</li>
-		{% if user.is_authenticated %}
-			<button class="likes btn btn-primary" data-news_id="{{ news_item.id }}" class="btn btn-primary" type="button">
-			<span class="glyphicon glyphicon-thumbs-up"></span>
-			Like
-			</button>
-		{% endif %}
-	{% endfor %}
+	<ul id="newsList">
 	</ul>
 
 {% endblock %}

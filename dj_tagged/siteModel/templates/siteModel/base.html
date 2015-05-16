@@ -7,7 +7,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -15,7 +15,6 @@
 
         <title> Tagged - {% block title %}Base{% endblock %} </title>
         <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="navbar-static-top.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'siteModel/style.css' %}" />
     </head>
 
@@ -61,7 +60,6 @@
         
     </div>
 
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -69,5 +67,91 @@
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Backbone libraries -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+    
+    <!-- =============== -->
+    <!-- Javascript code -->
+    <!-- =============== -->
+    <script type="text/javascript">
+        // your JS code goes here
+        'use strict';
+        
+        (function($){
+
+            var NewsItem = Backbone.Model.extend({
+                defaults: {
+                    title: '',
+                    date_created: '2015-03-22',
+                    date_updated: '2015-03-22',
+                    likes: 0,
+                    views: 0,
+                    url: '#',
+                    num_comments: 0                
+                }
+            });
+
+            var News = Backbone.Collection.extend({
+                model: NewsItem,
+                url: '/api/news'
+            });
+
+
+            var NewsItemView = Backbone.View.extend({
+                tagName: 'li',
+                initialize: function(){
+                    _.bindAll(this, 'render');
+                },
+                render: function(){
+                    $(this.el).html("<a target='_blank' href='" + this.model.get('url') + "'>" + this.model.get('title') + "</a>");
+                    return this;
+                }
+            });
+
+            var NewsView = Backbone.View.extend({
+                el: $('body'),
+                events: {
+                    'click button#add': 'addNews'
+                },
+                initialize: function(){
+                    _.bindAll(this, 'render', 'addNews', 'appendNews');
+                    
+                    this.collection = new News();
+                    this.collection.bind('add', this.appendNews);
+
+                    this.counter = 0;
+                    this.render();
+                },
+                render: function(){
+                    var self = this;
+                    $(this.el).append("<button id='add'> Add news </button>");
+                    var news = new News();
+                    news.fetch({ success: function(items) {
+                        items.each(function(item){
+                            self.appendNews(item);
+                        });
+                    } });
+                },
+                addNews: function(){
+                    this.counter++;
+                    var newsItem = new NewsItem();
+                    newsItem.set({
+                        title: newsItem.get('title') + this.counter
+                    });
+                    this.collection.add(newsItem);
+                },
+                appendNews: function(item){
+                    var newsItemView = new NewsItemView({
+                        model: item
+                    });
+                    $('ul#newsList', this.el).append(newsItemView.render().el);
+                }
+            });
+
+            var newsView = new NewsView();
+        })(jQuery);
+
+    </script>
     </body>
 </html>
