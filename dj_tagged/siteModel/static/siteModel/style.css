@@ -27,6 +27,26 @@ body {
     margin: 0px 3px;
 }
 
+.title {
+    font-size: medium;
+    margin-bottom: 1px;
+}
+
+/* url styles */
+.newsInfo .buttons li a {
+    color: #888;
+    font-weight: bold;
+}
+
+.source a {
+    color: #888;
+}
+
+/* list styles */
+.newsInfo .buttons li {
+    display: inline-block;
+}
+
 #content {
     padding:10px;
     padding-bottom:80px; /* Height of the footer element */

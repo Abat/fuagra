@@ -62,8 +62,6 @@
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
@@ -76,82 +74,7 @@
     <!-- =============== -->
     <script type="text/javascript">
         // your JS code goes here
-        'use strict';
-        
-        (function($){
-
-            var NewsItem = Backbone.Model.extend({
-                defaults: {
-                    title: '',
-                    date_created: '2015-03-22',
-                    date_updated: '2015-03-22',
-                    likes: 0,
-                    views: 0,
-                    url: '#',
-                    num_comments: 0                
-                }
-            });
-
-            var News = Backbone.Collection.extend({
-                model: NewsItem,
-                url: '/api/news'
-            });
-
-
-            var NewsItemView = Backbone.View.extend({
-                tagName: 'li',
-                initialize: function(){
-                    _.bindAll(this, 'render');
-                },
-                render: function(){
-                    $(this.el).html("<a target='_blank' href='" + this.model.get('url') + "'>" + this.model.get('title') + "</a>");
-                    return this;
-                }
-            });
-
-            var NewsView = Backbone.View.extend({
-                el: $('body'),
-                events: {
-                    'click button#add': 'addNews'
-                },
-                initialize: function(){
-                    _.bindAll(this, 'render', 'addNews', 'appendNews');
-                    
-                    this.collection = new News();
-                    this.collection.bind('add', this.appendNews);
-
-                    this.counter = 0;
-                    this.render();
-                },
-                render: function(){
-                    var self = this;
-                    $(this.el).append("<button id='add'> Add news </button>");
-                    var news = new News();
-                    news.fetch({ success: function(items) {
-                        items.each(function(item){
-                            self.appendNews(item);
-                        });
-                    } });
-                },
-                addNews: function(){
-                    this.counter++;
-                    var newsItem = new NewsItem();
-                    newsItem.set({
-                        title: newsItem.get('title') + this.counter
-                    });
-                    this.collection.add(newsItem);
-                },
-                appendNews: function(item){
-                    var newsItemView = new NewsItemView({
-                        model: item
-                    });
-                    $('ul#newsList', this.el).append(newsItemView.render().el);
-                }
-            });
-
-            var newsView = new NewsView();
-        })(jQuery);
-
     </script>
+
     </body>
 </html>
