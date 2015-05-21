@@ -13,7 +13,7 @@ class News(models.Model):
     views = models.IntegerField(default=0)
     url = models.URLField(unique=True)
     num_comments = models.IntegerField(default=0)
-    owner = models.ForeignKey('UserProfile', default=1)	
+    owner = models.ForeignKey('auth.User', default=1)	
 
     def __str__(self):
         return self.title
@@ -27,6 +27,7 @@ class Comments(models.Model):
     thumbs_down = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
+    owner = models.ForeignKey('auth.User')
 
     def __str__(self):
         return self.content
