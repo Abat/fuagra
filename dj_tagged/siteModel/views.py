@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from rest_framework import generics
+from rest_framework import permissions
 from siteModel.models import News
 from siteModel.serializers import NewsSerializer, UserSerializer
 from siteModel.forms import UserForm, UserProfileForm
+from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -125,17 +127,26 @@ def user_logout(request):
 
 # JSON starts here
 
-class NewsList(generics.ListCreateAPIView):
+class NewsList(generics.ListAPIView, generics.CreateAPIView):
     """
     List all news or create a new news.
     """
+    # only authenticated users can create a news or get news list
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+
+    # save the owner
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class NewsDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a code snippet.
+    Unauthorized users can read only
+    Only the owner of the news can modify or delete the news
     """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
