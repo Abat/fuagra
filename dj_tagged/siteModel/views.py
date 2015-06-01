@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import viewsets
 from siteModel.models import News
+from siteModel.models import UserProfile
 from siteModel.serializers import NewsSerializer, UserSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
@@ -127,13 +129,21 @@ def user_logout(request):
 
 # JSON starts here
 
-class NewsList(generics.ListAPIView, generics.CreateAPIView):
+class NewsList(generics.ListAPIView):
     """
-    List all news or create a new news.
+    List all the news.
     """
     # only authenticated users can create a news or get news list
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    
+class NewsCreate(generics.CreateAPIView):
+    """
+    Create new news. The only needed parameters are title and url. 
+    Everything else would be set.
+    """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = NewsSerializer
 
     # save the owner
@@ -143,17 +153,17 @@ class NewsList(generics.ListAPIView, generics.CreateAPIView):
 class NewsDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a code snippet.
-    Unauthorized users can read only
-    Only the owner of the news can modify or delete the news
+    Unauthorized users can read only.
+    Only the owner of the news can modify or delete the news.
     """
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     queryset = News.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     serializer_class = NewsSerializer
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserList(generics.ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserDetail(generics.RetrieveAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer

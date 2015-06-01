@@ -18,6 +18,9 @@ class News(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return "/api/news/%i/" % self.id
+
 class Comments(models.Model):
     news_id = models.ForeignKey(News)
     parent = models.ForeignKey('self', related_name='parent_comment')
@@ -39,3 +42,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def get_absolute_url(self):
+        return "/api/users/%i/" % self.id
