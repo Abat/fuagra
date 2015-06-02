@@ -3,7 +3,6 @@ from rest_framework import serializers
 from siteModel.models import News
 from siteModel.models import UserProfile
 
-
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
@@ -13,4 +12,3 @@ class NewsSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('id', 'username',) 

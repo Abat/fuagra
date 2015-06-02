@@ -66,8 +66,12 @@ DATABASES = {
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
-        #'HOST': '69.164.217.97',
+        'HOST': '69.164.217.97',
     }
+}
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 20
 }
 
 SWAGGER_SETTINGS = {
