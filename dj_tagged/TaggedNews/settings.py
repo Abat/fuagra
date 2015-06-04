@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_swagger',
     'siteModel',
 )
 
@@ -65,8 +66,34 @@ DATABASES = {
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
-        #'HOST': '69.164.217.97',
+        'HOST': '69.164.217.97',
     }
+}
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 20
+}
+
+SWAGGER_SETTINGS = {
+    'exclude_namespaces': [],
+    'api_version': '1.0',
+    'api_path': '/',
+    'enabled_methods': [
+        'get',
+        'post',
+        'put',
+        'patch',
+        'delete'
+    ],
+    'api_key': '',
+    'is_authenticated': True,
+    'is_superuser': True,
+    'permission_denied_handler': None,
+    'info': {
+        'description': 'API for TaggedNews website.',
+        'title': 'TaggedNews API',
+    },
+    'doc_expansion': 'none',
 }
 
 # Internationalization

@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import viewsets
 from siteModel.models import News
+from siteModel.models import UserProfile
 from siteModel.serializers import NewsSerializer, UserSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
@@ -131,33 +133,100 @@ def user_logout(request):
 
 # JSON starts here
 
-class NewsList(generics.ListAPIView, generics.CreateAPIView):
-    """
-    List all news or create a new news.
-    """
-    # only authenticated users can create a news or get news list
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    queryset = News.objects.all()
-    serializer_class = NewsSerializer
+class NewsViewSet(viewsets.ModelViewSet):
 
-    # save the owner
+    serializer_class = NewsSerializer
+    queryset = News.objects.all()
+    model = News
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    def list(self, request, *args, **kwargs):
+        """
+        Return a list of News paginated by 20 items.
+        Provide page number if necessary.
+        """
+        return super(NewsViewSet, self).list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Return the News for a provided id
+        """
+        return super(NewsViewSet, self).retrieve(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create news object.
+        """
+        return super(NewsViewSet, self).create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
+        # save the owner of the news
         serializer.save(owner=self.request.user)
 
-class NewsDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update or delete a code snippet.
-    Unauthorized users can read only
-    Only the owner of the news can modify or delete the news
-    """
+    def update(self, request, *args, **kwargs):
+        """
+        Update news object.
+        Only the owner of the news can update it.
+        """
+        return super(NewsViewSet, self).update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Update part of news object. 
+        Suggested to use this if you only need to update a single field.
+        Only the owner of the news can patch it.
+        """
+        return super(NewsViewSet, self).partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete news. 
+        Provide id of the news.
+        Only the owner of the news can delete it.
+        """
+        return super(NewsViewSet, self).destroy(request, *args, **kwargs)
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserSerializer
+    model = UserProfile
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
-    queryset = News.objects.all()
-    serializer_class = NewsSerializer
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    def list(self, request, *args, **kwargs):
+        """
+        Returns a list of Users paginated by 20 items.
+        Provide page number if necessary.
+        """
+        return super(UserViewSet, self).list(request, *args, **kwargs)
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Return the User for a provided id
+        """
+        return super(UserViewSet, self).retrieve(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create new user profile.
+        """
+        return super(UserViewSet, self).create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update user object.
+        Only the user himself can update his userprofile 
+        """
+        return super(UserViewSet, self).update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Update part of user profile.
+        Only the user can patch his profile.
+        """
+        return super(UserViewSet, self).partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete User Profile.
+        Provide id of the user.
+        """
+        return super(UserViewSet, self).destroy(request, *args, **kwargs)
