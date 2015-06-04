@@ -11,12 +11,9 @@
 	</div>
 	<a href="{% url 'logout' %}">Logout</a><br />
 	{% else %}
-	Hello Mello, this is first html page<br />
-	<a href="{% url 'register' %}">Register</a><br />
-	<a href="{% url 'login' %}">Login</a><br />
+	Hello Mello this is index page<br />
 	{% endif %}
 
-	<ul id="newsList">
-	</ul>
+	<ul id="newsList"> </ul>
 
 {% endblock %}

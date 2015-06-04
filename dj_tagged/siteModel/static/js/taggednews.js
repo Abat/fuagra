@@ -53,7 +53,7 @@ $(document).ready(function() {
                             <span class='source'> <a target='_blank' href='http://" + this.url.hostname + "'> ( " + this.url.hostname + " ) </a> </span>\
                         </p>\
                         <ul class='buttons'>\
-                            <li class='comments_button'> <a href='#'> comments </a> </li>\
+                            <li class='comments_button'> <a href='comments'> comments </a> </li>\
                         </ul>\
                     </div>\
                 </div>");
@@ -78,9 +78,13 @@ $(document).ready(function() {
             render: function(){
                 var self = this;
                 $(this.el).append("<button id='add'> Add news </button>");
+                this.collection.comparator = function(model) {
+                    return model.get('date_created');
+                }
+                this.collection.sort();
                 this.collection.fetch({ success: function(items) {
-                    items.each(function(item){
-                        self.appendNews(item);
+                    items.forEach(function(element, index, items) {
+                        self.appendNews(element);
                     });
                 } });
             },
