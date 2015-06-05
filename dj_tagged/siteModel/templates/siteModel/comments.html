@@ -1,0 +1,17 @@
+{% extends "siteModel/base.html" %}
+
+{% block title %} Comments Page {% endblock %}
+
+{% block content %}
+
+	{% if user.is_authenticated %}
+	<h1>Hello, {{ user.username }}!</h1>
+	<div>
+		Hello {{ user.username }}, you are visiting us {{ visits }} time!
+	</div>
+	<a href="{% url 'logout' %}">Logout</a><br />
+	{% else %}
+	Hello Mello this is comments page<br />
+	{% endif %}
+
+{% endblock %}

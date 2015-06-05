@@ -1,4 +1,4 @@
-$(document).ready(function() {
+define(['jquery', 'backbone'], function($, Backbone) {
 
     'use strict';
 
