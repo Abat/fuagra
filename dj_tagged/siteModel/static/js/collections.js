@@ -10,7 +10,10 @@ define([
 
     var NewsList = Backbone.Collection.extend({
         model: Models.NewsItemModel,
-        url: '/api/news'
+        url: '/api/news',
+        parse: function(response) {
+            return response.results;
+        }
     });
 
     return {

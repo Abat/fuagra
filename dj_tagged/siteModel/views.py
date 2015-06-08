@@ -57,6 +57,10 @@ def comments(request):
     context = {}
     return render(request, 'siteModel/comments.html', context)
 
+def submit(request):
+    context = {}
+    return render(request, 'siteModel/submit.html', context)
+
 # User Registration/Authentication
 
 def register(request):

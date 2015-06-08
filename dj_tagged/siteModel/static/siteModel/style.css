@@ -47,6 +47,13 @@ body {
     display: inline-block;
 }
 
+.side {
+    float: right;
+    background-color: white;
+    margin: 0px 5px 0px 5px;
+    width: 300px;
+}
+
 #content {
     padding:10px;
     padding-bottom:80px; /* Height of the footer element */
