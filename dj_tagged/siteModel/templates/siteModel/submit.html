@@ -12,6 +12,7 @@
 	<a href="{% url 'logout' %}">Logout</a><br />
 
 	<form action="/api/news/" method="POST" enctype="application/json">
+		{% csrf_token %}
 	<fieldset>
 	<legend>Submit a new link</legend>
 	Title:<br>
