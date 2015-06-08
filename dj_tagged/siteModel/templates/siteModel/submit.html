@@ -1,0 +1,30 @@
+{% extends "siteModel/base.html" %}
+
+{% block title %} Submit Page {% endblock %}
+
+{% block content %}
+
+	{% if user.is_authenticated %}
+	<h1>Hello, {{ user.username }}!</h1>
+	<div>
+		Hello {{ user.username }}, you are visiting us {{ visits }} time!
+	</div>
+	<a href="{% url 'logout' %}">Logout</a><br />
+
+	<form action="/api/news/" method="POST" enctype="application/json">
+	<fieldset>
+	<legend>Submit a new link</legend>
+	Title:<br>
+	<input type="text" name="title">
+	<br>
+	Url:<br>
+	<input type="text" name="url">
+	<br><br>
+	<input type="submit" value="Submit"></fieldset>
+	</form>	
+
+	{% else %}
+	Hello Mello this is submitting page<br />
+	{% endif %}
+
+{% endblock %}
