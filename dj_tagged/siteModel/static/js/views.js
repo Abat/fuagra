@@ -49,11 +49,16 @@ define([
 
     var NewsView = Backbone.View.extend({
         el: $('body'),
+        events: {
+            'click a#nextPage': 'nextPage'
+        },
         initialize: function(){
-            _.bindAll(this, 'render', 'appendNews');
+            _.bindAll(this, 'render', 'appendNews', 'nextPage');
             
             this.collection = new Collections.NewsListCollection();
 
+            this.nextPage = 1;
+            this.prevPage = 1;
             this.render();
         },
         render: function(){
@@ -62,8 +67,13 @@ define([
                 return model.get('date_created');
             }
             this.collection.sort();
-            this.collection.fetch({ success: function(items, response, options) {
-                $('.container', self.el).append("<a href='" + response.next + "'> Next </a>");
+            this.collection.fetch({data: {page: this.nextPage},  success: function(items, response, options) {
+                var matches = response.next.match(/\d+$/);
+                if (matches) {
+                    self.nextPage = matches[0];
+                }
+        
+                $('.container', self.el).append("<a href='#' id='nextPage'> Next </a>");
                 items.forEach(function(element, index, items) {
                     self.appendNews(element);
                 });
@@ -74,6 +84,11 @@ define([
                 model: item
             });
             $('ul#newsList', this.el).append(newsItemView.render().el);
+        },
+        nextPage: function(){
+            $('div.container a#nextPage', this.el).remove();
+            $('ul#newsList', this.el).empty();
+            this.render();
         }
     });
 
