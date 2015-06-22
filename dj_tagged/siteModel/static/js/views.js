@@ -50,33 +50,46 @@ define([
     var NewsView = Backbone.View.extend({
         el: $('body'),
         events: {
-            'click a#nextPage': 'nextPage'
+            'click a#nextPage': 'nextPage',
+            'click a#prevPage': 'prevPage'
         },
         initialize: function(){
-            _.bindAll(this, 'render', 'appendNews', 'nextPage');
+            _.bindAll(this, 'render', 'appendNews', 'nextPage', 'prevPage');
             
             this.collection = new Collections.NewsListCollection();
 
             this.nextPage = 1;
             this.prevPage = 1;
-            this.render();
+            this.render(1);
         },
-        render: function(){
+        render: function(pageNum){
             var self = this;
             this.collection.comparator = function(model) {
-                return model.get('date_created');
+                return -model.get('date_created');
             }
             this.collection.sort();
-            this.collection.fetch({data: {page: this.nextPage},  success: function(items, response, options) {
-                var matches = response.next.match(/\d+$/);
-                if (matches) {
-                    self.nextPage = matches[0];
-                }
-        
-                $('.container', self.el).append("<a href='#' id='nextPage'> Next </a>");
+            this.collection.fetch({data: {page: pageNum},  success: function(items, response, options) {
+                $('div.container a#nextPage', self.el).remove();
+                $('div.container a#prevPage', self.el).remove();
+                $('ul#newsList', self.el).empty();
+
                 items.forEach(function(element, index, items) {
                     self.appendNews(element);
                 });
+
+                if (response.previous) {
+                    if (response.previous.match(/\d+/)) {
+                        self.prevPage = response.previous.match(/\d+$/)[0];
+                        $('span#newsListNav', self.el).append("<a href='#' id='prevPage'> <--Previous-- </a>");
+                    }
+                }
+
+                if (response.next) {
+                    if (response.next.match(/\d+$/)) {
+                        self.nextPage = response.next.match(/\d+$/)[0];
+                        $('span#newsListNav', self.el).append("<a href='#' id='nextPage'> --Next--> </a>");
+                    }
+                }
             } });
         },
         appendNews: function(item){
@@ -86,9 +99,10 @@ define([
             $('ul#newsList', this.el).append(newsItemView.render().el);
         },
         nextPage: function(){
-            $('div.container a#nextPage', this.el).remove();
-            $('ul#newsList', this.el).empty();
-            this.render();
+            this.render(this.nextPage);
+        },
+        prevPage: function(){
+            this.render(this.prevPage);
         }
     });
 
