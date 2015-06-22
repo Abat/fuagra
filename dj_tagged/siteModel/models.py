@@ -15,6 +15,9 @@ class News(models.Model):
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey('auth.User', default=1)	
 
+    class Meta:
+        ordering = ['-date_updated']
+
     def __str__(self):
         return self.title
 

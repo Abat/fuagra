@@ -6,6 +6,9 @@ requirejs.config({
         'underscore': 'js/underscore/underscore-min',
         'backbone': 'js/backbone/backbone-min',
         'bootstrap': 'js/bootstrap/bootstrap.min',
+        'models': 'js/models',
+        'collections': 'js/collections',
+        'views': 'js/views',
     }
 });
 

@@ -3,17 +3,18 @@
 {% block title %} Index Page {% endblock %}
 
 {% block content %}
-
 	{% if user.is_authenticated %}
 	<h1>Hello, {{ user.username }}!</h1>
 	<div>
 		Hello {{ user.username }}, you are visiting us {{ visits }} time!
 	</div>
-	<a href="{% url 'logout' %}">Logout</a><br />
+	<br>
 	{% else %}
 	Hello Mello this is index page<br />
 	{% endif %}
 
 	<ul id="newsList"> </ul>
+	
+	<span id="newsListNav"> </ul>
 
 {% endblock %}
