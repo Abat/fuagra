@@ -26,13 +26,23 @@ define([
 
     var NewsItemView = Backbone.View.extend({
         tagName: 'li',
+        events: {
+            'click a.up': 'upvote',
+            'click a.down': 'downvote'
+        },
         initialize: function(){
-            _.bindAll(this, 'render');
+            _.bindAll(this, 'render', 'upvote', 'downvote');
+            this.listenTo(this.model, 'change', this.render);
         },
         render: function(){
             this.url = parseUrl(this.model.get('url'));
 
             $(this.el).html("<div class='news'>\
+                <div class='newsVote'>\
+                    <div class='arrow'> <a href='#' class='up'> + </a> </div>\
+                    <div class='score'>" + this.model.get('likes') + "</div>\
+                    <div class='arrow'> <a href='#' class='down'> - </a> </div>\
+                </div>\
                 <div class='newsInfo'>\
                     <p class='title'>\
                         <a target='_blank' href='" + this.model.get('url') + "'>" + this.model.get('title') + "</a>\
@@ -44,6 +54,28 @@ define([
                 </div>\
             </div>");
             return this;
+        },
+        upvote: function(e) {
+            e.preventDefault();
+            this.model.save({likes: this.model.get('likes') + 1}, {
+                success: function(model, response, options) {
+                    console.log(response);
+                },
+                error: function(model, xhr, options) {
+                    console.log(xhr);
+                }
+            });
+        },
+        downvote: function(e) {
+            e.preventDefault();
+            this.model.save({likes: this.model.get('likes') - 1}, {
+                success: function(model, response, options) {
+                    console.log(response);
+                },
+                error: function(model, xhr, options) {
+                    console.log(xhr);
+                }
+            });
         }
     });
 

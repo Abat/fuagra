@@ -27,6 +27,10 @@ body {
     margin: 0px 3px;
 }
 
+p.title {
+    padding-top: 15px;
+}
+
 .title {
     font-size: medium;
     margin-bottom: 1px;
@@ -45,6 +49,25 @@ body {
 /* list styles */
 .newsInfo .buttons li {
     display: inline-block;
+}
+
+div.news {
+    padding-bottom: 5px;
+}
+
+div.newsVote {
+    float: left;
+    margin-right: 7px;
+    margin-left: 7px;
+    overflow: hidden;
+}
+
+div.arrow {
+    font-size: 15px;
+}
+
+div.score {
+    font-size: 15px;
 }
 
 .side {

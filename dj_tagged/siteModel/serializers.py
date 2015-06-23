@@ -6,8 +6,8 @@ from siteModel.models import UserProfile
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ('title', 'date_created', 'date_updated', 'likes', 'views', 'url', 'num_comments', 'owner') 
-        read_only_fields = ('date_created', 'date_updated', 'likes', 'views', 'num_comments', 'owner')
+        fields = ('id', 'title', 'date_created', 'date_updated', 'likes', 'views', 'url', 'num_comments', 'owner') 
+        read_only_fields = ('id', 'date_created', 'date_updated', 'views', 'num_comments', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
