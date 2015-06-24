@@ -3,12 +3,16 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
-	<strong>Login</strong>
-	
 	<form id="login_form" method="POST" action="/login/">
+	<fieldset>
+	<legend> Login </legend>
 		{% csrf_token %}
-		Username: <input type="text" name="username" value="" size="50"<br />
-		Password: <input type="password" name="password" value="" size="50"<br />
+		Username:<br>
+		<input type="text" name="username" value="" size="50"><br>
+		Password:<br>
+		<input type="password" name="password" value="" size="50">
+		<br><br>
 		<input type="submit" value="submit" />
+	</fieldset>
 	</form>
 {% endblock %}
