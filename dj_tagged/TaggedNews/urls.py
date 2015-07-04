@@ -3,6 +3,7 @@ from django.contrib import admin
 from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
+from siteModel.views import CommentList
 
 news_list = NewsViewSet.as_view({
     'get': 'list',
@@ -42,5 +43,6 @@ urlpatterns = patterns('',
     url(r'^api/news/(?P<pk>[0-9]+)/$', news_detail, name='news-detail'),
     url(r'^api/users/$', user_list, name='user-list'),
     url(r'^api/users/(?P<pk>[0-9]+)/$', user_detail, name='user-detail'),
+    url(r'^api/comments/(?P<pk>[0-9]+)/$', views.CommentList.as_view(), name='comments-list'),
     url(r'^docs/', include('rest_framework_swagger.urls')),
 )

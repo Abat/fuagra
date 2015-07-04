@@ -2,6 +2,7 @@ from django.forms import widgets
 from rest_framework import serializers
 from siteModel.models import News
 from siteModel.models import UserProfile
+from siteModel.models import Comments
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,3 +13,8 @@ class NewsSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
+
+class CommentSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Comments
+		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner')

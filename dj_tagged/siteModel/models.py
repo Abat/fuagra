@@ -25,15 +25,15 @@ class News(models.Model):
         return "/api/news/%i/" % self.id
 
 class Comments(models.Model):
-    news_id = models.ForeignKey(News)
-    parent = models.ForeignKey('self', related_name='parent_comment')
-    child = models.ForeignKey('self', related_name='child_comment')
-    user_id = models.IntegerField()
+    news = models.ForeignKey(News)
+    parent = models.ForeignKey('self', related_name='parent_comment', default=-1)
+    child = models.ForeignKey('self', related_name='child_comment', default=-1)
     thumbs_up = models.IntegerField(default=0)
     thumbs_down = models.IntegerField(default=0)
-    rank = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey('auth.User')
+    isExpert = models.BooleanField(default=False)
+    date_created = models.DateTimeField('Date Updated', default=timezone.now())
 
     def __str__(self):
         return self.content

@@ -4,7 +4,8 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from siteModel.models import News
 from siteModel.models import UserProfile
-from siteModel.serializers import NewsSerializer, UserSerializer
+from siteModel.models import Comments
+from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
@@ -234,3 +235,15 @@ class UserViewSet(viewsets.ModelViewSet):
         Provide id of the user.
         """
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
+
+class CommentList(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    
+    def get_queryset(self):
+        news_id = self.kwargs['pk']
+        return Comments.objects.filter(news=news_id)
+
+    def perform_create(self, serializer):
+        # save the owner of the news
+        serializer.save(owner=self.request.user)
+
