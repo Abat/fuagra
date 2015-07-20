@@ -24,14 +24,25 @@ define([
         }
     })();
 
+    var CommentsItemView = Backbone.View.extend({
+        tagName: 'textarea',
+        initialize: function(){
+            _.bindAll(this, 'render');
+        },
+        render: function(){
+            return this;
+        }
+    });
+
     var NewsItemView = Backbone.View.extend({
         tagName: 'li',
         events: {
             'click a.up': 'upvote',
-            'click a.down': 'downvote'
+            'click a.down': 'downvote',
+            'click a.comments': 'comments'
         },
         initialize: function(){
-            _.bindAll(this, 'render', 'upvote', 'downvote');
+            _.bindAll(this, 'render', 'upvote', 'downvote', 'comments');
             this.listenTo(this.model, 'change', this.render);
         },
         render: function(){
@@ -49,7 +60,7 @@ define([
                         <span class='source'> <a target='_blank' href='http://" + this.url.hostname + "'> ( " + this.url.hostname + " ) </a> </span>\
                     </p>\
                     <ul class='buttons'>\
-                        <li class='comments_button'> <a href='comments'> comments </a> </li>\
+                        <li class='comments_button'> <a href='api/comments' class='comments'> comments </a> </li>\
                     </ul>\
                 </div>\
             </div>");
@@ -76,6 +87,12 @@ define([
                     console.log(xhr);
                 }
             });
+        },
+        comments: function(e) {
+            e.preventDefault();
+            console.log('comments open here');
+            var commentsItemView = new CommentsItemView(); 
+            $('body').append(commentsItemView.render().el);
         }
     });
 
@@ -141,6 +158,7 @@ define([
     // export stuff
     return {
         'NewsView': NewsView,
-        'NewsItemView': NewsItemView
+        'NewsItemView': NewsItemView,
+        'CommentsItemView': CommentsItemView
     };
 });
