@@ -116,22 +116,6 @@ def user_login(request):
         return render(request, 'siteModel/login.html', {})
 
 @login_required
-def like_news(request):
-    news_id = None
-    if request.method == "GET":
-        news_id = request.GET['news_id']
-
-    likes = 0
-    if news_id:
-        news_object = News.objects.get(id=int(news_id))
-        if news_object:
-            likes = news_object.likes + 1
-            news_object.likes = likes
-            news_object.save()
-
-    return HttpResponse(likes)
-
-@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')

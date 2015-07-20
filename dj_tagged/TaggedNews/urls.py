@@ -37,7 +37,6 @@ urlpatterns = patterns('',
     url(r'^login/$', views.user_login, name='login'),
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^like_news/$', views.like_news, name='like_news'),
     # api starts here
     url(r'^api/news/$', news_list, name='news-list'),
     url(r'^api/news/(?P<pk>[0-9]+)/$', news_detail, name='news-detail'),
