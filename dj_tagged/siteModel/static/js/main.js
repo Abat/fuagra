@@ -9,6 +9,7 @@ requirejs.config({
         'models': 'js/models',
         'collections': 'js/collections',
         'views': 'js/views',
+        'comment_views': 'js/comment_views'
     }
 });
 

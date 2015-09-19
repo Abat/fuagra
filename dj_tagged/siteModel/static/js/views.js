@@ -3,8 +3,9 @@ define([
     'underscore',
     'backbone',
     'collections',
-    'models'
-], function($, _, Backbone, Collections, Models) {
+    'models',
+    'comment_views'
+], function($, _, Backbone, Collections, Models, Comment_Views) {
 
     'use strict';
 
@@ -24,16 +25,6 @@ define([
         }
     })();
 
-    var CommentsItemView = Backbone.View.extend({
-        tagName: 'textarea',
-        initialize: function(){
-            _.bindAll(this, 'render');
-        },
-        render: function(){
-            return this;
-        }
-    });
-
     var NewsItemView = Backbone.View.extend({
         tagName: 'li',
         events: {
@@ -48,10 +39,12 @@ define([
         render: function(){
             this.url = parseUrl(this.model.get('url'));
 
+            var score = this.model.get('upvotes') - this.model.get('downvotes');
+
             $(this.el).html("<div class='news'>\
                 <div class='newsVote'>\
                     <div class='arrow'> <a href='#' class='up'> + </a> </div>\
-                    <div class='score'>" + this.model.get('likes') + "</div>\
+                    <div class='score'>" + score + "</div>\
                     <div class='arrow'> <a href='#' class='down'> - </a> </div>\
                 </div>\
                 <div class='newsInfo'>\
@@ -68,7 +61,7 @@ define([
         },
         upvote: function(e) {
             e.preventDefault();
-            this.model.save({likes: this.model.get('likes') + 1}, {
+            this.model.save({upvotes: this.model.get('upvotes') + 1}, {
                 success: function(model, response, options) {
                     console.log(response);
                 },
@@ -79,7 +72,7 @@ define([
         },
         downvote: function(e) {
             e.preventDefault();
-            this.model.save({likes: this.model.get('likes') - 1}, {
+            this.model.save({downvotes: this.model.get('downvotes') + 1}, {
                 success: function(model, response, options) {
                     console.log(response);
                 },
@@ -91,8 +84,8 @@ define([
         comments: function(e) {
             e.preventDefault();
             console.log('comments open here');
-            var commentsItemView = new CommentsItemView(); 
-            $('body').append(commentsItemView.render().el);
+            var commentsView = new Comment_Views.CommentsView(); 
+            $('body').append(commentsView);
         }
     });
 
@@ -158,7 +151,6 @@ define([
     // export stuff
     return {
         'NewsView': NewsView,
-        'NewsItemView': NewsItemView,
-        'CommentsItemView': CommentsItemView
+        'NewsItemView': NewsItemView
     };
 });

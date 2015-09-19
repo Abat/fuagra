@@ -7,7 +7,7 @@ from siteModel.models import Comments
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ('id', 'title', 'date_created', 'date_updated', 'views', 'url', 'num_comments', 'owner') 
+        fields = ('id', 'title', 'date_created', 'date_updated', 'upvotes', 'downvotes', 'views', 'url', 'num_comments', 'owner') 
         read_only_fields = ('id', 'date_created', 'date_updated', 'views', 'num_comments', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
