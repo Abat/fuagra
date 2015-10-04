@@ -27,6 +27,7 @@ define([
 
     var NewsItemView = Backbone.View.extend({
         tagName: 'li',
+        className: 'newsItem',
         events: {
             'click a.up': 'upvote',
             'click a.down': 'downvote',
@@ -53,7 +54,7 @@ define([
                         <span class='source'> <a target='_blank' href='http://" + this.url.hostname + "'> ( " + this.url.hostname + " ) </a> </span>\
                     </p>\
                     <ul class='buttons'>\
-                        <li class='comments_button'> <a href='api/comments' class='comments'> comments </a> </li>\
+                        <li class='comments_button'> <a href='/api/comments/" + this.model.get('id') + "' class='comments'> comments </a> </li>\
                     </ul>\
                 </div>\
             </div>");
@@ -84,8 +85,8 @@ define([
         comments: function(e) {
             e.preventDefault();
             console.log('comments open here');
-            var commentsView = new Comment_Views.CommentsView(); 
-            $('body').append(commentsView);
+            $('.container #default_container').empty();
+            var commentsView = new Comment_Views.CommentsView({ newsId: this.model.get('id') }); 
         }
     });
 

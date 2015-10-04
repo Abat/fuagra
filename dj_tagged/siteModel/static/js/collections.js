@@ -17,8 +17,11 @@ define([
     });
 
     var CommentsList = Backbone.Collection.extend({
+        initialize: function(models, options) {
+            this.options=options;
+        },
         model: Models.CommentsItemModel,
-        url: '/api/comments/' + '1',
+        url: function() { return '/api/comments/' + this.options.newsId; },
         parse: function(response) {
             return response.results;
         } 

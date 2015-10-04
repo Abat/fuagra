@@ -6,10 +6,6 @@
 
 	{% if user.is_authenticated %}
 	<h1>Hello, {{ user.username }}!</h1>
-	<div>
-		Hello {{ user.username }}, you are visiting us {{ visits }} time!
-	</div>
-	<a href="{% url 'logout' %}">Logout</a><br />
 
 	<form action="/api/news/" method="POST" enctype="application/json">
 		{% csrf_token %}
