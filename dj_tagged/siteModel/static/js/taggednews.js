@@ -2,8 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'views',
-], function($, _, Backbone, Views) {
+    'routers',
+], function($, _, Backbone, Routers) {
 
     'use strict';
     
@@ -15,6 +15,14 @@ define([
             };
             return oldSync(method, model, options);
         };
-        var newsView = new Views.NewsView();
+        
+        window.App = {
+            Router: {}
+        };
+
+        App.router = new Routers.WorkspaceRouter();
+
+        Backbone.history.start({ pushState: true });
+
     })(jQuery);
 });

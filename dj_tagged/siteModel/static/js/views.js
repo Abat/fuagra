@@ -4,7 +4,7 @@ define([
     'backbone',
     'collections',
     'models',
-    'comment_views'
+    'comment_views',
 ], function($, _, Backbone, Collections, Models, Comment_Views) {
 
     'use strict';
@@ -84,8 +84,8 @@ define([
         },
         comments: function(e) {
             e.preventDefault();
-            console.log('comments open here');
-            $('.container #default_container').empty();
+            console.log('comments view triggered');
+            $('ul#newsList').empty();
             var commentsView = new Comment_Views.CommentsView({ newsId: this.model.get('id') }); 
         }
     });
@@ -106,6 +106,9 @@ define([
             this.render(1);
         },
         render: function(pageNum){
+
+            console.log("newsview render");
+
             var self = this;
             this.collection.comparator = function(model) {
                 return -model.get('date_created');
@@ -133,6 +136,8 @@ define([
                         $('span#newsListNav', self.el).append("<a href='#' id='nextPage'> --Next--> </a>");
                     }
                 }
+
+                App.router.navigate('', {trigger: true});
             } });
         },
         appendNews: function(item){

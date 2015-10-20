@@ -3,8 +3,9 @@ define([
     'underscore',
     'backbone',
     'collections',
-    'models'
-], function($, _, Backbone, Collections, Models) {
+    'models',
+    'routers'
+], function($, _, Backbone, Collections, Models, Routers) {
 
     'use strict';
     
@@ -34,42 +35,77 @@ define([
 
     var CommentsView = Backbone.View.extend({
         el: $('body'),
+        events: {
+            'submit form#newComment': 'newComment'
+        },
         initialize: function(attr){
-            _.bindAll(this, 'render', 'appendComments');
+            _.bindAll(this, 'render', 'appendComments', 'newComment');
 
             this.newsId = attr.newsId;
             this.collection = new Collections.CommentsListCollection([], { newsId: attr.newsId });
-            
-            this.render();
+            this.collection.comparator = function(model) {
+                return -model.get('date_created').toString();
+            }
+            this.collection.sort();
+
+
+            var self = this;
+            this.collection.fetch({ success: function() {
+                self.render();    
+            } });
         },
         render: function(){
             var self = this;
-            this.collection.comparator = function(model) {
-                return -model.get('date_created');
-            }
-            this.collection.fetch({ success: function(items, response, options) {
 
-                var csrf = $("input[name='csrfmiddlewaretoken']").val()
+            $('div#commentsList').empty();
 
-                $('#default_container', self.el).append("<form action='/api/comments/" + self.newsId + "/' method='post' enctype='application/json'>\
-                    <fieldset><legend> Write a comment </legend>\
-                    <textarea name='content'> </textarea>\
-                    <input type='hidden' name='news' value='" + self.newsId + "'>\
-                    <input type='hidden' name='csrfmiddlewaretoken' value='" + csrf + "'>\
-                    <br><br>\
-                    <input type='submit' value='Post'></fieldset>\
-                    </form>");
+            console.log('Comments view render');
 
-                items.forEach(function(element, index, items) {
-                    self.appendComments(element);
-                });
-            } });
+            var csrf = $("input[name='csrfmiddlewaretoken']").val()
+
+            $('div#commentsList', self.el).append("<form action='/api/comments/" + self.newsId + "/' method='post' enctype='application/json' id='newComment'>\
+                <fieldset><legend> Write a comment </legend>\
+                <textarea name='content'> </textarea>\
+                <input type='hidden' name='news' value='" + self.newsId + "'>\
+                <input type='hidden' name='csrfmiddlewaretoken' value='" + csrf + "'>\
+                <br><br>\
+                <input type='submit' value='Post'></fieldset>\
+                </form>");
+
+            $('div#commentsList', self.el).append("<div id='topComment'> </div>");
+
+            this.collection.each(function(model) {
+                self.appendComments(model);
+            });
+            App.router.navigate('comments');
         },
         appendComments: function(item){
             var commentsItemView = new CommentsItemView({
                 model: item
             });
-            $('#default_container', this.el).append(commentsItemView.render().el);
+            $('div#commentsList', this.el).append(commentsItemView.render().el);
+        },
+        newComment: function(e){
+            var self = this;
+            e.preventDefault();
+            var comment = this.collection.create({
+                content: $("textarea[name='content']").val(),
+                news: $("input[name='news']").val(),
+                csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                date_created: Date.now()
+            }, {
+                success: function(resp) {
+                    console.log(resp);
+                    var newComment = new CommentsItemView({
+                        model: comment
+                    });
+                    $('textarea').val('');
+                    $('div#commentsList div#topComment', self.el).prepend(newComment.render().el);
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
         }
     });
 
