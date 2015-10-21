@@ -2,16 +2,19 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'marionette',
     'views',
-], function($, _, Backbone, Views) {
+], function($, _, Backbone, Marionette, Views) {
 
     'use strict';
 
-    var WorkspaceRouter = Backbone.Router.extend({
+    var MyRouter = Marionette.AppRouter.extend({
+        appRoutes: {
+
+        },
 
         routes: {
             "": "home",
-            "about": "about",   // #about
             "comments": "comments"
         },
 
@@ -24,10 +27,10 @@ define([
             console.log("comments route triggered");
             //var newsView = new Views.NewsView();
         }
+
     });
 
-
     return {
-        'WorkspaceRouter': WorkspaceRouter
+        'MyRouter': MyRouter
     };
 });

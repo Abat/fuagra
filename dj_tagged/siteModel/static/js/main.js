@@ -5,6 +5,7 @@ requirejs.config({
         'jquery': 'js/jquery/jquery-2.1.3.min',
         'underscore': 'js/underscore/underscore-min',
         'backbone': 'js/backbone/backbone-min',
+        'marionette': 'js/marionette/backbone.marionette.min',
         'bootstrap': 'js/bootstrap/bootstrap.min',
         'models': 'js/models',
         'collections': 'js/collections',
@@ -14,7 +15,8 @@ requirejs.config({
     }
 });
 
-require(['app/taggednews'], function(Application) {
+require(['app/taggednews'], function(App) {
     // App starts here
-    
+    window.App = App;
+    window.App.start();
 });
