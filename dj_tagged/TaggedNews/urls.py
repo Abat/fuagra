@@ -45,5 +45,7 @@ urlpatterns = patterns('',
     url(r'^api/comments/(?P<pk>[0-9]+)/$', views.CommentList.as_view(), name='comments-list'),
     url(r'^docs/', include('rest_framework_swagger.urls')),
 	url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-	(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'siteModel/testOauth.html'}),
+	url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'siteModel/testOauth.html'}),
+    url(r'^api/hello', views.ApiEndpoint.as_view()),  # and also a resource server!
+    url(r'^secret$', views.secret_page, name='secret'),
 )

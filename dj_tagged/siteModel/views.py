@@ -15,6 +15,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from datetime import datetime
+from oauth2_provider.views.generic import ProtectedResourceView
 
 # Create your views here.
 def index(request):
@@ -232,6 +233,11 @@ class CommentList(generics.ListCreateAPIView):
         # save the owner of the news
         serializer.save(owner=self.request.user)
 
-def testOauth(request):
-    context = {}
-    return render(request, 'siteModel/testOauth.html', context)
+
+class ApiEndpoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Hello, OAuth2!')
+
+@login_required
+def secret_page(request, *args, **kwargs):
+    return HttpResponse('Secret contents!', status=200)
