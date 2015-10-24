@@ -2,10 +2,13 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'marionette',
     'collections',
     'models',
     'comment_views',
-], function($, _, Backbone, Collections, Models, Comment_Views) {
+    'text!templates/newsView.html',
+    'text!templates/newsItemView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT) {
 
     'use strict';
 
@@ -25,6 +28,16 @@ define([
         }
     })();
 
+    var NewsItemView = Marionette.ItemView.extend({
+        tagName: 'li',
+        className: 'newsItem',
+        template: _.template(newsItemT),
+        templateHelpers: function() {
+            return { urlParsed: parseUrl(this.model.get('url')) };
+        }
+    });
+
+    /*
     var NewsItemView = Backbone.View.extend({
         tagName: 'li',
         className: 'newsItem',
@@ -89,7 +102,34 @@ define([
             var commentsView = new Comment_Views.CommentsView({ newsId: this.model.get('id') }); 
         }
     });
+    */
 
+    var NewsView = Marionette.CompositeView.extend({
+        el: '#commentsList',
+        tagName: 'div',
+        template: _.template(newsT),
+
+        childView: NewsItemView,
+        childViewContainer: 'ul',
+
+        collectionEvents: {
+            "sync": 'newsSync'
+        },
+
+        modelEvents: {
+            change: 'render'
+        },
+
+        initialize: function() {
+            console.log('Initializing NewsView...');
+        },
+
+        newsSync: function() {
+            console.log('Collection synced');    
+        }
+    });
+
+    /*
     var NewsView = Backbone.View.extend({
         el: $('body'),
         events: {
@@ -137,7 +177,7 @@ define([
                     }
                 }
 
-                App.router.navigate('', {trigger: true});
+                App.router.navigate('');
             } });
         },
         appendNews: function(item){
@@ -153,6 +193,7 @@ define([
             this.render(this.prevPage);
         }
     });
+    */
 
     // export stuff
     return {

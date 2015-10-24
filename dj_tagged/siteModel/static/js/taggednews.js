@@ -28,7 +28,7 @@ define([
     taggedApp.on('start', function() {
         console.log('App start triggered...');
         Backbone.history.start({ pushState: true });
-    });
+    });    
 
     return taggedApp;
 });

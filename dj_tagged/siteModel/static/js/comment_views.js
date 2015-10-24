@@ -77,7 +77,7 @@ define([
             this.collection.each(function(model) {
                 self.appendComments(model);
             });
-            App.router.navigate('comments');
+            App.router.navigate('comments/' + self.newsId);
         },
         appendComments: function(item){
             var commentsItemView = new CommentsItemView({

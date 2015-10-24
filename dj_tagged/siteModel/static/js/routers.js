@@ -3,8 +3,10 @@ define([
     'underscore',
     'backbone',
     'marionette',
+    'collections',
     'views',
-], function($, _, Backbone, Marionette, Views) {
+    'comment_views',
+], function($, _, Backbone, Marionette, Collections, Views, Comment_Views) {
 
     'use strict';
 
@@ -15,19 +17,26 @@ define([
 
         routes: {
             "": "home",
-            "comments": "comments"
+            "comments/:newsId": "comments",
+            "*nomatch": "notFound"
         },
 
         home: function() {
             console.log("home route triggered");
-            var newsView = new Views.NewsView();
+            var news = new Collections.NewsListCollection();
+            news.fetch({ success: function(items, response, options) {
+                var newsView = new Views.NewsView({ collection: items });
+                newsView.render();
+            }});
         },
 
-        comments: function() {
-            console.log("comments route triggered");
-            //var newsView = new Views.NewsView();
+        comments: function(newsId) {
+            console.log("comments route triggered: ", newsId);
+            var commentsView = new Comment_Views.CommentsView({ newsId: newsId });
+        },
+        notFound: function() {
+            console.log("Route not found: ", arguments);
         }
-
     });
 
     return {

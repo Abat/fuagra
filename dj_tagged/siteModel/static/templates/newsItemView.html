@@ -1,0 +1,16 @@
+<div class='news'>
+    <div class='newsVote'>
+        <div class='arrow'> <a href='#' class='up'> + </a> </div>
+        <div class='score'> <%= upvotes - downvotes %> </div>
+        <div class='arrow'> <a href='#' class='down'> - </a> </div>
+    </div>
+        <div class='newsInfo'>
+            <p class='title'>
+                <a target='_blank' href='<%= url %>'> <%= title %> </a>
+                <span class='source'> <a target='_blank' href='url'> ( <%= urlParsed.host %> ) </a> </span>
+            </p>
+            <ul class='buttons'>
+                <li class='comments_button'> <a href='/api/comments/<%= id %>' class='comments'> comments </a> </li>
+            </ul>
+        </div>
+</div>
