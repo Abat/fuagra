@@ -44,4 +44,6 @@ urlpatterns = patterns('',
     url(r'^api/users/(?P<pk>[0-9]+)/$', user_detail, name='user-detail'),
     url(r'^api/comments/(?P<pk>[0-9]+)/$', views.CommentList.as_view(), name='comments-list'),
     url(r'^docs/', include('rest_framework_swagger.urls')),
+	url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+	(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'siteModel/testOauth.html'}),
 )

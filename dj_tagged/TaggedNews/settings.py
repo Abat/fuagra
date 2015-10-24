@@ -40,6 +40,9 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_swagger',
     'siteModel',
+	'oauth2_provider',
+    'corsheaders',
+	
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'TaggedNews.urls'
@@ -114,3 +118,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ORIGIN_ALLOW_ALL = True
+LOGIN_REDIRECT_URL = 'http://django-oauth-toolkit.herokuapp.com/consumer/exchange/'

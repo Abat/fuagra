@@ -232,3 +232,6 @@ class CommentList(generics.ListCreateAPIView):
         # save the owner of the news
         serializer.save(owner=self.request.user)
 
+def testOauth(request):
+    context = {}
+    return render(request, 'siteModel/testOauth.html', context)
