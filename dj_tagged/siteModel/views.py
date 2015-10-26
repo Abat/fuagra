@@ -5,17 +5,19 @@ from rest_framework import viewsets
 from siteModel.models import News
 from siteModel.models import UserProfile
 from siteModel.models import Comments
+from siteModel.models import User # Simple email confirm
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from datetime import datetime
 from oauth2_provider.views.generic import ProtectedResourceView
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 def index(request):
@@ -76,6 +78,12 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
 
+            new_email = user_form.cleaned_data.get('email_address')
+            confirmation_key = user.add_unconfirmed_email(new_email)
+            
+            send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, EMAIL_HOST_USER,
+            [new_email], fail_silently=False)
+
             user.set_password(user.password)
             user.save()
 
@@ -122,7 +130,12 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-# JSON starts here
+def confirm_email(request):
+    #TODO
+    confirmation_key = request.GET.get('key', 'ERROR')
+    if user.confirm_email(confirmation_key):
+        user.set_primary_email(new_email)
+        user.email = new_email
 
 class NewsViewSet(viewsets.ModelViewSet):
 

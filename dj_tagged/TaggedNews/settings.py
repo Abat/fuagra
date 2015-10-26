@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'siteModel',
 	'oauth2_provider',
     'corsheaders',
+    'simple_email_confirmation',
 	
 )
 
@@ -128,3 +129,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'siteModel.User'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'GMAIL ACC'
+EMAIL_HOST_PASSWORD = 'GMAIL PASS'
+EMAIL_PORT = 587
+
