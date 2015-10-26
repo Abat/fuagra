@@ -7,7 +7,7 @@
         <div class='newsInfo'>
             <p class='title'>
                 <a target='_blank' href='<%= url %>'> <%= title %> </a>
-                <span class='source'> <a target='_blank' href='url'> ( <%= urlParsed.host %> ) </a> </span>
+                <span class='source'> <a target='_blank' href='<%= (urlParsed.protocol=="https://") ? "https://" : "http://" + urlParsed.host %>'> ( <%= urlParsed.hostname %> ) </a> </span>
             </p>
             <ul class='buttons'>
                 <li class='comments_button'> <a href='/api/comments/<%= id %>' class='comments'> comments </a> </li>

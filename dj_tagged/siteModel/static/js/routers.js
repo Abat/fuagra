@@ -32,7 +32,11 @@ define([
 
         comments: function(newsId) {
             console.log("comments route triggered: ", newsId);
-            var commentsView = new Comment_Views.CommentsView({ newsId: newsId });
+            var comments = new Collections.CommentsListCollection([], { newsId: newsId });
+            comments.fetch({ success: function(items, response, options) {
+                var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
+                commentsView.render();
+            }});
         },
         notFound: function() {
             console.log("Route not found: ", arguments);

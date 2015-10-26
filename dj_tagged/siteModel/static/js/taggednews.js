@@ -23,7 +23,10 @@ define([
     });
 
     var taggedApp = new TaggedApp({ example: 'sample' });
+
     taggedApp.router = new Routers.MyRouter();
+
+    // add regions here
 
     taggedApp.on('start', function() {
         console.log('App start triggered...');

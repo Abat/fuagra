@@ -1,0 +1,11 @@
+<form action='/api/comments/<%= newsId %>/' method='post' enctype='application/json' id='newComment'>
+    <fieldset><legend> Write a comment </legend>
+        <textarea name='content'> </textarea>
+        <input type='hidden' name='news' value='<%= newsId %>'>
+        <br><br>
+        <input type='submit' value='Post'>
+    </fieldset>
+</form>
+
+<div id='topComment'> </div>
+<ul> </ul>
