@@ -9,7 +9,9 @@ class News(models.Model):
     date_created = models.DateTimeField('Date Created', default=timezone.now())
     date_updated = models.DateTimeField('Date Updated', default=timezone.now())
     # web url of a news
-    likes = models.IntegerField(default=0)
+    upvotes = models.IntegerField(default=0)
+    downvotes = models.IntegerField(default=0)
+    # votes = models.IntegerField(default=1000)
     views = models.IntegerField(default=0)
     url = models.URLField(unique=True)
     num_comments = models.IntegerField(default=0)
@@ -17,6 +19,10 @@ class News(models.Model):
 
     class Meta:
         ordering = ['-date_updated']
+
+    # @property
+    # def votes(self):
+    #     return upvotes - downvotes
 
     def __str__(self):
         return self.title
@@ -45,3 +51,9 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Vote(models.Model):
+    news = models.ForeignKey(News)
+    user = models.OneToOneField('auth.User')
+    upvoted = models.BooleanField(default=False)
+    downvoted = models.BooleanField(default=False)

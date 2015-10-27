@@ -40,7 +40,7 @@ define([
             $(this.el).html("<div class='news'>\
                 <div class='newsVote'>\
                     <div class='arrow'> <a href='#' class='up'> + </a> </div>\
-                    <div class='score'>" + this.model.get('likes') + "</div>\
+                    <div class='score'>" + this.model.get('upvotes') + "</div>\
                     <div class='arrow'> <a href='#' class='down'> - </a> </div>\
                 </div>\
                 <div class='newsInfo'>\
@@ -57,9 +57,10 @@ define([
         },
         upvote: function(e) {
             e.preventDefault();
-            this.model.save({likes: this.model.get('likes') + 1}, {
+            this.model.save({upvotes: this.model.get('upvotes') + 1}, {
                 success: function(model, response, options) {
                     console.log(response);
+                    console.log(model);
                 },
                 error: function(model, xhr, options) {
                     console.log(xhr);
@@ -68,7 +69,7 @@ define([
         },
         downvote: function(e) {
             e.preventDefault();
-            this.model.save({likes: this.model.get('likes') - 1}, {
+            this.model.save({downvotes: this.model.get('downvotes') + 1}, {
                 success: function(model, response, options) {
                     console.log(response);
                 },
