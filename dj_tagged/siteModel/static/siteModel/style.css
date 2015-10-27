@@ -5,6 +5,15 @@ body {
     height:100%;
 }
 
+.duck {
+    width: 75px;
+    height: 43px;
+}
+
+.navbar-default .navbar-brand {
+    color: #EADB09;
+}
+
 textarea {
     width: 500px;
     height: 100px;
@@ -102,13 +111,12 @@ li.commentsItem {
     width: 300px;
 }
 
-#default_container {
+#layout_view {
     min-height: 100%;
 }
 
-#content {
-    padding:10px;
-    padding-bottom:80px; /* Height of the footer element */
+#default_container {
+    min-height: 100%;
 }
 
 #footer {

@@ -22,7 +22,6 @@ define([
     });
 
     var CommentsView = Marionette.CompositeView.extend({
-        el: '#commentsList',
         tagName: 'div',
         template: _.template(commentsT),
         templateHelpers: function() {

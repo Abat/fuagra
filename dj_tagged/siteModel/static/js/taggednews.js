@@ -4,7 +4,11 @@ define([
     'backbone',
     'marionette',
     'routers',
-], function($, _, Backbone, Marionette, Routers) {
+    'views',
+    'text!templates/content.html',
+], function($, _, Backbone, Marionette, Routers, Views, contentT) {
+
+    var taggedApp;
 
     'use strict';
 
@@ -22,16 +26,24 @@ define([
         }
     });
 
-    var taggedApp = new TaggedApp({ example: 'sample' });
+    taggedApp = new TaggedApp({ example: 'sample' });
+
+    var RootLayout = Marionette.LayoutView.extend({
+        el: '#layout_view',
+        template: _.template(contentT),
+
+        regions: {
+            content: '#content',
+        }
+    });
+    taggedApp.rootLayout = new RootLayout();
+    taggedApp.rootLayout.render();
 
     taggedApp.router = new Routers.MyRouter();
-
-    // add regions here
 
     taggedApp.on('start', function() {
         console.log('App start triggered...');
         Backbone.history.start({ pushState: true });
     });    
-
     return taggedApp;
 });
