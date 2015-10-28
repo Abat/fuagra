@@ -18,6 +18,9 @@ from datetime import datetime
 from oauth2_provider.views.generic import ProtectedResourceView
 from django.core.mail import send_mail
 from django.conf import settings
+import logging
+
+
 
 # Create your views here.
 def index(request):
@@ -54,7 +57,7 @@ def index(request):
     return render(request, 'siteModel/index.html', context)
 
 def about(request):
-    context = {} 
+    context = {}
     return render(request, 'siteModel/about.html', context)
 
 def comments(request, pk):
@@ -81,7 +84,7 @@ def register(request):
             new_email = user_form.cleaned_data.get('email_address')
             confirmation_key = user.add_unconfirmed_email(new_email)
             
-            send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, EMAIL_HOST_USER,
+            send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
             [new_email], fail_silently=False)
 
             user.set_password(user.password)
@@ -130,12 +133,31 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+@login_required
 def confirm_email(request):
-    #TODO
+    # Get an instance of a logger
+    logger = logging.getLogger("django")
+    logger.info("HELLO WORLD")
     confirmation_key = request.GET.get('key', 'ERROR')
-    if user.confirm_email(confirmation_key):
-        user.set_primary_email(new_email)
-        user.email = new_email
+    try:
+        logger.info(confirmation_key)
+        new_email = request.user.confirm_email(confirmation_key)
+        logger.info("success")
+        request.user.set_primary_email(new_email)
+        request.user.email = new_email
+        return HttpResponse("good")
+    except:
+        logger.info("fail didnt match!")
+        return HttpResponse("bad")
+
+@login_required
+def resend_confirmation_email(request):
+    emails = request.user.get_unconfirmed_emails
+    email = emails[0]
+    confirmation_key = request.user.reset_confirmation(email)
+    send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
+            [email], fail_silently=False)
+    return HttpResponse("uhh ok")
 
 class NewsViewSet(viewsets.ModelViewSet):
 

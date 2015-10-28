@@ -134,7 +134,25 @@ AUTH_USER_MODEL = 'siteModel.User'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'GMAIL ACC'
-EMAIL_HOST_PASSWORD = 'GMAIL PASS'
+EMAIL_HOST_USER = '[email/acc/@gmail.com]'
+EMAIL_HOST_PASSWORD = '[password]'
 EMAIL_PORT = 587
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '[path/to/file]',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
