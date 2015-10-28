@@ -5,6 +5,11 @@ body {
     height:100%;
 }
 
+textarea {
+    width: 500px;
+    height: 100px;
+}
+
 #wrapper {
     min-height:100%;
     position:relative;
@@ -29,6 +34,7 @@ body {
 
 p.title {
     padding-top: 15px;
+    margin: 0 0 10px;
 }
 
 .title {
@@ -37,7 +43,7 @@ p.title {
 }
 
 /* url styles */
-.newsInfo .buttons li a {
+ .buttons li a {
     color: #888;
     font-weight: bold;
 }
@@ -47,7 +53,7 @@ p.title {
 }
 
 /* list styles */
-.newsInfo .buttons li {
+.buttons li {
     display: inline-block;
 }
 
@@ -55,7 +61,18 @@ div.news {
     padding-bottom: 5px;
 }
 
+div.comments {
+    padding-bottom: 5px;
+}
+
 div.newsVote {
+    float: left;
+    margin-right: 7px;
+    margin-left: 7px;
+    overflow: hidden;
+}
+
+div.commentsVote {
     float: left;
     margin-right: 7px;
     margin-left: 7px;
@@ -70,11 +87,23 @@ div.score {
     font-size: 15px;
 }
 
+li.newsItem {
+    padding-left: 10px;
+}
+
+li.commentsItem {
+    padding-left: 10px;
+}
+
 .side {
     float: right;
     background-color: white;
     margin: 0px 5px 0px 5px;
     width: 300px;
+}
+
+#default_container {
+    min-height: 100%;
 }
 
 #content {

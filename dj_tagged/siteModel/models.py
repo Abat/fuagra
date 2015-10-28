@@ -6,12 +6,11 @@ from django.contrib.auth.models import User
 # Create your models here.
 class News(models.Model):
     title = models.CharField(max_length=400)
-    date_created = models.DateTimeField('Date Created', default=timezone.now())
-    date_updated = models.DateTimeField('Date Updated', default=timezone.now())
+    date_created = models.DateTimeField('Date Created', default=timezone.now)
+    date_updated = models.DateTimeField('Date Updated', default=timezone.now)
     # web url of a news
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
-    # votes = models.IntegerField(default=1000)
     views = models.IntegerField(default=0)
     url = models.URLField(unique=True)
     num_comments = models.IntegerField(default=0)
@@ -39,7 +38,10 @@ class Comments(models.Model):
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey('auth.User')
     isExpert = models.BooleanField(default=False)
-    date_created = models.DateTimeField('Date Updated', default=timezone.now())
+    date_created = models.DateTimeField('Date Created', default=timezone.now)
+
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         return self.content
@@ -57,3 +59,6 @@ class Vote(models.Model):
     user = models.OneToOneField('auth.User')
     upvoted = models.BooleanField(default=False)
     downvoted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'news',)

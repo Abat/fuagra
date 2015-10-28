@@ -16,7 +16,22 @@ define([
         }
     });
 
+    var CommentsList = Backbone.Collection.extend({
+        initialize: function(models, options) {
+            this.options=options;
+        },
+        model: Models.CommentsItemModel,
+        comparator: function(model) {
+            return model.get('-date_created');
+        },
+        url: function() { return '/api/comments/' + this.options.newsId + '/'; },
+        parse: function(response) {
+            return response.results;
+        } 
+    });
+
     return {
-        'NewsListCollection': NewsList
+        'NewsListCollection': NewsList,
+        'CommentsListCollection': CommentsList
     };   
 });

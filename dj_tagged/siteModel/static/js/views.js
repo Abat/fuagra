@@ -2,9 +2,13 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'marionette',
     'collections',
-    'models'
-], function($, _, Backbone, Collections, Models) {
+    'models',
+    'comment_views',
+    'text!templates/newsView.html',
+    'text!templates/newsItemView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT) {
 
     'use strict';
 
@@ -24,36 +28,20 @@ define([
         }
     })();
 
-    var NewsItemView = Backbone.View.extend({
+    var NewsItemView = Marionette.ItemView.extend({
         tagName: 'li',
+        className: 'newsItem',
+        template: _.template(newsItemT),
+        templateHelpers: function() {
+            return { urlParsed: parseUrl(this.model.get('url')) };
+        },
         events: {
             'click a.up': 'upvote',
-            'click a.down': 'downvote'
+            'click a.down': 'downvote',
+            'click a.comments': 'comments'
         },
-        initialize: function(){
-            _.bindAll(this, 'render', 'upvote', 'downvote');
-            this.listenTo(this.model, 'change', this.render);
-        },
-        render: function(){
-            this.url = parseUrl(this.model.get('url'));
-
-            $(this.el).html("<div class='news'>\
-                <div class='newsVote'>\
-                    <div class='arrow'> <a href='#' class='up'> + </a> </div>\
-                    <div class='score'>" + this.model.get('upvotes') + "</div>\
-                    <div class='arrow'> <a href='#' class='down'> - </a> </div>\
-                </div>\
-                <div class='newsInfo'>\
-                    <p class='title'>\
-                        <a target='_blank' href='" + this.model.get('url') + "'>" + this.model.get('title') + "</a>\
-                        <span class='source'> <a target='_blank' href='http://" + this.url.hostname + "'> ( " + this.url.hostname + " ) </a> </span>\
-                    </p>\
-                    <ul class='buttons'>\
-                        <li class='comments_button'> <a href='comments'> comments </a> </li>\
-                    </ul>\
-                </div>\
-            </div>");
-            return this;
+        modelEvents: {
+            'change': 'render'
         },
         upvote: function(e) {
             e.preventDefault();
@@ -77,65 +65,63 @@ define([
                     console.log(xhr);
                 }
             });
+        },
+        comments: function(e) {
+            var self = this;
+            e.preventDefault();
+            console.log('comments view triggered');
+            App.router.navigate('comments/' + self.model.get('id'), {trigger: true});
+            /*
+            var comments = new Collections.CommentsListCollection([], { newsId: this.model.get('id') });
+            comments.fetch({ success: function(items, response, options) {
+                var commentsView = new Comment_Views.CommentsView({ newsId: self.model.get('id'), collection: items }); 
+                commentsView.render();
+            }});*/
         }
     });
 
-    var NewsView = Backbone.View.extend({
-        el: $('body'),
+    var NewsView = Marionette.CompositeView.extend({
+        el: '#newsList',
+        tagName: 'div',
+        template: _.template(newsT),
+
+        childView: NewsItemView,
+        childViewContainer: 'ul',
+
+        initialize: function() {
+            console.log('Initializing NewsView...');
+            this.pageNum = 1;
+        },
+
         events: {
             'click a#nextPage': 'nextPage',
             'click a#prevPage': 'prevPage'
         },
-        initialize: function(){
-            _.bindAll(this, 'render', 'appendNews', 'nextPage', 'prevPage');
-            
-            this.collection = new Collections.NewsListCollection();
-
-            this.nextPage = 1;
-            this.prevPage = 1;
-            this.render(1);
+        collectionEvents: {
+            "sync": 'newsSync'
         },
-        render: function(pageNum){
+
+        newsSync: function() {
+            console.log('News collection synced');    
+        },
+        nextPage: function(e) {
+            e.preventDefault();
+            this.pageNum += 1;
+            this.fetch();
+        },
+        prevPage: function(e) {
+            e.preventDefault();
+            this.pageNum -= 1;
+            this.fetch();
+        },
+        fetch: function() {
             var self = this;
-            this.collection.comparator = function(model) {
-                return -model.get('date_created');
-            }
-            this.collection.sort();
-            this.collection.fetch({data: {page: pageNum},  success: function(items, response, options) {
-                $('div.container a#nextPage', self.el).remove();
-                $('div.container a#prevPage', self.el).remove();
-                $('ul#newsList', self.el).empty();
-
-                items.forEach(function(element, index, items) {
-                    self.appendNews(element);
-                });
-
-                if (response.previous) {
-                    if (response.previous.match(/\d+/)) {
-                        self.prevPage = response.previous.match(/\d+$/)[0];
-                        $('span#newsListNav', self.el).append("<a href='#' id='prevPage'> <--Previous-- </a>");
-                    }
-                }
-
-                if (response.next) {
-                    if (response.next.match(/\d+$/)) {
-                        self.nextPage = response.next.match(/\d+$/)[0];
-                        $('span#newsListNav', self.el).append("<a href='#' id='nextPage'> --Next--> </a>");
-                    }
-                }
-            } });
-        },
-        appendNews: function(item){
-            var newsItemView = new NewsItemView({
-                model: item
-            });
-            $('ul#newsList', this.el).append(newsItemView.render().el);
-        },
-        nextPage: function(){
-            this.render(this.nextPage);
-        },
-        prevPage: function(){
-            this.render(this.prevPage);
+            this.collection.fetch({data: {page: this.pageNum},  success: function(items, response, options) {
+                console.log('success: ', response);
+            }, error: function(collection, response, options) {
+                console.log('error: ', response);
+                self.pageNum = 1;
+            }});
         }
     });
 

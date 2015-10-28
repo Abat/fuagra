@@ -23,4 +23,4 @@ class CommentSerializer(serializers.ModelSerializer):
 class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Vote
-		fields = ('news', 'user', 'upvoted', 'downvoted')
+		fields = ('news', 'upvoted', 'downvoted')
