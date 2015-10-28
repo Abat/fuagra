@@ -39,6 +39,9 @@ define([
         events: {
             'submit form#newComment': 'newComment'
         },
+        collectionEvents: {
+            'add': 'commentAdded'
+        },
 
         newComment: function(e){
             var self = this;
@@ -54,11 +57,16 @@ define([
                     var newComment = new CommentsItemView({
                         model: comment
                     });
+                    $('div#topComment').append('<p> Your comment was posted. </p>').append(newComment.render().el);
                 },
                 error: function(err) {
                     console.log(err);
                 }
             });
+        },
+        commentAdded: function(){
+            console.log('New comments has been added.');
+            $('textarea').val('');
         }
     });
 
