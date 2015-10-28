@@ -26,7 +26,7 @@ define([
             var news = new Collections.NewsListCollection();
             news.fetch({ success: function(items, response, options) {
                 var newsView = new Views.NewsView({ collection: items });
-                newsView.render();
+                App.rootLayout.getRegion('content').show(newsView);
             }});
         },
 
@@ -35,7 +35,7 @@ define([
             var comments = new Collections.CommentsListCollection([], { newsId: newsId });
             comments.fetch({ success: function(items, response, options) {
                 var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
-                commentsView.render();
+                App.rootLayout.getRegion('content').show(commentsView);
             }});
         },
         notFound: function() {

@@ -5,9 +5,32 @@ body {
     height:100%;
 }
 
+.duck {
+    width: 75px;
+    height: 43px;
+}
+
+.navbar-default .navbar-brand {
+    color: #EADB09;
+}
+
+a.comment-control {
+    color: #386;
+}
+
 textarea {
     width: 500px;
     height: 100px;
+}
+
+div#topComment {
+    padding-left: 40px;
+    margin: 0 0 20px 0;
+}
+
+time {
+    font-size: 10px;
+    color: #888;
 }
 
 #wrapper {
@@ -35,6 +58,11 @@ textarea {
 p.title {
     padding-top: 15px;
     margin: 0 0 10px;
+    font-size: 1.3em;
+}
+
+p.content {
+    font-size: 1.2em;
 }
 
 .title {
@@ -46,6 +74,7 @@ p.title {
  .buttons li a {
     color: #888;
     font-weight: bold;
+    font-size: 12px;
 }
 
 .source a {
@@ -102,13 +131,12 @@ li.commentsItem {
     width: 300px;
 }
 
-#default_container {
+#layout_view {
     min-height: 100%;
 }
 
-#content {
-    padding:10px;
-    padding-bottom:80px; /* Height of the footer element */
+#default_container {
+    min-height: 100%;
 }
 
 #footer {

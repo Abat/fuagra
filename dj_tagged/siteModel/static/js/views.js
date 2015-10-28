@@ -81,7 +81,6 @@ define([
     });
 
     var NewsView = Marionette.CompositeView.extend({
-        el: '#newsList',
         tagName: 'div',
         template: _.template(newsT),
 
