@@ -6,12 +6,21 @@ body {
 }
 
 .duck {
-    width: 75px;
+    width: 43px;
     height: 43px;
+    margin: 5px 0 0 0;
 }
 
 .navbar-default .navbar-brand {
-    color: #EADB09;
+    color: #DAA520;
+    padding: 20px 15px 0px 0px;
+    font-size: 2em;
+}
+
+div#top {
+    width: 90%;
+    height: 50px;
+    margin: 0 auto 0 auto;
 }
 
 a.comment-control {
@@ -124,19 +133,29 @@ li.commentsItem {
     padding-left: 10px;
 }
 
-.side {
-    float: right;
+div#content {
+    float: left;
+    border: 1px solid black;
+    width: 80%;
+}
+
+div#side {
     background-color: white;
     margin: 0px 5px 0px 5px;
-    width: 300px;
+    border: 1px solid black;
+    overflow: hidden;
 }
 
 #layout_view {
     min-height: 100%;
+    width: 90%;
+    overflow: hidden;
+    margin: 0 auto 0 auto;
 }
 
-#default_container {
-    min-height: 100%;
+.default_container {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #footer {

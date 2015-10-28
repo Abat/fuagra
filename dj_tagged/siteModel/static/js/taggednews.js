@@ -5,8 +5,8 @@ define([
     'marionette',
     'routers',
     'views',
-    'text!templates/content.html',
-], function($, _, Backbone, Marionette, Routers, Views, contentT) {
+    'text!templates/layout.html',
+], function($, _, Backbone, Marionette, Routers, Views, layoutT) {
 
     var taggedApp;
 
@@ -30,10 +30,11 @@ define([
 
     var RootLayout = Marionette.LayoutView.extend({
         el: '#layout_view',
-        template: _.template(contentT),
+        template: _.template(layoutT),
 
         regions: {
             content: '#content',
+            side: '#side'
         }
     });
     taggedApp.rootLayout = new RootLayout();

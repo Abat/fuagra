@@ -67,6 +67,7 @@ define([
         commentAdded: function(){
             console.log('New comments has been added.');
             $('textarea').val('');
+            $('div#topComment').empty();
         }
     });
 
