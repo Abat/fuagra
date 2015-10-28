@@ -84,7 +84,7 @@ def register(request):
             new_email = user_form.cleaned_data.get('email_address')
             confirmation_key = user.add_unconfirmed_email(new_email)
             
-            send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
+            send_mail('Confirm', 'Use localhost:8000/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
             [new_email], fail_silently=False)
 
             user.set_password(user.password)
@@ -155,7 +155,7 @@ def resend_confirmation_email(request):
     emails = request.user.get_unconfirmed_emails
     email = emails[0]
     confirmation_key = request.user.reset_confirmation(email)
-    send_mail('Confirm', 'Use %s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
+    send_mail('Confirm', 'Use localhost:8000/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
             [email], fail_silently=False)
     return HttpResponse("uhh ok")
 
