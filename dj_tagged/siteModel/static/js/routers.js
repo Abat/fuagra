@@ -6,7 +6,8 @@ define([
     'collections',
     'views',
     'comment_views',
-], function($, _, Backbone, Marionette, Collections, Views, Comment_Views) {
+    'side_views',
+], function($, _, Backbone, Marionette, Collections, Views, Comment_Views, Side_Views) {
 
     'use strict';
 
@@ -24,9 +25,11 @@ define([
         home: function() {
             console.log("home route triggered");
             var news = new Collections.NewsListCollection();
+            var sideView = new Side_Views.SideView();
             news.fetch({ success: function(items, response, options) {
                 var newsView = new Views.NewsView({ collection: items });
                 App.rootLayout.getRegion('content').show(newsView);
+                App.rootLayout.getRegion('side').show(sideView);
             }});
         },
 
