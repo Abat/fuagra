@@ -33,6 +33,7 @@ define([
         template: _.template(layoutT),
 
         regions: {
+            special_top: '#special_top',
             content: '#content',
             side: '#side'
         }

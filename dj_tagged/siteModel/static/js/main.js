@@ -13,6 +13,7 @@ requirejs.config({
         'views': 'js/views',
         'comment_views': 'js/comment_views',
         'side_views': 'js/side_views',
+        'top_views': 'js/top_views',
         'routers': 'js/routers'
     }
 });

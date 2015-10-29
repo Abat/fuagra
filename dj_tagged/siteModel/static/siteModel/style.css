@@ -37,6 +37,11 @@ div#topComment {
     margin: 0 0 20px 0;
 }
 
+div.collapsed {
+    overflow: hidden;
+    height: 23px;
+}
+
 time {
     font-size: 10px;
     color: #888;
@@ -131,6 +136,13 @@ li.newsItem {
 
 li.commentsItem {
     padding-left: 10px;
+}
+
+div#special_top {
+    float: left;
+    border: 1px solid black;
+    width: 80%;
+    min-height: 80px;
 }
 
 div#content {

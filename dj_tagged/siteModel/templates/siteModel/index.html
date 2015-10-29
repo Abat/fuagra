@@ -3,15 +3,6 @@
 {% block title %} Index Page {% endblock %}
 
 {% block content %}
-	{% if user.is_authenticated %}
-	<h1>Hello, {{ user.username }}!</h1>
-	<div>
-		Hello {{ user.username }}, you are visiting us {{ visits }} time!
-	</div>
-	<br>
-	{% else %}
-	Hello Mello this is index page<br />
-	{% endif %}
 
     <div id='layout_view'> </div>
 	

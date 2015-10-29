@@ -16,8 +16,23 @@ define([
         tagName: 'li',
         className: 'commentsItem',
         template: _.template(commentsItemT),
+
+        events: {
+            'click a.expand': 'expand'
+        },
         modelEvents: {
             'change': 'render'
+        },
+
+        expand: function(e){
+            e.preventDefault();
+            if ($('div.comments', this.el).hasClass('collapsed')) {
+                $('div.comments', this.el).removeClass('collapsed');
+                $('a.expand', this.el).text("[-]");
+            } else {
+                $('div.comments', this.el).addClass('collapsed');
+                $('a.expand', this.el).text("[+]");
+            }
         }
     });
 
