@@ -3,6 +3,7 @@ requirejs.config({
     'paths': {
         'app': 'js',
         'text': 'js/text',
+        'markdown': 'js/markdown/micromarkdown',
         'jquery': 'js/jquery/jquery-2.1.3.min',
         'underscore': 'js/underscore/underscore-min',
         'backbone': 'js/backbone/backbone-min',

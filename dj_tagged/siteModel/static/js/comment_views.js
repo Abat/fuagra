@@ -6,9 +6,10 @@ define([
     'collections',
     'models',
     'routers',
+    'markdown',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, commentsItemT, commentsT) {
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT) {
 
     'use strict';
     
@@ -16,7 +17,11 @@ define([
         tagName: 'li',
         className: 'commentsItem',
         template: _.template(commentsItemT),
-
+        
+        onRender: function() {
+            $('div.content', this.el).html(Micromarkdown.parse(this.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+        },
+        
         events: {
             'click a.expand': 'expand'
         },

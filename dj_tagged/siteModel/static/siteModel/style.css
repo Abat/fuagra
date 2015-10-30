@@ -75,8 +75,9 @@ p.title {
     font-size: 1.3em;
 }
 
-p.content {
+div.content {
     font-size: 1.2em;
+    padding-left: 25px;
 }
 
 .title {
@@ -102,6 +103,11 @@ p.content {
 
 div.news {
     padding-bottom: 5px;
+    overflow: hidden;
+}
+
+div.newsInfo {
+    padding-left: 25px;
 }
 
 div.comments {
@@ -140,21 +146,21 @@ li.commentsItem {
 
 div#special_top {
     float: left;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     width: 80%;
     min-height: 80px;
 }
 
 div#content {
     float: left;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     width: 80%;
 }
 
 div#side {
     background-color: white;
     margin: 0px 5px 0px 5px;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     overflow: hidden;
 }
 
