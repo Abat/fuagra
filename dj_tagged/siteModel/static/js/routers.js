@@ -42,11 +42,12 @@ define([
             var comments = new Collections.CommentsListCollection([], { newsId: newsId });
             var news = new Collections.NewsListCollection();
             news.fetch({ success: function(items, response, options) {
-                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: items.get(newsId)}));  
-            }});
-            comments.fetch({ success: function(items, response, options) {
-                var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
-                App.rootLayout.getRegion('content').show(commentsView);
+                var newsModel = items.get(newsId);
+                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel}));  
+                comments.fetch({ success: function(items, response, options) {
+                    var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
+                    App.rootLayout.getRegion('content').show(commentsView);
+                }});
             }});
         },
         notFound: function() {

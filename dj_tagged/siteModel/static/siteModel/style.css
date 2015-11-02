@@ -5,6 +5,10 @@ body {
     height:100%;
 }
 
+a {
+    text-decoration: none;
+}
+
 .duck {
     width: 43px;
     height: 43px;
@@ -71,8 +75,13 @@ time {
 
 p.title {
     padding-top: 15px;
-    margin: 0 0 10px;
     font-size: 1.3em;
+    margin: 0;
+}
+
+.meta {
+    color: #888;
+    font-size: 0.9em;
 }
 
 div.content {
@@ -80,20 +89,16 @@ div.content {
     padding-left: 25px;
 }
 
-.title {
-    font-size: medium;
-    margin-bottom: 1px;
-}
-
 /* url styles */
  .buttons li a {
     color: #888;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 0.9em;
 }
 
 .source a {
     color: #888;
+    font-size: 0.9em;
 }
 
 /* list styles */
@@ -136,8 +141,16 @@ div.score {
     font-size: 15px;
 }
 
+ul.newsList {
+    padding-left:0px;
+}
+
 li.newsItem {
-    padding-left: 10px;
+    padding-left: 0px;
+}
+
+ul#comments {
+    padding-left:0px;
 }
 
 li.commentsItem {

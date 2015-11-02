@@ -1,7 +1,3 @@
-{% load staticfiles %}
-
-<script data-main="{% static 'js/main' %}" src="{% static 'js/requirejs/require.js' %}"></script>
-
 <html>
     <head>
         <meta charset="utf-8">
@@ -9,11 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="{% static 'images/favicon.ico' %}">
+        <link rel="icon" href="/images/favicon.ico">
 
         <title> Fua - {% block title %}Base{% endblock %} </title>
-        <link rel="stylesheet" type="text/css" href="{% static 'siteModel/bootstrap.min.css' %}" />
-        <link rel="stylesheet" type="text/css" href="{% static 'siteModel/style.css' %}" />
+        <script data-main="/static/js/main" src="/static/js/requirejs/require.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/siteModel/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/siteModel/style.css" />
     </head>
 
     <body>
@@ -21,7 +18,7 @@
             <div class="default_container">
                 <div id="top">
                     <div class="navbar-header">
-                        <img class='duck' src="{% static 'images/canard.svg' %}" title='quack quack :)' alt='duck'>
+                        <img class='duck' src='/images/canard.svg' title='quack quack :)' alt='duck'>
                     </div>
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
