@@ -327,7 +327,6 @@ class CommentList(generics.ListCreateAPIView):
         # save the owner of the news
         serializer.save(owner=self.request.user)
 
-<<<<<<< HEAD
 
 class ApiEndpoint(ProtectedResourceView):
     def get(self, request, *args, **kwargs):
@@ -336,7 +335,6 @@ class ApiEndpoint(ProtectedResourceView):
 @login_required
 def secret_page(request, *args, **kwargs):
     return HttpResponse('Secret contents!', status=200)
-=======
 # class VoteViewSet(viewsets.ModelViewSet):
 #     serializer_class = VoteSerializer
 
@@ -369,4 +367,3 @@ class VoteList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
->>>>>>> develop
