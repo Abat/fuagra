@@ -83,10 +83,10 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 20,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
     )
+    'PAGINATE_BY': 40 # old val 20, changed to 40 for testing purposes
 }
 
 SWAGGER_SETTINGS = {

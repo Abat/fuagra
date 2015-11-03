@@ -2,19 +2,49 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'marionette',
+    'routers',
     'views',
-], function($, _, Backbone, Views) {
+    'text!templates/layout.html',
+], function($, _, Backbone, Marionette, Routers, Views, layoutT) {
+
+    var taggedApp;
 
     'use strict';
-    
-    (function($){
-        var oldSync = Backbone.sync;
-        Backbone.sync = function(method, model, options){
-            options.beforeSend = function(xhr){
-                xhr.setRequestHeader('X-CSRFToken', $("input[name='csrfmiddlewaretoken']").val());
-            };
-            return oldSync(method, model, options);
+
+    var oldSync = Backbone.sync;
+    Backbone.sync = function(method, model, options){
+        options.beforeSend = function(xhr){
+            xhr.setRequestHeader('X-CSRFToken', $("input[name='csrfmiddlewaretoken']").val());
         };
-        var newsView = new Views.NewsView();
-    })(jQuery);
+        return oldSync(method, model, options);
+    };
+
+    var TaggedApp = Marionette.Application.extend({
+        initialize: function(options) {
+            console.log('App initialized...', options);
+        }
+    });
+
+    taggedApp = new TaggedApp({ example: 'sample' });
+
+    var RootLayout = Marionette.LayoutView.extend({
+        el: '#layout_view',
+        template: _.template(layoutT),
+
+        regions: {
+            content: '#content',
+            side: '#side'
+        }
+    });
+    taggedApp.rootLayout = new RootLayout();
+    taggedApp.rootLayout.render();
+
+    taggedApp.router = new Routers.MyRouter();
+
+    taggedApp.on('start', function() {
+        console.log('App start triggered...');
+        Backbone.history.start({ pushState: true });
+    });    
+    return taggedApp;
 });

@@ -11,8 +11,8 @@ class User(SimpleEmailConfirmationUserMixin, AbstractUser):
 # Create your models here.
 class News(models.Model):
     title = models.CharField(max_length=400)
-    date_created = models.DateTimeField('Date Created', default=timezone.now())
-    date_updated = models.DateTimeField('Date Updated', default=timezone.now())
+    date_created = models.DateTimeField('Date Created', default=timezone.now)
+    date_updated = models.DateTimeField('Date Updated', default=timezone.now)
     # web url of a news
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
@@ -23,6 +23,10 @@ class News(models.Model):
 
     class Meta:
         ordering = ['-date_updated']
+
+    # @property
+    # def votes(self):
+    #     return upvotes - downvotes
 
     def __str__(self):
         return self.title
@@ -39,7 +43,10 @@ class Comments(models.Model):
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     isExpert = models.BooleanField(default=False)
-    date_created = models.DateTimeField('Date Updated', default=timezone.now())
+    date_created = models.DateTimeField('Date Created', default=timezone.now)
+
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         return self.content
@@ -51,3 +58,12 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Vote(models.Model):
+    news = models.ForeignKey(News)
+    user = models.OneToOneField('auth.User')
+    upvoted = models.BooleanField(default=False)
+    downvoted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'news',)

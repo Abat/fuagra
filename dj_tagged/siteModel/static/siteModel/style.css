@@ -5,9 +5,41 @@ body {
     height:100%;
 }
 
+.duck {
+    width: 43px;
+    height: 43px;
+    margin: 5px 0 0 0;
+}
+
+.navbar-default .navbar-brand {
+    color: #DAA520;
+    padding: 20px 15px 0px 0px;
+    font-size: 2em;
+}
+
+div#top {
+    width: 90%;
+    height: 50px;
+    margin: 0 auto 0 auto;
+}
+
+a.comment-control {
+    color: #386;
+}
+
 textarea {
     width: 500px;
     height: 100px;
+}
+
+div#topComment {
+    padding-left: 40px;
+    margin: 0 0 20px 0;
+}
+
+time {
+    font-size: 10px;
+    color: #888;
 }
 
 #wrapper {
@@ -34,6 +66,12 @@ textarea {
 
 p.title {
     padding-top: 15px;
+    margin: 0 0 10px;
+    font-size: 1.3em;
+}
+
+p.content {
+    font-size: 1.2em;
 }
 
 .title {
@@ -45,6 +83,7 @@ p.title {
  .buttons li a {
     color: #888;
     font-weight: bold;
+    font-size: 12px;
 }
 
 .source a {
@@ -94,20 +133,29 @@ li.commentsItem {
     padding-left: 10px;
 }
 
-.side {
-    float: right;
+div#content {
+    float: left;
+    border: 1px solid black;
+    width: 80%;
+}
+
+div#side {
     background-color: white;
     margin: 0px 5px 0px 5px;
-    width: 300px;
+    border: 1px solid black;
+    overflow: hidden;
 }
 
-#default_container {
+#layout_view {
     min-height: 100%;
+    width: 90%;
+    overflow: hidden;
+    margin: 0 auto 0 auto;
 }
 
-#content {
-    padding:10px;
-    padding-bottom:80px; /* Height of the footer element */
+.default_container {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #footer {

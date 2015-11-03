@@ -4,6 +4,7 @@ from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
 from siteModel.views import CommentList
+from siteModel.views import VoteList
 
 news_list = NewsViewSet.as_view({
     'get': 'list',
@@ -27,22 +28,37 @@ user_detail = UserViewSet.as_view({
     'delete': 'destroy',
 })
 
-urlpatterns = patterns('',
+# vote_detail = VoteViewSet.as_view({
+#     'get': 'retrieve',
+# })
 
-    url(r'^$', views.index, name='index'),
-    url(r'^about/$', views.about, name='about'),
+# vote_list = VoteViewSet.as_view({
+#     'post': 'create'
+# })
+
+urlpatterns = patterns('',
+    url(r'^about/?$', views.about, name='about'),
     # url(r'^comments/(?P<pk>[0-9]+)/$', views.comments, name='comments'),
-    url(r'^submit/$', views.submit, name='submit'),
-    url(r'^register/$', views.register, name='register'),
-    url(r'^login/$', views.user_login, name='login'),
-    url(r'^logout/$', views.user_logout, name='logout'),
+    url(r'^submit/?$', views.submit, name='submit'),
+    url(r'^register/?$', views.register, name='register'),
+    url(r'^login/?$', views.user_login, name='login'),
+    url(r'^logout/?$', views.user_logout, name='logout'),
     url(r'^admin/', include(admin.site.urls)),
     # api starts here
-    url(r'^api/news/$', news_list, name='news-list'),
-    url(r'^api/news/(?P<pk>[0-9]+)/$', news_detail, name='news-detail'),
-    url(r'^api/users/$', user_list, name='user-list'),
-    url(r'^api/users/(?P<pk>[0-9]+)/$', user_detail, name='user-detail'),
-    url(r'^api/comments/(?P<pk>[0-9]+)/$', views.CommentList.as_view(), name='comments-list'),
+    url(r'^api/news/?$', news_list, name='news-list'),
+    url(r'^api/news/(?P<pk>[0-9]+)/?$', news_detail, name='news-detail'),
+    url(r'^api/users/?$', user_list, name='user-list'),
+    url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
+    url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
+    url(r'^api/vote/?$', views.VoteList.as_view(), name='vote-detail'),
+    # url(r'^api/vote/?$', vote_list, name='vote-list'),
+
+    # api starts here
+    url(r'^api/news/?$', news_list, name='news-list'),
+    url(r'^api/news/(?P<pk>[0-9]+)/?$', news_detail, name='news-detail'),
+    url(r'^api/users/?$', user_list, name='user-list'),
+    url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
+    url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
     url(r'^docs/', include('rest_framework_swagger.urls')),
 	url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 	url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'siteModel/testOauth.html'}),
@@ -50,4 +66,7 @@ urlpatterns = patterns('',
     url(r'^secret$', views.secret_page, name='secret'),
     url(r'^accounts/confirmation/$', views.confirm_email, name='confirm_email'),
     url(r'^accounts/resend_confirmation/$', views.resend_confirmation_email, name='resend_confirmation_email'),
+
+    # catch all
+    url(r'^.*$', views.index, name='index'),
 )
