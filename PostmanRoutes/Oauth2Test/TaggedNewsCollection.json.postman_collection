@@ -1,0 +1,134 @@
+{
+	"id": "9948a276-3cdf-4e84-e577-38bbc17bd475",
+	"name": "TaggedNewsCollection",
+	"description": "",
+	"order": [
+		"7d802773-87f1-5a68-6e16-6a537ff389aa",
+		"118e71b0-fe74-2d1e-dce5-94cfc7b70392",
+		"c4e0dd01-7297-c3af-0eb8-d8e61ae007ec",
+		"e8efb15f-70e7-de0e-5d13-6d41d1899cec"
+	],
+	"folders": [],
+	"timestamp": 1445702171238,
+	"owner": "",
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "118e71b0-fe74-2d1e-dce5-94cfc7b70392",
+			"headers": "",
+			"url": "{{TAGGEDNEWS_ADDR}}/oauth2/revoke_token/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "token",
+					"value": "{{BEARER_TOKEN}}",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_id",
+					"value": "{{CLIENT_ID}}",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_secret",
+					"value": "{{CLIENT_SECRET}}",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1445702382268,
+			"name": "RevokeToken",
+			"description": "",
+			"collectionId": "9948a276-3cdf-4e84-e577-38bbc17bd475",
+			"responses": []
+		},
+		{
+			"id": "7d802773-87f1-5a68-6e16-6a537ff389aa",
+			"headers": "Authorization: Bearer {{BEARER_TOKEN}}\n",
+			"url": "{{TAGGEDNEWS_ADDR}}/secret",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "9948a276-3cdf-4e84-e577-38bbc17bd475",
+			"data": [],
+			"dataMode": "params",
+			"name": "SecretWebpage",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1445702171237,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "c4e0dd01-7297-c3af-0eb8-d8e61ae007ec",
+			"headers": "Authorization: Bearer {{BEARER_TOKEN}}\n",
+			"url": "{{TAGGEDNEWS_ADDR}}/api/hello/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "9948a276-3cdf-4e84-e577-38bbc17bd475",
+			"data": [],
+			"dataMode": "params",
+			"name": "OauthProtectedPage",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1445702519194,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "e8efb15f-70e7-de0e-5d13-6d41d1899cec",
+			"headers": "Authorization: Basic OEpST1lGc1ZxaW82SmZDRkxKYUxFNHZ2dkIyUU1GZTg5ZlloMkRpQTpuTGJGTUFlTlYzQnRJWkdlTklZWldGTHpvTEJTeU1JTHJldnppM1QwT3RacUxjNkV0bkRJRElSVmh1Zkt4d1BrcW1tUDJOdG02RlQwSjFlaHo5OFJ4akVlVko2ZDFaZFRmcGVIMzJaOFFrRnpKazZxaWU4OUkwczJoM1hEVU9NVQ==\n",
+			"url": "{{TAGGEDNEWS_ADDR}}/oauth2/token/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "grant_type",
+					"value": "password",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "{{USERNAME}}",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "{{PASSWORD}}",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1445704494313,
+			"name": "ConsumerLoginRequestToken",
+			"description": "",
+			"collectionId": "9948a276-3cdf-4e84-e577-38bbc17bd475",
+			"responses": []
+		}
+	]
+}

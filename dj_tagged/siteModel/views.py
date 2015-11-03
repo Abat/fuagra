@@ -5,16 +5,25 @@ from rest_framework import viewsets
 from siteModel.models import News
 from siteModel.models import UserProfile
 from siteModel.models import Comments
-from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer
+from siteModel.models import User # Simple email confirm
+from siteModel.models import Vote
+from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from datetime import datetime
+from oauth2_provider.views.generic import ProtectedResourceView
+from django.core.mail import send_mail
+from django.conf import settings
+import logging
+
+
 
 # Create your views here.
 def index(request):
@@ -51,7 +60,7 @@ def index(request):
     return render(request, 'siteModel/index.html', context)
 
 def about(request):
-    context = {} 
+    context = {}
     return render(request, 'siteModel/about.html', context)
 
 def comments(request, pk):
@@ -74,6 +83,12 @@ def register(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
+
+            new_email = user_form.cleaned_data.get('email_address')
+            confirmation_key = user.add_unconfirmed_email(new_email)
+            
+            send_mail('Confirm', 'Use localhost:8000/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
+            [new_email], fail_silently=False)
 
             user.set_password(user.password)
             user.save()
@@ -117,11 +132,91 @@ def user_login(request):
         return render(request, 'siteModel/login.html', {})
 
 @login_required
+def upvote_news(request):
+    news_id = None
+    if request.method == "GET":
+        news_id = request.GET['news_id']
+
+    if news_id:
+        news_object = News.objects.get(id=int(news_id))
+    
+    try:
+        vote = Vote.objects.get(news=news_object, user=request.user)
+    except Vote.DoesNotExist:
+        vote = None
+
+    # person has voted
+    if vote:
+        # person wants to remove his upvote
+        if vote.upvoted:
+            news_object.upvotes -= 1
+        # person downvoted before and wants to upvote
+        elif vote.downvoted:
+            news_object.downvotes -= 1
+            news_object.upvotes += 1
+            vote.downvoted = False
+            vote.upvoted = True
+    else:
+        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
+
+@login_required
+def downvote_news(request):
+    news_id = None
+    if request.method == "GET":
+        news_id = request.GET['news_id']
+
+    if news_id:
+        news_object = News.objects.get(id=int(news_id))
+    
+    try:
+        vote = Vote.objects.get(news=news_object, user=request.user)
+    except Vote.DoesNotExist:
+        vote = None
+
+    # person has voted
+    if vote:
+        # person wants to remove his downvote
+        if vote.downvoted:
+            news_object.downvotes -= 1
+        # person upvoted before and wants to downvote
+        elif vote.downvoted:
+            news_object.upvotes -= 1
+            news_object.downvotes += 1
+            vote.downvoted = True
+            vote.upvoted = False
+    else:
+        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
+
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-# JSON starts here
+@login_required
+def confirm_email(request):
+    # Get an instance of a logger
+    logger = logging.getLogger("django")
+    logger.info("HELLO WORLD")
+    confirmation_key = request.GET.get('key', 'ERROR')
+    try:
+        logger.info(confirmation_key)
+        new_email = request.user.confirm_email(confirmation_key)
+        logger.info("success")
+        request.user.set_primary_email(new_email)
+        request.user.email = new_email
+        return HttpResponse("good")
+    except:
+        logger.info("fail didnt match!")
+        return HttpResponse("bad")
+
+@login_required
+def resend_confirmation_email(request):
+    emails = request.user.get_unconfirmed_emails
+    email = emails[0]
+    confirmation_key = request.user.reset_confirmation(email)
+    send_mail('Confirm', 'Use localhost:8000/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
+            [email], fail_silently=False)
+    return HttpResponse("uhh ok")
 
 class NewsViewSet(viewsets.ModelViewSet):
 
@@ -231,4 +326,44 @@ class CommentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # save the owner of the news
         serializer.save(owner=self.request.user)
+
+
+class ApiEndpoint(ProtectedResourceView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Hello, OAuth2!')
+
+@login_required
+def secret_page(request, *args, **kwargs):
+    return HttpResponse('Secret contents!', status=200)
+# class VoteViewSet(viewsets.ModelViewSet):
+#     serializer_class = VoteSerializer
+
+#     model = Vote
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+#     filter_fields = ('news', 'user')
+
+#     def get_queryset(self):
+#         queryset = Vote.objects.all()
+#         news_id = self.request.query_params.get('news_id', None)
+#         if news_id is not None:
+#             queryset = queryset.filter(news_id=news_id)
+#         return queryset
+        
+
+#     def retrieve(self, request, *args, **kwargs):
+#         queryset = Vote.objects.all()
+#         vote = get_object_or_404(queryset, news_id=kwargs['pk'])
+#         serializer = VoteSerializer(vote)
+#         return Response(serializer.data)
+
+class VoteList(generics.ListCreateAPIView):
+    serializer_class = VoteSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        news_id = self.kwargs['pk']
+        return Vote.objects.filter(news=news_id, user = user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 

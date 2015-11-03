@@ -40,6 +40,10 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_swagger',
     'siteModel',
+	'oauth2_provider',
+    'corsheaders',
+    'simple_email_confirmation',
+	
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,6 +54,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'oauth2_provider.backends.OAuth2Backend',
+    
 )
 
 ROOT_URLCONF = 'TaggedNews.urls'
@@ -71,6 +83,9 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+    )
     'PAGINATE_BY': 40 # old val 20, changed to 40 for testing purposes
 }
 
@@ -114,3 +129,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'siteModel.User'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = '[email/acc/@gmail.com]'
+EMAIL_HOST_PASSWORD = '[password]'
+EMAIL_PORT = 587
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '[path/to/file]',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

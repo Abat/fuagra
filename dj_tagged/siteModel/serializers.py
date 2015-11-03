@@ -3,6 +3,7 @@ from rest_framework import serializers
 from siteModel.models import News
 from siteModel.models import UserProfile
 from siteModel.models import Comments
+from siteModel.models import Vote
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +19,8 @@ class CommentSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Comments
 		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner')
+
+class VoteSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Vote
+		fields = ('news', 'upvoted', 'downvoted')

@@ -48,6 +48,7 @@ define([
             this.model.save({upvotes: this.model.get('upvotes') + 1}, {
                 success: function(model, response, options) {
                     console.log(response);
+                    console.log(model);
                 },
                 error: function(model, xhr, options) {
                     console.log(xhr);

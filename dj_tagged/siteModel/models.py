@@ -1,7 +1,12 @@
 from django.db import models
 from datetime import datetime
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from simple_email_confirmation import SimpleEmailConfirmationUserMixin
+from django.conf import settings
+
+class User(SimpleEmailConfirmationUserMixin, AbstractUser):
+    pass
 
 # Create your models here.
 class News(models.Model):
@@ -14,10 +19,14 @@ class News(models.Model):
     views = models.IntegerField(default=0)
     url = models.URLField(unique=True)
     num_comments = models.IntegerField(default=0)
-    owner = models.ForeignKey('auth.User', default=1)	
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)	
 
     class Meta:
         ordering = ['-date_updated']
+
+    # @property
+    # def votes(self):
+    #     return upvotes - downvotes
 
     def __str__(self):
         return self.title
@@ -32,7 +41,7 @@ class Comments(models.Model):
     thumbs_up = models.IntegerField(default=0)
     thumbs_down = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
-    owner = models.ForeignKey('auth.User')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     isExpert = models.BooleanField(default=False)
     date_created = models.DateTimeField('Date Created', default=timezone.now)
 
@@ -49,3 +58,12 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Vote(models.Model):
+    news = models.ForeignKey(News)
+    user = models.OneToOneField('auth.User')
+    upvoted = models.BooleanField(default=False)
+    downvoted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'news',)
