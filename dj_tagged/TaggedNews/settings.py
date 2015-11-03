@@ -83,10 +83,10 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 40 # old val 20, changed to 40 for testing purposes
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'PAGINATE_BY': 40, # old val 20, changed to 40 for testing purposes
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    )
+    ]
 }
 
 SWAGGER_SETTINGS = {
@@ -134,8 +134,8 @@ AUTH_USER_MODEL = 'siteModel.User'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = '[email/acc/@gmail.com]'
-EMAIL_HOST_PASSWORD = '[password]'
+EMAIL_HOST_USER = 'fuagrakz@gmail.com'
+EMAIL_HOST_PASSWORD = 'FuaGra123'
 EMAIL_PORT = 587
 
 LOGGING = {
@@ -145,7 +145,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '[path/to/file]',
+            'filename': '/home/abat/tagged/logs/mail.log',
         },
     },
     'loggers': {

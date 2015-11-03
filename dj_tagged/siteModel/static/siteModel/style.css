@@ -137,8 +137,14 @@ div.arrow {
     font-size: 15px;
 }
 
+img.arrow {
+    width: 30px;
+    height: 30px;
+}
+
 div.score {
     font-size: 15px;
+    text-align: center;
 }
 
 ul.newsList {
