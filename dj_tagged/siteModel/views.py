@@ -6,7 +6,8 @@ from siteModel.models import News
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
-from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer
+from siteModel.models import Vote
+from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
@@ -14,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from datetime import datetime
 from oauth2_provider.views.generic import ProtectedResourceView
 from django.core.mail import send_mail
@@ -127,6 +130,62 @@ def user_login(request):
             return HttpResponse("Invalid login details supplied.")
     else:
         return render(request, 'siteModel/login.html', {})
+
+@login_required
+def upvote_news(request):
+    news_id = None
+    if request.method == "GET":
+        news_id = request.GET['news_id']
+
+    if news_id:
+        news_object = News.objects.get(id=int(news_id))
+    
+    try:
+        vote = Vote.objects.get(news=news_object, user=request.user)
+    except Vote.DoesNotExist:
+        vote = None
+
+    # person has voted
+    if vote:
+        # person wants to remove his upvote
+        if vote.upvoted:
+            news_object.upvotes -= 1
+        # person downvoted before and wants to upvote
+        elif vote.downvoted:
+            news_object.downvotes -= 1
+            news_object.upvotes += 1
+            vote.downvoted = False
+            vote.upvoted = True
+    else:
+        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
+
+@login_required
+def downvote_news(request):
+    news_id = None
+    if request.method == "GET":
+        news_id = request.GET['news_id']
+
+    if news_id:
+        news_object = News.objects.get(id=int(news_id))
+    
+    try:
+        vote = Vote.objects.get(news=news_object, user=request.user)
+    except Vote.DoesNotExist:
+        vote = None
+
+    # person has voted
+    if vote:
+        # person wants to remove his downvote
+        if vote.downvoted:
+            news_object.downvotes -= 1
+        # person upvoted before and wants to downvote
+        elif vote.downvoted:
+            news_object.upvotes -= 1
+            news_object.downvotes += 1
+            vote.downvoted = True
+            vote.upvoted = False
+    else:
+        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
 
 @login_required
 def user_logout(request):
@@ -276,3 +335,35 @@ class ApiEndpoint(ProtectedResourceView):
 @login_required
 def secret_page(request, *args, **kwargs):
     return HttpResponse('Secret contents!', status=200)
+# class VoteViewSet(viewsets.ModelViewSet):
+#     serializer_class = VoteSerializer
+
+#     model = Vote
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+#     filter_fields = ('news', 'user')
+
+#     def get_queryset(self):
+#         queryset = Vote.objects.all()
+#         news_id = self.request.query_params.get('news_id', None)
+#         if news_id is not None:
+#             queryset = queryset.filter(news_id=news_id)
+#         return queryset
+        
+
+#     def retrieve(self, request, *args, **kwargs):
+#         queryset = Vote.objects.all()
+#         vote = get_object_or_404(queryset, news_id=kwargs['pk'])
+#         serializer = VoteSerializer(vote)
+#         return Response(serializer.data)
+
+class VoteList(generics.ListCreateAPIView):
+    serializer_class = VoteSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        news_id = self.kwargs['pk']
+        return Vote.objects.filter(news=news_id, user = user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+

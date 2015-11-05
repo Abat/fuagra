@@ -24,6 +24,10 @@ class News(models.Model):
     class Meta:
         ordering = ['-date_updated']
 
+    # @property
+    # def votes(self):
+    #     return upvotes - downvotes
+
     def __str__(self):
         return self.title
 
@@ -54,3 +58,12 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Vote(models.Model):
+    news = models.ForeignKey(News)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    upvoted = models.BooleanField(default=False)
+    downvoted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user', 'news',)

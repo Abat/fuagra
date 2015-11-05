@@ -8,7 +8,7 @@ define([
     'use strict';
 
     var NewsItem = Backbone.Model.extend({
-
+        
     });
 
     var CommentsItem = Backbone.Model.extend({
