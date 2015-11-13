@@ -6,7 +6,8 @@ from siteModel.models import News
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
-from siteModel.models import Vote
+
+from siteModel.ranking.ranking import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
@@ -31,6 +32,8 @@ def index(request):
 
     # Get all News (write better solution later)
     news_list = News.objects.all()
+    rankAlgo = WilsonRanking()
+    news_list = rankAlgo.sortListOfNews(news_list)
 
     # Get the number of visits to the site.
     visits = request.session.get('visits')

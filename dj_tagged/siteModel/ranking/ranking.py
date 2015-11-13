@@ -2,6 +2,17 @@ from siteModel.models import News
 from math import log
 import operator
 
+#Composite of a weight + Ranking Algorithm
+class RankingObject(object):
+	weight = 0.0
+	algo = None
+	
+	def __init__(self, fWeight, rankingAlgo):
+		if (fWeight < 0):
+			fWeight = 0
+		self.weight = fWeight
+		self.algo = rankingAlgo
+
 # Create with a list of ranking algorithms + their weights as RankingObjects
 class Ranking(object):
 	rankingObjectList = []
@@ -9,14 +20,14 @@ class Ranking(object):
 	
 	def __init__(self, rankingObjectList):
 		self.rankingObjectList = rankingObjectList
-		for rankingObj in self.rankingObjectList
-			totalWeight += rankingObj.weight;
+		for rankingObj in self.rankingObjectList:
+			self.totalWeight += rankingObj.weight;
 
 	def evaluate(self, news):
-		if totalWeight == 0:
+		if self.totalWeight == 0:
 			return 0
 		score = 0.0
-		for rankingObj in rankingObjectList:
+		for rankingObj in self.rankingObjectList:
 			score += rankingObj.weight/self.totalWeight * rankingObj.algo.evaluate(news)
 		return score
 
@@ -35,19 +46,9 @@ class Ranking(object):
 
 class WilsonRanking(Ranking):
 	def __init__(self):
-		wilsonRank = RankingObject(1.0f, WilsonScoreRankingAlgo())
-		self.rankingObjectList = [wilsonRank] 
-
-#Composite of a weight + Ranking Algorithm
-class RankingObject(object):
-	weight = 0.0f
-	algo = None
-	
-	def __init__(self, fWeight, rankingAlgo):
-		if (fWeight < 0):
-			fWeight = 0
-		self.weight = fWeight
-		self.algo = rankingAlgo
+		rankAlgo = WilsonScoreRankingAlgo()
+		wilsonRank = RankingObject(1.0, rankAlgo)
+		super(WilsonRanking, self).__init__([wilsonRank])
 
 #each one returns a score of 0->100, 100 meaning that obj is really good in that category
 class RankingAlgo(object):
@@ -90,7 +91,7 @@ class CommentRankingAlgo(RankingAlgo):
 	def _evaluateNews(self, news):
 		lifeSeconds = self._getNewsLifeSinceNowInSeconds(news)
 		lifeHours = lifeSeconds / 60.0 / 60.0;
-		if (lifeHours == 0)
+		if (lifeHours == 0):
 			lifeHours = 0.1
 		commentsPerHour = news.num_comments / lifeHours
 		return (commentsPerHour / self.MAX_SCORE_COMMENTS_PER_HOUR) * 100
@@ -102,7 +103,7 @@ class ViewRankingAlgo(RankingAlgo):
 	def _evaluateNews(self, news):
 		lifeSeconds = self._getNewsLifeSinceNowInSeconds(news)
 		lifeHours = lifeSeconds / 60.0 / 60.0;
-		if (lifeHours == 0)
+		if (lifeHours == 0):
 			lifeHours = 0.1
 		viewsPerHour = news.num_comments / lifeHours
 		return (viewsPerHour / self.MAX_SCORE_VIEWS_PER_HOUR) * 100
@@ -111,11 +112,9 @@ class ViewRankingAlgo(RankingAlgo):
 class WilsonScoreRankingAlgo(RankingAlgo):
 	def _evaluateNews(self, news):
 		totalVotes = news.upvotes + news.downvotes
-
-		if (netVotes = 0):
+		if (totalVotes == 0):
 			return 0
-
-	    z = 1.0 #1.0 = 85%, 1.6 = 95%
-	    phat = float(news.upvotes) / totalVotes
-	    return (phat+z*z/(2*n)-z*sqrt((phat*(1-phat)+z*z/(4*n))/n)) / (1+z*z/n)
+		z = 1.0 #1.0 = 85%, 1.6 = 95%
+		phat = float(news.upvotes) / totalVotes
+		return (phat+z*z/(2*n)-z*sqrt((phat*(1-phat)+z*z/(4*n))/n)) / (1+z*z/n)
 		

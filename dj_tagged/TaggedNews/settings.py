@@ -145,7 +145,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/abat/tagged/logs/mail.log',
+            'filename': 'debug.log',
         },
     },
     'loggers': {
