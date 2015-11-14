@@ -40,9 +40,9 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_swagger',
     'siteModel',
-	'oauth2_provider',
-    'corsheaders',
-    'simple_email_confirmation',
+	# 'oauth2_provider',
+ #    'corsheaders',
+ #    'simple_email_confirmation',
 	
 )
 
@@ -54,15 +54,15 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'corsheaders.middleware.CorsMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+	# 'corsheaders.middleware.CorsMiddleware',
+ #    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'oauth2_provider.backends.OAuth2Backend',
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'oauth2_provider.backends.OAuth2Backend',
     
-)
+# )
 
 ROOT_URLCONF = 'TaggedNews.urls'
 
@@ -84,9 +84,12 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     'PAGINATE_BY': 40, # old val 20, changed to 40 for testing purposes
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    ]
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+    # ]
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
 }
 
 SWAGGER_SETTINGS = {
@@ -145,7 +148,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/abat/tagged/logs/mail.log',
+            'filename': '/Users/bagland/Developer/tagged_log/mail.log',
         },
     },
     'loggers': {
