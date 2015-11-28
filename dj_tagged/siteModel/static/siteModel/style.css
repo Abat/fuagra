@@ -183,7 +183,14 @@ div#side {
     overflow: hidden;
 }
 
-#layout_view {
+.layout {
+    min-height: 100%;
+    width: 90%;
+    overflow: hidden;
+    margin: 0 auto 0 auto;
+}
+
+.layout_view {
     min-height: 100%;
     width: 90%;
     overflow: hidden;

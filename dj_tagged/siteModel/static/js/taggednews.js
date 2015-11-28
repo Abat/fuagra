@@ -29,7 +29,7 @@ define([
     taggedApp = new TaggedApp({ example: 'sample' });
 
     var RootLayout = Marionette.LayoutView.extend({
-        el: '#layout_view',
+        el: '.layout',
         template: _.template(layoutT),
 
         regions: {
