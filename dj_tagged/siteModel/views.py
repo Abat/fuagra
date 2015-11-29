@@ -87,8 +87,8 @@ def register(request):
             new_email = user_form.cleaned_data.get('email_address')
             confirmation_key = user.add_unconfirmed_email(new_email)
             
-            send_mail('Confirm', 'Use localhost:8000/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
-            [new_email], fail_silently=False)
+            send_mail('Confirm', _create_email_confirmation_message(user.username, confirmation_key), settings.EMAIL_HOST_USER,
+            [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
             user.set_password(user.password)
             user.save()
@@ -111,6 +111,13 @@ def register(request):
     return render(request, 'siteModel/register.html', {'user_form':user_form,
      'profile_form':profile_form,
       'registered':registered})
+
+def _create_email_confirmation_message(user_name, confirmation_key):
+    return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit localhost:8000/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
+
+#Probably want https later.
+def _create_html_email_confirmation_message(user_name, confirmation_key):
+    return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://localhost:8000/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
 
 def user_login(request):
     if request.method == 'POST':
