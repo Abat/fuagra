@@ -148,7 +148,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/Users/bagland/Developer/tagged_log/mail.log',
+            'filename': 'debug.log',
         },
     },
     'loggers': {
