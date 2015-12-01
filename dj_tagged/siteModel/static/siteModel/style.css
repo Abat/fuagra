@@ -159,6 +159,21 @@ ul#comments {
     padding-left:0px;
 }
 
+div.bottomArea {
+    width: 500px;
+    height: 20px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+span.help {
+    float: right;
+}
+
+.md td {
+    border: 1px solid #C1BFBF;
+}
+
 li.commentsItem {
     padding-left: 10px;
 }
