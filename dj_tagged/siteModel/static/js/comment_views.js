@@ -57,7 +57,8 @@ define([
         },
 
         events: {
-            'submit form#newComment': 'newComment'
+            'submit form#newComment': 'newComment',
+            'click span.help a': 'toggleHelp'
         },
         collectionEvents: {
             'add': 'commentAdded'
@@ -83,6 +84,11 @@ define([
                     console.log(err);
                 }
             });
+        },
+        toggleHelp: function(e) {
+            var self = this;
+            e.preventDefault();
+            $('div.markhelp').toggle();
         },
         commentAdded: function(){
             console.log('New comments has been added.');

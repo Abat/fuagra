@@ -52,7 +52,7 @@ class Comments(models.Model):
         return self.content
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
 
     avatar = models.ImageField(upload_to='profile_pictures', blank=True)
 

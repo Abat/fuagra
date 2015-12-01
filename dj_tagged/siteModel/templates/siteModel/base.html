@@ -35,10 +35,15 @@
                             <li><a href="#latest">Latest</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
+                            {% if user.is_authenticated %}
                             {% csrf_token %}
+                            <li><a href="#">Hello, {{ user }}</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
+                            {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>
                             <li><a href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
             </div>

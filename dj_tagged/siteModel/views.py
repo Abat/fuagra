@@ -14,12 +14,12 @@ from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime
-from oauth2_provider.views.generic import ProtectedResourceView
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
@@ -226,7 +226,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
     model = News
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,)
     def list(self, request, *args, **kwargs):
         """
         Return a list of News paginated by 20 items.
@@ -248,7 +248,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # save the owner of the news
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=get_user(self.request))
 
     def update(self, request, *args, **kwargs):
         """
@@ -277,7 +277,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserSerializer
     model = UserProfile
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
         """
@@ -331,9 +331,9 @@ class CommentList(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-class ApiEndpoint(ProtectedResourceView):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse('Hello, OAuth2!')
+# class ApiEndpoint(ProtectedResourceView):
+#     def get(self, request, *args, **kwargs):
+#         return HttpResponse('Hello, OAuth2!')
 
 @login_required
 def secret_page(request, *args, **kwargs):
