@@ -107,6 +107,7 @@ def register(request):
 
         else:
             print(user_form.errors, profile_form.errors)
+            return HttpResponse("Error: {0}, {1}".format(user_form.errors, profile_form.errors))
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()

@@ -21,8 +21,9 @@ class News(models.Model):
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)	
 
-    class Meta:
-        ordering = ['-date_updated']
+    # commented out so that our Ranking algorithms work
+    #class Meta:
+    #    ordering = ['-date_updated']
 
     # @property
     # def votes(self):
