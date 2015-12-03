@@ -107,6 +107,7 @@ def register(request):
 
         else:
             print(user_form.errors, profile_form.errors)
+            return HttpResponse("Error: {0}, {1}".format(user_form.errors, profile_form.errors))
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
@@ -256,7 +257,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
-        serializer.save(owner=user, username=user__username)
+        serializer.save(owner=user, username=user.username)
 
     def update(self, request, *args, **kwargs):
         """

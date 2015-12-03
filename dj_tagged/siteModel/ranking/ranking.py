@@ -108,7 +108,7 @@ class DateRankingAlgo(RankingAlgo):
 
 	def _evaluate_news(self, news):
 		life_seconds = self._get_news_life_since_now_in_seconds(news)
-		life_hours = life_seconds / 60.0 / 60.0
+		life_hours = life_seconds / 60.0 / 60.0;
 		return ( 1.0/log(life_hours/self.CUTOFF_FACTOR) ) * 100
 
 class RatingRankingAlgo(RankingAlgo):
@@ -121,7 +121,7 @@ class CommentRankingAlgo(RankingAlgo):
 
 	def _evaluate_news(self, news):
 		life_seconds = self._get_news_life_since_now_in_seconds(news)
-		life_hours = life_seconds / 60.0 / 60.0
+		life_hours = life_seconds / 60.0 / 60.0;
 		if (life_hours == 0):
 			life_hours = 0.1
 		comments_per_hour = news.num_comments / life_hours
@@ -133,7 +133,7 @@ class ViewRankingAlgo(RankingAlgo):
 
 	def _evaluate_news(self, news):
 		life_seconds = self._get_news_life_since_now_in_seconds(news)
-		life_hours = life_seconds / 60.0 / 60.0
+		life_hours = life_seconds / 60.0 / 60.0;
 		if (life_hours == 0):
 			life_hours = 0.1
 		views_per_hour = news.num_comments / life_hours
