@@ -22,8 +22,8 @@ class News(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
 
-    class Meta:
-        ordering = ['-date_updated']
+    # class Meta:
+    #     ordering = ['-date_updated']
 
     def __str__(self):
         return self.title
