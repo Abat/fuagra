@@ -255,7 +255,8 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # save the owner of the news
-        serializer.save(owner=get_user(self.request))
+        user = get_user(self.request)
+        serializer.save(owner=user, username=user__username)
 
     def update(self, request, *args, **kwargs):
         """
@@ -281,9 +282,9 @@ class NewsViewSet(viewsets.ModelViewSet):
         return super(NewsViewSet, self).destroy(request, *args, **kwargs)
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    model = UserProfile
+    model = User
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
@@ -335,7 +336,8 @@ class CommentList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # save the owner of the news
-        serializer.save(owner=self.request.user)
+        user = self.request.user
+        serializer.save(owner=user, username=user__username)
 
 
 # class ApiEndpoint(ProtectedResourceView):
