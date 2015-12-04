@@ -132,15 +132,21 @@ def user_login(request):
 
         if user:
             if user.is_active:
+                logger = logging.getLogger("django")
+                logger.info("views.user_login: Redirecting to" + request.POST.get('next','/'))
                 login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect(request.POST.get('next','/'))
             else:
                 return HttpResponse("Your Account is disabled.")
         else:
             print("Invalid login details :{0}, {1}".format(username, password))
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'siteModel/login.html', {})
+        #This is the key used by django to redirect (notice next= ... in redirects!)
+        context = {}
+        if request.GET.get('next') is not None:
+            context['next'] = request.GET.get('next')
+        return render(request, 'siteModel/login.html', context)
 
 @login_required
 def upvote_news(request):
