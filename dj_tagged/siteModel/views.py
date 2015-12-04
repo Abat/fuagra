@@ -127,15 +127,20 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        redirect = request.POST.get('next')
 
+        #Check empty
+        if not redirect:
+            redirect = '/'
+            
         user = authenticate(username=username, password=password)
 
         if user:
             if user.is_active:
                 logger = logging.getLogger("django")
-                logger.info("views.user_login: Redirecting to" + request.POST.get('next','/'))
+                logger.info("views.user_login: Redirecting to" + redirect)
                 login(request, user)
-                return HttpResponseRedirect(request.POST.get('next','/'))
+                return HttpResponseRedirect(redirect)
             else:
                 return HttpResponse("Your Account is disabled.")
         else:
