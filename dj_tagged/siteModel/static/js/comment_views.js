@@ -49,7 +49,7 @@ define([
         },
 
         childView: CommentsItemView,
-        childViewContainer: 'ul',
+        childViewContainer: 'ul#comments',
 
         initialize: function(attr){
             console.log('Initializing CommentsView...');

@@ -43,8 +43,8 @@ class Comments(models.Model):
     isExpert = models.BooleanField(default=False)
     date_created = models.DateTimeField('Date Created', default=timezone.now)
 
-    class Meta:
-        ordering = ['-date_created']
+    #class Meta:
+        #ordering = ['-date_created']
 
     def __str__(self):
         return self.content

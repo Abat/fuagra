@@ -6,7 +6,7 @@
     <div class='commentsInfo'>
         <p class='tagline'>
             <a href='#' class='comment-control expand'> [-] </a>
-            <a href='#' class='comment-control'> <%= typeof(owner) !== 'undefined' ? owner : '404' %> </a>
+            <a href='#' class='comment-control'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
             <time datetime='<%= date_created %>'> <%= date_created %> </time>
         </p>
         <div class='content'> <%= content %> </div>

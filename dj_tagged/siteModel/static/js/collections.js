@@ -12,7 +12,7 @@ define([
         model: Models.NewsItemModel,
         url: '/api/news/',
         parse: function(response) {
-            return response.results;
+            return response.results.reverse();
         }
     });
 
@@ -26,7 +26,7 @@ define([
         },
         url: function() { return '/api/comments/' + this.options.newsId + '/'; },
         parse: function(response) {
-            return response.results;
+            return response.results.reverse();
         } 
     });
 

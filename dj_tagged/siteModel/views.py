@@ -347,7 +347,7 @@ class CommentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
-        serializer.save(owner=user, username=user__username)
+        serializer.save(owner=user, username=user.username)
 
 
 # class ApiEndpoint(ProtectedResourceView):
