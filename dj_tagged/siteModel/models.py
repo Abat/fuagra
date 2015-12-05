@@ -19,15 +19,11 @@ class News(models.Model):
     views = models.IntegerField(default=0)
     url = models.URLField(unique=True)
     num_comments = models.IntegerField(default=0)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)	
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+    username = models.CharField(max_length=100)
 
-    # commented out so that our Ranking algorithms work
-    #class Meta:
-    #    ordering = ['-date_updated']
-
-    # @property
-    # def votes(self):
-    #     return upvotes - downvotes
+    # class Meta:
+    #     ordering = ['-date_updated']
 
     def __str__(self):
         return self.title
@@ -43,6 +39,7 @@ class Comments(models.Model):
     thumbs_down = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    username = models.CharField(max_length=100)
     isExpert = models.BooleanField(default=False)
     date_created = models.DateTimeField('Date Created', default=timezone.now)
 
