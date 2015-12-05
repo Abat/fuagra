@@ -127,20 +127,31 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        redirect = request.POST.get('next')
 
+        #Check empty
+        if not redirect:
+            redirect = '/'
+            
         user = authenticate(username=username, password=password)
 
         if user:
             if user.is_active:
+                logger = logging.getLogger("django")
+                logger.info("views.user_login: Redirecting to" + redirect)
                 login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect(redirect)
             else:
                 return HttpResponse("Your Account is disabled.")
         else:
             print("Invalid login details :{0}, {1}".format(username, password))
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'siteModel/login.html', {})
+        #This is the key used by django to redirect (notice next= ... in redirects!)
+        context = {}
+        if request.GET.get('next') is not None:
+            context['next'] = request.GET.get('next')
+        return render(request, 'siteModel/login.html', context)
 
 @login_required
 def upvote_news(request):
@@ -254,7 +265,8 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # save the owner of the news
-        serializer.save(owner=get_user(self.request))
+        user = get_user(self.request)
+        serializer.save(owner=user, username=user.username)
 
     def update(self, request, *args, **kwargs):
         """
@@ -280,9 +292,9 @@ class NewsViewSet(viewsets.ModelViewSet):
         return super(NewsViewSet, self).destroy(request, *args, **kwargs)
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    model = UserProfile
+    model = User
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
@@ -334,7 +346,8 @@ class CommentList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # save the owner of the news
-        serializer.save(owner=self.request.user)
+        user = self.request.user
+        serializer.save(owner=user, username=user__username)
 
 
 # class ApiEndpoint(ProtectedResourceView):

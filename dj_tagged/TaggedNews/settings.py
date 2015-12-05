@@ -26,7 +26,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['.fuagra.kz']
-
+LOGIN_URL = "/login/"
 
 # Application definition
 
