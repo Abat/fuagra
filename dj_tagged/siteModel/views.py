@@ -80,6 +80,10 @@ def submit(request):
 def register(request):
     registered = False
 
+    #change
+    if request.user is not None:
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
@@ -124,6 +128,11 @@ def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
 
 def user_login(request):
+
+    #change
+    if request.user is not None:
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
