@@ -81,7 +81,7 @@ def register(request):
     registered = False
 
     #change
-    if request.user is not None:
+    if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
 
     if request.method == 'POST':
