@@ -80,6 +80,9 @@ def submit(request):
 def register(request):
     registered = False
 
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
@@ -87,13 +90,15 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
 
+            the_username = user.username
+            the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
             confirmation_key = user.add_unconfirmed_email(new_email)
             
-            send_mail('Confirm', _create_email_confirmation_message(user.username, confirmation_key), settings.EMAIL_HOST_USER,
+            send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
             [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
-            user.set_password(user.password)
+            user.set_password(the_password)
             user.save()
 
             profile = profile_form.save(commit=False)
@@ -104,6 +109,9 @@ def register(request):
 
             profile.save()
             registered = True
+            #Login user after registering
+            user_acc = authenticate(username=the_username, password=the_password)
+            login(request, user_acc)
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -124,6 +132,10 @@ def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
 
 def user_login(request):
+
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
