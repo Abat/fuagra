@@ -41,6 +41,10 @@ div#topComment {
     margin: 0 0 20px 0;
 }
 
+div.markhelp {
+    margin-bottom: 10px;
+}
+
 div.collapsed {
     overflow: hidden;
     height: 23px;
@@ -157,6 +161,10 @@ li.newsItem {
 
 ul#comments {
     padding-left:0px;
+}
+
+li.comments_button {
+    padding-left: 5px;
 }
 
 div.bottomArea {

@@ -9,7 +9,8 @@ define([
     'markdown',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT) {
+    'text!templates/commentsTextareaView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT, commentsTextareaT) {
 
     'use strict';
     
@@ -17,13 +18,19 @@ define([
         tagName: 'li',
         className: 'commentsItem',
         template: _.template(commentsItemT),
+
+        initialize: function(attr) {
+            this.collection = attr.collection;
+            this.newsId = attr.newsId;
+        },
         
         onRender: function() {
             $('div.content', this.el).html(Micromarkdown.parse(this.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
         },
         
         events: {
-            'click a.expand': 'expand'
+            'click a.expand': 'expand',
+            'click a.reply': 'reply'
         },
         modelEvents: {
             'change': 'render'
@@ -38,39 +45,42 @@ define([
                 $('div.comments', this.el).addClass('collapsed');
                 $('a.expand', this.el).text("[+]");
             }
+        },
+        reply: function(e) {
+            e.preventDefault();
+            if (!$('form', this.el)[0]) {
+                var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id') });
+                $(this.el).append(commentsTextareaView.render().el);
+            }
         }
     });
 
-    var CommentsView = Marionette.CompositeView.extend({
+    var CommentsTextareaView = Marionette.ItemView.extend({
         tagName: 'div',
-        template: _.template(commentsT),
+        template: _.template(commentsTextareaT),
         templateHelpers: function() {
             return { newsId: this.newsId };
         },
 
-        childView: CommentsItemView,
-        childViewContainer: 'ul#comments',
-
         initialize: function(attr){
-            console.log('Initializing CommentsView...');
+            console.log('Initializing CommentsTextareaView...');
             this.newsId = attr.newsId;
+            this.parentId = attr.parentId;
         },
 
         events: {
             'submit form#newComment': 'newComment',
             'click span.help a': 'toggleHelp'
         },
-        collectionEvents: {
-            'add': 'commentAdded'
-        },
 
         newComment: function(e){
             var self = this;
             e.preventDefault();
             var comment = this.collection.create({
-                content: $("textarea[name='content']").val(),
-                news: $("input[name='news']").val(),
-                csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                content: $("textarea[name='content']", this.el).val(),
+                news: $("input[name='news']", this.el).val(),
+                "parent": this.parentId,
+                csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']", this.el).val(),
                 date_created: Date.now()
             }, {
                 success: function(resp) {
@@ -78,7 +88,9 @@ define([
                     var newComment = new CommentsItemView({
                         model: comment
                     });
-                    $('div#topComment').append('<p> Your comment was posted. </p>').append(newComment.render().el);
+                    $('form#newComment', self.el).remove();
+                    $('div#topComment', self.el).empty();
+                    $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>').append(newComment.render().el);
                 },
                 error: function(err) {
                     console.log(err);
@@ -88,17 +100,38 @@ define([
         toggleHelp: function(e) {
             var self = this;
             e.preventDefault();
-            $('div.markhelp').toggle();
-        },
-        commentAdded: function(){
-            console.log('New comments has been added.');
-            $('textarea').val('');
-            $('div#topComment').empty();
+            $('div.markhelp', this.el).toggle();
         }
+    });
+
+    var CommentsView = Marionette.CompositeView.extend({
+        tagName: 'div',
+        template: _.template(commentsT),
+
+        childView: CommentsItemView,
+        childViewContainer: 'ul#comments',
+        childViewOptions: function(model, index) {
+            return {
+                collection: this.collection,
+                newsId: this.newsId
+            }
+        },
+
+        onRender: function() {
+            console.log('CommentsView onRender...');
+            var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
+            $(this.el).prepend(commentsTextareaView.render().el);
+        },
+
+        initialize: function(attr){
+            this.newsId = attr.newsId;
+            console.log('Initializing CommentsView...');
+        },
     });
 
     return {
         'CommentsItemView': CommentsItemView,
+        'CommentsTextareaView': CommentsTextareaView,
         'CommentsView': CommentsView  
     };
 });
