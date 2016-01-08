@@ -261,8 +261,19 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
+        
         news_list = News.objects.all()
-        rankAlgo = WilsonRanking()
+                
+        sort_style = None
+        if request.GET.get('sort') is not None:
+            sort_style = request.GET.get('sort')
+
+        rankAlgo = None
+        if (sort_style == 'Newest'):
+            rankAlgo = DateRanking()
+        else:
+            rankAlgo = WilsonRanking()
+
         self.queryset = rankAlgo.sort_list_of_news(news_list)
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
