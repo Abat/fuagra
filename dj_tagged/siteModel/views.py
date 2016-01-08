@@ -32,8 +32,6 @@ def index(request):
 
     # Get all News (write better solution later)
     news_list = News.objects.all()
-    rankAlgo = NewestRanking()
-    news_list = rankAlgo.sort_list_of_news(news_list)
 
     # Get the number of visits to the site.
     visits = request.session.get('visits')
@@ -263,6 +261,9 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
+        news_list = News.objects.all()
+        rankAlgo = WilsonRanking()
+        self.queryset = rankAlgo.sort_list_of_news(news_list)
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
