@@ -8,6 +8,24 @@ from django.conf import settings
 class User(SimpleEmailConfirmationUserMixin, AbstractUser):
     pass
 
+class NewsCategory(models.Model):
+    title = models.CharField(max_length=100, primary_key=True)
+
+class NewsCategoryUserPermission(models.Model):
+    category = models.ForeignKey(NewsCategory)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    USER_TYPES = (
+        ('AD', 'Admin'),
+        ('MD', 'Moderator'),
+        ('EX', 'Expert'),
+        ('US', 'User') #We probably can just assume the user is by default a user.
+    )
+    permission = models.CharField(max_length=2, choices=USER_TYPES, default = 'US')
+    last_updated = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = (('user', 'category'),)
+
 # Create your models here.
 class News(models.Model):
     title = models.CharField(max_length=400)
@@ -21,7 +39,7 @@ class News(models.Model):
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
-
+    category = models.ForeignKey(NewsCategory, default = "Test")
     # class Meta:
     #     ordering = ['-date_updated']
 
@@ -30,6 +48,7 @@ class News(models.Model):
 
     def get_absolute_url(self):
         return "/api/news/%i/" % self.id
+
 
 class Comments(models.Model):
     news = models.ForeignKey(News)
