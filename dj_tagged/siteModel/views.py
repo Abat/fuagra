@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
 from siteModel.models import News
+from siteModel.models import NewsCategory
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
@@ -263,6 +264,24 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
+   
+        news_category = request.GET.get('category', None)
+
+        news_list = None
+
+        if news_category is not None:
+            #Check if news category specified exists.
+            news_category_objects = NewsCategory.objects.filter(title=news_category)
+            if news_category_objects.count() > 0:
+                news_list = News.objects.filter(category=news_category)
+            else:
+                #TODO THROW EXCEPTION CATEGORY DOES NOT EXIST
+                pass
+        else:
+            news_list = News.objects.all()
+            
+        self.queryset = news_list
+
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
