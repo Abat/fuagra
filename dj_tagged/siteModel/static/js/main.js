@@ -9,6 +9,7 @@ requirejs.config({
         'backbone': 'js/backbone/backbone-min',
         'marionette': 'js/marionette/backbone.marionette.min',
         'bootstrap': 'js/bootstrap/bootstrap.min',
+        'url': 'js/url/url.min',
         'models': 'js/models',
         'collections': 'js/collections',
         'views': 'js/views',

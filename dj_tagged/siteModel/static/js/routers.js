@@ -3,13 +3,14 @@ define([
     'underscore',
     'backbone',
     'marionette',
+    'url',
     'collections',
     'models',
     'views',
     'comment_views',
     'side_views',
     'top_views',
-], function($, _, Backbone, Marionette, Collections, Models, Views, Comment_Views, Side_Views, Top_Views) {
+], function($, _, Backbone, Marionette, Url, Collections, Models, Views, Comment_Views, Side_Views, Top_Views) {
 
     'use strict';
 
@@ -25,7 +26,7 @@ define([
         },
 
         home: function() {
-            console.log("home route triggered");
+            console.log("home route triggered: ", url('?category'), url('?sort'));
             var news = new Collections.NewsListCollection();
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
