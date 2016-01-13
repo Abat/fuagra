@@ -33,8 +33,6 @@ def index(request):
 
     # Get all News (write better solution later)
     news_list = News.objects.all()
-    rankAlgo = NewestRanking()
-    news_list = rankAlgo.sort_list_of_news(news_list)
 
     # Get the number of visits to the site.
     visits = request.session.get('visits')
@@ -264,11 +262,12 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
+
    
         news_category = request.GET.get('category', None)
-
         news_list = None
 
+        #Getting news list/filtering
         if news_category is not None:
             #Check if news category specified exists.
             news_category_objects = NewsCategory.objects.filter(title=news_category)
@@ -277,10 +276,21 @@ class NewsViewSet(viewsets.ModelViewSet):
             else:
                 #TODO THROW EXCEPTION CATEGORY DOES NOT EXIST
                 pass
-        else:
+        else: #If no filtering, pass in all news
             news_list = News.objects.all()
-            
-        self.queryset = news_list
+                
+        #sort style
+        sort_style = None
+        if request.GET.get('sort') is not None:
+            sort_style = request.GET.get('sort')
+
+        rankAlgo = None
+        if (sort_style == 'Newest'):
+            rankAlgo = DateRanking()
+        else:
+            rankAlgo = WilsonRanking()
+
+        self.queryset = rankAlgo.sort_list_of_news(news_list)
 
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
