@@ -49,6 +49,15 @@ class News(models.Model):
     def get_absolute_url(self):
         return "/api/news/%i/" % self.id
 
+    def get_creation_date(self):
+        return self.date_created
+        
+    def get_ups(self):
+        return self.upvotes
+
+    def get_downs(self):
+        return self.downvotes
+
 
 class Comments(models.Model):
     news = models.ForeignKey(News)
@@ -67,6 +76,17 @@ class Comments(models.Model):
 
     def __str__(self):
         return self.content
+
+    def get_creation_date(self):
+        return self.date_created
+
+    def get_ups(self):
+        return self.thumbs_up
+
+    def get_downs(self):
+        return self.thumbs_down
+
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
