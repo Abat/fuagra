@@ -52,8 +52,7 @@ class News(models.Model):
 
 class Comments(models.Model):
     news = models.ForeignKey(News)
-    parent = models.ForeignKey('self', related_name='parent_comment', default=-1)
-    child = models.ForeignKey('self', related_name='child_comment', default=-1)
+    parent = models.ForeignKey('self', related_name='parent_comment', null=True)
     thumbs_up = models.IntegerField(default=0)
     thumbs_down = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
