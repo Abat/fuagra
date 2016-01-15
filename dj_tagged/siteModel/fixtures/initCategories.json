@@ -10,5 +10,17 @@
     "fields": {
       "title": "Test"
     }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "News"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Funny"
+    }
   }
 ]

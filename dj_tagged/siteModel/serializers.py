@@ -8,7 +8,7 @@ from siteModel.models import Vote
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ('id', 'title', 'date_created', 'date_updated', 'upvotes', 'downvotes', 'views', 'url', 'num_comments', 'owner', 'username') 
+        fields = ('id', 'title', 'date_created', 'date_updated', 'upvotes', 'downvotes', 'views', 'url', 'num_comments', 'owner', 'username', 'category') 
         read_only_fields = ('id', 'date_created', 'date_updated', 'views', 'num_comments', 'owner', 'username')
 
 class UserSerializer(serializers.ModelSerializer):
