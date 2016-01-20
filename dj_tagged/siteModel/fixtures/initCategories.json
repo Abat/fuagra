@@ -1,0 +1,14 @@
+[
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Blargh"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Test"
+    }
+  }
+]

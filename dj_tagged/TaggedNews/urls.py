@@ -4,7 +4,7 @@ from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
 from siteModel.views import CommentList
-from siteModel.views import VoteList
+from siteModel.views import VoteViewSet
 
 news_list = NewsViewSet.as_view({
     'get': 'list',
@@ -26,6 +26,18 @@ user_detail = UserViewSet.as_view({
     'put': 'update',
     'patch': 'partial_update',
     'delete': 'destroy',
+})
+
+vote_detail = VoteViewSet.as_view({
+    'get' : 'retrieve',
+    'put' : 'update',
+    'patch' : 'partial_update',
+    'delete' : 'destroy',
+})
+
+vote_list = VoteViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
 })
 
 # vote_detail = VoteViewSet.as_view({
@@ -50,7 +62,9 @@ urlpatterns = patterns('',
     url(r'^api/users/?$', user_list, name='user-list'),
     url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
-    url(r'^api/vote/?$', views.VoteList.as_view(), name='vote-detail'),
+    url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
+    url(r'^api/news/vote/(?P<news_id>[0-9]+)/(?P<pk>[0-9]+)/?$', vote_detail, name='vote-detail'),
+
     # url(r'^api/vote/?$', vote_list, name='vote-list'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),

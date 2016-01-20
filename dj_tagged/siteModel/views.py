@@ -3,11 +3,13 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
 from siteModel.models import News
+from siteModel.models import NewsCategory
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
 from siteModel.ranking.ranking import *
+from siteModel.ranking.rank_helper import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
@@ -32,8 +34,6 @@ def index(request):
 
     # Get all News (write better solution later)
     news_list = News.objects.all()
-    rankAlgo = NewestRanking()
-    news_list = rankAlgo.sort_list_of_news(news_list)
 
     # Get the number of visits to the site.
     visits = request.session.get('visits')
@@ -80,6 +80,9 @@ def submit(request):
 def register(request):
     registered = False
 
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
@@ -87,13 +90,15 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
 
+            the_username = user.username
+            the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
             confirmation_key = user.add_unconfirmed_email(new_email)
             
-            send_mail('Confirm', _create_email_confirmation_message(user.username, confirmation_key), settings.EMAIL_HOST_USER,
+            send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
             [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
-            user.set_password(user.password)
+            user.set_password(the_password)
             user.save()
 
             profile = profile_form.save(commit=False)
@@ -104,6 +109,9 @@ def register(request):
 
             profile.save()
             registered = True
+            #Login user after registering
+            user_acc = authenticate(username=the_username, password=the_password)
+            login(request, user_acc)
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -124,6 +132,10 @@ def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
 
 def user_login(request):
+
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -251,13 +263,51 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
+
+   
+        news_category = request.GET.get('category', None)
+        news_list = None
+
+        #Getting news list/filtering
+        if news_category is not None:
+            #Check if news category specified exists.
+            news_category_objects = NewsCategory.objects.filter(title=news_category)
+            if news_category_objects.count() > 0:
+                news_list = News.objects.filter(category=news_category)
+            else:
+                #TODO THROW EXCEPTION CATEGORY DOES NOT EXIST
+                pass
+        else: #If no filtering, pass in all news
+            news_list = News.objects.all()
+                
+        #sort style
+        sort_style = None
+        if request.GET.get('sort') is not None:
+            sort_style = request.GET.get('sort')
+
+        rankAlgo = RankHelper.parse_rank_style(sort_style)
+
+        self.queryset = rankAlgo.sort_list_of_news(news_list)
+
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         """
         Return the News for a provided id
         """
-        return super(NewsViewSet, self).retrieve(request, *args, **kwargs)
+        queryset = News.objects.all()
+        news = get_object_or_404(queryset, pk=kwargs['pk'])
+        
+        vote_queryset = Vote.objects.all()
+        upvotelist = vote_queryset.filter(news_id=kwargs['pk'], upvoted=True)
+        downvotelist = vote_queryset.filter(news_id=kwargs['pk'], downvoted=True)
+        print(upvotelist.count())
+        print(downvotelist.count())
+        news.upvotes = upvotelist.count()
+        news.downvotes = downvotelist.count()
+        serializer = NewsSerializer(news)
+        return Response(serializer.data)
+        # return super(NewsViewSet, self).retrieve(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
@@ -344,7 +394,16 @@ class CommentList(generics.ListCreateAPIView):
     
     def get_queryset(self):
         news_id = self.kwargs['pk']
-        return Comments.objects.filter(news=news_id)
+        comments = Comments.objects.filter(news=news_id)
+        
+        #sort style
+        sort_style = self.request.QUERY_PARAMS.get('sort', None)
+
+        rankAlgo = RankHelper.parse_rank_style(sort_style)
+
+        query_set = rankAlgo.sort_list_of_news(comments)
+
+        return query_set
 
     def perform_create(self, serializer):
         # save the owner of the news
@@ -359,35 +418,68 @@ class CommentList(generics.ListCreateAPIView):
 @login_required
 def secret_page(request, *args, **kwargs):
     return HttpResponse('Secret contents!', status=200)
-# class VoteViewSet(viewsets.ModelViewSet):
-#     serializer_class = VoteSerializer
 
-#     model = Vote
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
-#     filter_fields = ('news', 'user')
 
-#     def get_queryset(self):
-#         queryset = Vote.objects.all()
-#         news_id = self.request.query_params.get('news_id', None)
-#         if news_id is not None:
-#             queryset = queryset.filter(news_id=news_id)
-#         return queryset
-        
-
-#     def retrieve(self, request, *args, **kwargs):
-#         queryset = Vote.objects.all()
-#         vote = get_object_or_404(queryset, news_id=kwargs['pk'])
-#         serializer = VoteSerializer(vote)
-#         return Response(serializer.data)
-
-class VoteList(generics.ListCreateAPIView):
+class VoteViewSet(viewsets.ModelViewSet):
+    model = Vote
     serializer_class = VoteSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        user = self.request.user
-        news_id = self.kwargs['pk']
-        return Vote.objects.filter(news=news_id, user = user)
+        news_id = self.kwargs['news_id']
+        return Vote.objects.filter(news=news_id)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Return a list of News paginated by 20 items.
+        Provide page number if necessary.
+        """
+        return super(VoteViewSet, self).list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create news object.
+        """
+        return super(VoteViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
+        news_id = self.kwargs['news_id']
+        queryset = News.objects.all()
+        news = get_object_or_404(queryset, pk=news_id)
+        vote_queryset = Vote.objects.all()
+        upvotelist = vote_queryset.filter(news_id=news_id, upvoted=True)
+        downvotelist = vote_queryset.filter(news_id=news_id, downvoted=True)
         serializer.save(user=self.request.user)
+        news.upvotes = upvotelist.count()
+        news.downvotes = downvotelist.count()
+        news.save()
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Return the User for a provided id
+        """
+        return super(VoteViewSet, self).retrieve(request, *args, **kwargs)
+    # def get_queryset(self):
+    #     queryset = Vote.objects.all()
+    #     news_id = self.kwargs['news_id']
+    #     if news_id is not None:
+    #         queryset = queryset.filter(news_id=news_id)
+    #     return queryset
+        
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     return super(VoteViewSet, self).retrieve(request, *args, **kwargs)
+
+
+
+# class VoteList(generics.ListCreateAPIView):
+#     serializer_class = VoteSerializer
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         news_id = self.kwargs['news_id']
+#         return Vote.objects.filter(news=news_id, user = user)
+
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
 

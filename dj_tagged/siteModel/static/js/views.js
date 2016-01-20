@@ -27,7 +27,14 @@ define([
             };
         }
     })();
+    // var Reward = Backbone.Model.extend({
+    //     urlRoot: function(){ return this.get('url_created') },
+    // });
 
+    // var reward = new Reward({'url_created': campaign.get('url_created')});
+    var VoteItem = Backbone.Model.extend({
+        urlRoot: function() { return this.get('url_created') },
+    });
     var NewsItemView = Marionette.ItemView.extend({
         tagName: 'li',
         className: 'newsItem',
@@ -45,26 +52,46 @@ define([
         },
         upvote: function(e) {
             e.preventDefault();
-            this.model.save({upvotes: this.model.get('upvotes') + 1}, {
-                success: function(model, response, options) {
-                    console.log(response);
-                    console.log(model);
+            var self = this;
+            var vote = new VoteItem({'url_created': '/api/news/vote/' + this.model.id + '/'});
+
+            vote.save({news:this.model.id, upvoted:true, downvoted:false},{
+                success: function(){
+                    self.model.save({upvotes: self.model.get('upvotes') + 1}, {
+                        success: function(model, response, options) {
+                            console.log(response);
+                            console.log(model);
+                        },
+                        error: function(model, xhr, options) {
+                            console.log(xhr);
+                        }
+                    });
+                    console.log('success');
                 },
-                error: function(model, xhr, options) {
-                    console.log(xhr);
+                error: function(){
+                    console.log('error');
                 }
             });
+            // this.model.save({upvotes: this.model.get('upvotes') + 1}, {
+            //     success: function(model, response, options) {
+            //         console.log(response);
+            //         console.log(model);
+            //     },
+            //     error: function(model, xhr, options) {
+            //         console.log(xhr);
+            //     }
+            // });
         },
         downvote: function(e) {
             e.preventDefault();
-            this.model.save({downvotes: this.model.get('downvotes') + 1}, {
-                success: function(model, response, options) {
-                    console.log(response);
-                },
-                error: function(model, xhr, options) {
-                    console.log(xhr);
-                }
-            });
+            // this.model.save({downvotes: this.model.get('downvotes') + 1}, {
+            //     success: function(model, response, options) {
+            //         console.log(response);
+            //     },
+            //     error: function(model, xhr, options) {
+            //         console.log(xhr);
+            //     }
+            // });
         },
         comments: function(e) {
             var self = this;
