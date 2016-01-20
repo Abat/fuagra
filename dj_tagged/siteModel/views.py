@@ -9,6 +9,7 @@ from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
 from siteModel.ranking.ranking import *
+from siteModel.ranking.rank_helper import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
@@ -284,11 +285,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         if request.GET.get('sort') is not None:
             sort_style = request.GET.get('sort')
 
-        rankAlgo = None
-        if (sort_style == 'Newest'):
-            rankAlgo = DateRanking()
-        else:
-            rankAlgo = WilsonRanking()
+        rankAlgo = RankHelper.parse_rank_style(sort_style)
 
         self.queryset = rankAlgo.sort_list_of_news(news_list)
 
@@ -385,7 +382,16 @@ class CommentList(generics.ListCreateAPIView):
     
     def get_queryset(self):
         news_id = self.kwargs['pk']
-        return Comments.objects.filter(news=news_id)
+        comments = Comments.objects.filter(news=news_id)
+        
+        #sort style
+        sort_style = self.request.QUERY_PARAMS.get('sort', None)
+
+        rankAlgo = RankHelper.parse_rank_style(sort_style)
+
+        query_set = rankAlgo.sort_list_of_news(comments)
+
+        return query_set
 
     def perform_create(self, serializer):
         # save the owner of the news
