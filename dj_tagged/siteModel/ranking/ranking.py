@@ -73,7 +73,7 @@ class RankingAlgo(object):
 	
 	#Not sure if this is correct. - should be converting both to UTC & then subtracting.
 	def _get_news_life_since_now_in_seconds(self, news):
-		return (datetime.utcnow() - news.date_created.replace(tzinfo=None)).total_seconds()
+		return (datetime.utcnow() - news.get_creation_date().replace(tzinfo=None)).total_seconds()
 
 
 '''
@@ -123,7 +123,7 @@ class DateRankingAlgo(RankingAlgo):
 
 class RatingRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
-		return news.upvotes - news.downvotes
+		return news.get_ups() - news.get_downs()
 
 #By comments per hr
 class CommentRankingAlgo(RankingAlgo):
@@ -158,6 +158,6 @@ class WilsonScoreRankingAlgo(RankingAlgo):
 		if (total_votes == 0):
 			return 0
 		z = 1.0 #1.0 = 85%, 1.6 = 95%
-		phat = float(news.upvotes) / total_votes
+		phat = float(news.get_ups()) / total_votes
 		return (phat+z*z/(2*total_votes)-z*sqrt((phat*(1-phat)+z*z/(4*total_votes))/total_votes)) / (1+z*z/total_votes)
 		
