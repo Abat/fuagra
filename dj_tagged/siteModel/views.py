@@ -263,7 +263,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Provide page number if necessary.
         """
    
-        news_category = request.GET.get('category', None)
+        news_category = self.request.query_params.get('category', None)
         news_list = None
 
         #Getting news list/filtering
@@ -273,15 +273,14 @@ class NewsViewSet(viewsets.ModelViewSet):
             if news_category_objects.count() > 0:
                 news_list = News.objects.filter(category=news_category)
             else:
-                #TODO THROW EXCEPTION CATEGORY DOES NOT EXIST
-                pass
+                news_list = News.objects.all()
         else: #If no filtering, pass in all news
             news_list = News.objects.all()
                 
         #sort style
         sort_style = None
-        if request.GET.get('sort') is not None:
-            sort_style = request.GET.get('sort')
+        if self.request.query_params.get('sort') is not None:
+            sort_style = self.request.query_params.get('sort')
 
         rankAlgo = None
         if (sort_style == 'Newest'):
