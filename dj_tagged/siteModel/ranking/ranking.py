@@ -116,11 +116,11 @@ class DateRankingAlgo(RankingAlgo):
 
 	def _evaluate_news(self, news):
 		logger = logging.getLogger("django");
-                logger.info("Using date ranking");
-                life_seconds = self._get_news_life_since_now_in_seconds(news)
+		logger.info("Using date ranking");
+		life_seconds = self._get_news_life_since_now_in_seconds(news)
 		life_hours = life_seconds / 60.0 / 60.0;
 		#return ( 1.0/log(life_hours/self.CUTOFF_FACTOR) )
-                return 1.0 / life_hours
+		return 1.0 / life_hours
 
 class RatingRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
@@ -153,8 +153,8 @@ class ViewRankingAlgo(RankingAlgo):
 # i got no idea what this returns. XD
 class WilsonScoreRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
-                logger = logging.getLogger("django")
-                logger.info("USing wilson rankning")
+		logger = logging.getLogger("django")
+		logger.info("USing wilson rankning")
 		total_votes = news.get_ups() + news.get_downs()
 		if (total_votes == 0):
 			return 0
