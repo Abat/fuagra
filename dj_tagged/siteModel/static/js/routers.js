@@ -21,6 +21,7 @@ define([
 
         routes: {
             "": "home",
+            "submit": "submit",
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
             "*nomatch": "notFound"
@@ -38,6 +39,16 @@ define([
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
             }});
+        },
+        submit: function() {
+            console.log("submit route triggered...");
+            var news = new Collections.NewsListCollection();
+            var sideView = new Side_Views.SideView();
+            var specialTopView = new Top_Views.SpecialTopView();
+            var contentView = new Views.ContentView({ collection: news });
+            App.rootLayout.getRegion('content').show(contentView);
+            App.rootLayout.getRegion('side').show(sideView);
+            App.rootLayout.getRegion('special_top').show(specialTopView);
         },
         subfuas: function(category) {
             var sort_sort = url('?sort') ? url('?sort') : 'None';

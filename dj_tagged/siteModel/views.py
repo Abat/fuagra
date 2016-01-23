@@ -71,12 +71,12 @@ def comments(request, pk):
     context['news_pk'] = pk
     return render(request, 'siteModel/comments.html', context)
 
-def submit(request):
-    context = {}
-    if request.user.is_anonymous():
-        return HttpResponseRedirect('/login')
-    else:
-        return render(request, 'siteModel/submit.html', context)
+#def submit(request):
+#    context = {}
+#    if request.user.is_anonymous():
+#        return HttpResponseRedirect('/login')
+#    else:
+#        return render(request, 'siteModel/submit.html', context)
 
 # User Registration/Authentication
 
