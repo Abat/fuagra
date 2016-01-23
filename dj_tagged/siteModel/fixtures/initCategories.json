@@ -56,6 +56,12 @@
   {
     "model": "siteModel.newscategory",
     "fields": {
+      "title": "Inspire"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
       "title": "Raznoe"
     }
   }
