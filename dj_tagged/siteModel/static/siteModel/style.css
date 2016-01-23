@@ -23,8 +23,31 @@ a {
 
 div#top {
     width: 90%;
+    margin: 0 auto 0 auto;
+    /*border: 1px solid red;*/
+}
+
+div#bottom {
+    padding-right: 15px;
+    padding-left: 15px;
     height: 50px;
     margin: 0 auto 0 auto;
+    background-color: #F5DEB3;
+    /*border: 1px solid black;*/
+}
+
+.nav li a {
+    font-size: 1em;
+    padding: 5px 5px 5px 5px;
+}
+
+ul.navbar-right {
+    margin: 10px 10px 10px 0;
+}
+
+ul.navbar-left {
+    margin: 10px 10px 10px 20px;
+    font-weight: bold;
 }
 
 a.comment-control {
