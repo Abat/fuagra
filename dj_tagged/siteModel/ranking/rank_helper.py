@@ -10,4 +10,4 @@ class RankHelper(object):
 			rankAlgo = DateRanking()
 		else:
 			rankAlgo = WilsonRanking()
-			return rankAlgo
+		return rankAlgo
