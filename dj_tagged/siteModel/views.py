@@ -396,7 +396,12 @@ class CommentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
-        serializer.save(owner=user, username=user.username)
+        comment = serializer.save(owner=user, username=user.username)
+        if comment is not None:
+            news_object = News.objects.get(id=int(comment.news_id))
+            news_object.num_comments += 1
+            news_object.save()
+
 
 
 # class ApiEndpoint(ProtectedResourceView):
