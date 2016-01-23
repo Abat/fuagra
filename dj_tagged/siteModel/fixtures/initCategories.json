@@ -22,5 +22,41 @@
     "fields": {
       "title": "Funny"
     }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Sport"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Science_Tech"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Economics"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Life_stories"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Movies"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Raznoe"
+    }
   }
 ]
