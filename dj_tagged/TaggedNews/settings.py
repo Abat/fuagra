@@ -58,11 +58,11 @@ MIDDLEWARE_CLASSES = (
  #    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
 #     'oauth2_provider.backends.OAuth2Backend',
     
-)
+# )
 
 ROOT_URLCONF = 'TaggedNews.urls'
 
@@ -78,7 +78,6 @@ DATABASES = {
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
-        # 'HOST': '69.164.217.97',
     }
 }
 

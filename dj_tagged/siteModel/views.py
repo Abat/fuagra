@@ -166,62 +166,6 @@ def user_login(request):
         return render(request, 'siteModel/login.html', context)
 
 @login_required
-def upvote_news(request):
-    news_id = None
-    if request.method == "GET":
-        news_id = request.GET['news_id']
-
-    if news_id:
-        news_object = News.objects.get(id=int(news_id))
-    
-    try:
-        vote = Vote.objects.get(news=news_object, user=request.user)
-    except Vote.DoesNotExist:
-        vote = None
-
-    # person has voted
-    if vote:
-        # person wants to remove his upvote
-        if vote.upvoted:
-            news_object.upvotes -= 1
-        # person downvoted before and wants to upvote
-        elif vote.downvoted:
-            news_object.downvotes -= 1
-            news_object.upvotes += 1
-            vote.downvoted = False
-            vote.upvoted = True
-    else:
-        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
-
-@login_required
-def downvote_news(request):
-    news_id = None
-    if request.method == "GET":
-        news_id = request.GET['news_id']
-
-    if news_id:
-        news_object = News.objects.get(id=int(news_id))
-    
-    try:
-        vote = Vote.objects.get(news=news_object, user=request.user)
-    except Vote.DoesNotExist:
-        vote = None
-
-    # person has voted
-    if vote:
-        # person wants to remove his downvote
-        if vote.downvoted:
-            news_object.downvotes -= 1
-        # person upvoted before and wants to downvote
-        elif vote.downvoted:
-            news_object.upvotes -= 1
-            news_object.downvotes += 1
-            vote.downvoted = True
-            vote.upvoted = False
-    else:
-        Vote.objects.create(news=news_object, user=request.user, upvoted=True)
-
-@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
@@ -295,19 +239,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         """
         Return the News for a provided id
         """
-        queryset = News.objects.all()
-        news = get_object_or_404(queryset, pk=kwargs['pk'])
-        
-        vote_queryset = Vote.objects.all()
-        upvotelist = vote_queryset.filter(news_id=kwargs['pk'], upvoted=True)
-        downvotelist = vote_queryset.filter(news_id=kwargs['pk'], downvoted=True)
-        print(upvotelist.count())
-        print(downvotelist.count())
-        news.upvotes = upvotelist.count()
-        news.downvotes = downvotelist.count()
-        serializer = NewsSerializer(news)
-        return Response(serializer.data)
-        # return super(NewsViewSet, self).retrieve(request, *args, **kwargs)
+        return super(NewsViewSet, self).retrieve(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
@@ -442,44 +374,78 @@ class VoteViewSet(viewsets.ModelViewSet):
         """
         return super(VoteViewSet, self).create(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        news_id = self.kwargs['news_id']
-        queryset = News.objects.all()
-        news = get_object_or_404(queryset, pk=news_id)
-        vote_queryset = Vote.objects.all()
-        upvotelist = vote_queryset.filter(news_id=news_id, upvoted=True)
-        downvotelist = vote_queryset.filter(news_id=news_id, downvoted=True)
-        serializer.save(user=self.request.user)
-        news.upvotes = upvotelist.count()
-        news.downvotes = downvotelist.count()
-        news.save()
+    def upvote(self, request, news_id):
+        user = self.request.user
+        serializer = VoteSerializer(data=request.data)
+        news = get_object_or_404(News, pk=news_id)
+        if serializer.is_valid():
+            try:
+                vote = Vote.objects.get(news=news_id, user=user)
+                if vote.vote_status == Vote.CLEAR_STATUS:
+                    vote.vote_status = Vote.UPVOTE_STATUS
+                    news.upvotes += 1
+                    vote.save()
+                    news.save()
+                    return Response({'upvote':'1'})
+                if vote.vote_status == Vote.DOWNVOTE_STATUS:
+                    vote.vote_status = Vote.UPVOTE_STATUS
+                    news.upvotes += 1
+                    news.downvotes -= 1
+                    vote.save()
+                    news.save()
+                    return Response({'upvote':'1', 'downvote':'-1'})
+                else:
+                    vote.vote_status = Vote.CLEAR_STATUS
+                    news.upvotes -= 1
+                    vote.save()
+                    news.save()
+                    return Response({'upvote':'-1'})
+            except Vote.DoesNotExist:
+                serializer.save(user=user, vote_status=Vote.UPVOTE_STATUS)
+                news.upvotes += 1
+                news.save()
+                return Response({'upvote':'1'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def downvote(self, request, news_id):
+        user = self.request.user
+        serializer = VoteSerializer(data=request.data)
+        news = get_object_or_404(News, pk=news_id)
+        if serializer.is_valid():
+            try:
+                vote = Vote.objects.get(news=news_id, user=user)
+                if vote.vote_status == Vote.CLEAR_STATUS:
+                    vote.vote_status = Vote.DOWNVOTE_STATUS
+                    news.downvotes += 1
+                    vote.save()
+                    news.save()
+                    return Response({'downvote':'1'})
+                if vote.vote_status == Vote.DOWNVOTE_STATUS:
+                    vote.vote_status = Vote.CLEAR_STATUS
+                    news.downvotes -= 1
+                    vote.save()
+                    news.save()
+                    return Response({'downvote':'-1'})
+                else:
+                    vote.vote_status = Vote.DOWNVOTE_STATUS
+                    news.upvotes -= 1
+                    news.downvotes += 1
+                    vote.save()
+                    news.save()
+                    return Response({'downvote':'1', 'upvote':'-1'})
+            except Vote.DoesNotExist:
+                serializer.save(user=user, vote_status=Vote.DOWNVOTE_STATUS)
+                news.downvotes += 1
+                news.save()
+                return Response({'downvote':'1'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
 
     def retrieve(self, request, *args, **kwargs):
         """
         Return the User for a provided id
         """
         return super(VoteViewSet, self).retrieve(request, *args, **kwargs)
-    # def get_queryset(self):
-    #     queryset = Vote.objects.all()
-    #     news_id = self.kwargs['news_id']
-    #     if news_id is not None:
-    #         queryset = queryset.filter(news_id=news_id)
-    #     return queryset
-        
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     return super(VoteViewSet, self).retrieve(request, *args, **kwargs)
-
-
-
-# class VoteList(generics.ListCreateAPIView):
-#     serializer_class = VoteSerializer
-
-#     def get_queryset(self):
-#         user = self.request.user
-#         news_id = self.kwargs['news_id']
-#         return Vote.objects.filter(news=news_id, user = user)
-
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
 

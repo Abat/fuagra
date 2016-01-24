@@ -40,6 +40,13 @@ vote_list = VoteViewSet.as_view({
     'post': 'create',
 })
 
+vote_upvote = VoteViewSet.as_view({
+    'post': 'upvote',
+})
+
+vote_downvote = VoteViewSet.as_view({
+    'post': 'downvote',
+})
 # vote_detail = VoteViewSet.as_view({
 #     'get': 'retrieve',
 # })
@@ -64,7 +71,8 @@ urlpatterns = patterns('',
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
     url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
     url(r'^api/news/vote/(?P<news_id>[0-9]+)/(?P<pk>[0-9]+)/?$', vote_detail, name='vote-detail'),
-
+    url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
+    url(r'^api/news/(?P<news_id>[0-9]+)/downvote/?$', vote_downvote, name='downvote'),
     # url(r'^api/vote/?$', vote_list, name='vote-list'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),
