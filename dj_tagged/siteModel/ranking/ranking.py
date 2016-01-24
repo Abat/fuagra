@@ -37,7 +37,7 @@ class Ranking(object):
 		logger = logging.getLogger("django")
 		for news in news_list:
 			score = self._evaluate(news)
-			logger.info("Score of news " + str(score) + " " + news.title)
+			#logger.info("Score of news " + str(score) + " " + news.title)
 			news_dict[news] = score
 
 		#http://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
@@ -45,8 +45,8 @@ class Ranking(object):
 		sorted_news_list_tuples = sorted(news_dict.items(), key=operator.itemgetter(1))
 		sorted_news_list = [item[0] for item in sorted_news_list_tuples]
 
-		for news in sorted_news_list:
-			logger.info("Sorted news " + news.title)
+		#for news in sorted_news_list:
+			#logger.info("Sorted news " + news.title)
 		return sorted_news_list
 
 #Composite of a weight + Ranking Algorithm
@@ -115,9 +115,12 @@ class DateRankingAlgo(RankingAlgo):
 	CUTOFF_FACTOR = 12.0
 
 	def _evaluate_news(self, news):
+		logger = logging.getLogger("django");
+		logger.info("Using date ranking");
 		life_seconds = self._get_news_life_since_now_in_seconds(news)
 		life_hours = life_seconds / 60.0 / 60.0;
-		return ( 1.0/log(life_hours/self.CUTOFF_FACTOR) )
+		#return ( 1.0/log(life_hours/self.CUTOFF_FACTOR) )
+		return 1.0 / life_hours
 
 class RatingRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
@@ -150,6 +153,8 @@ class ViewRankingAlgo(RankingAlgo):
 # i got no idea what this returns. XD
 class WilsonScoreRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
+		logger = logging.getLogger("django")
+		logger.info("USing wilson rankning")
 		total_votes = news.get_ups() + news.get_downs()
 		if (total_votes == 0):
 			return 0

@@ -8,7 +8,8 @@ define([
     'comment_views',
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT) {
+    'text!templates/contentView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, contentT) {
 
     'use strict';
 
@@ -101,6 +102,37 @@ define([
         }
     });
 
+    var ContentView = Marionette.ItemView.extend({
+        tagName: 'div',
+        className: 'contentView',
+        template: _.template(contentT),
+        initialize: function() {
+            console.log('Initializing ContentView...');
+        },
+        events: {
+            'submit form#newPost': 'newPost'
+        },
+        newPost: function(e) {
+            var self = this;
+            e.preventDefault();
+            console.log('New post...');
+            var post = this.collection.create({
+                title: $("input[name='title']", this.el).val(),
+                url: $("input[name='url']", this.el).val(),
+                category: $("select[name='category']", this.el).val(),
+            }, {
+                success: function(resp) {
+                    console.log("Success, a new post: ", resp);
+                    $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
+                },
+                error: function(err) {
+                    console.log("Error: ", err);
+                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                }
+            });
+        }
+    });
+
     var NewsView = Marionette.CompositeView.extend({
         tagName: 'div',
         template: _.template(newsT),
@@ -148,6 +180,7 @@ define([
     // export stuff
     return {
         'NewsView': NewsView,
-        'NewsItemView': NewsItemView
+        'NewsItemView': NewsItemView,
+        'ContentView': ContentView
     };
 });

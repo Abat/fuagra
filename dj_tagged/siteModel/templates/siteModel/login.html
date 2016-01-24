@@ -8,13 +8,13 @@
         <fieldset>
         <legend> Login </legend>
             {% csrf_token %}
-            Username:<br>
+            <b>Username:</b><br>
             <input type="text" name="username" value="" size="50"><br>
-            Password:<br>
+            <b>Password:</b><br>
             <input type="password" name="password" value="" size="50">
             <br><br>
             <input type="hidden" name="next" value="{{ next }}" />
-            <input type="submit" value="submit" />
+            <input type="submit" value="Login" /> or <a href='/register'> register </a>
         </fieldset>
         </form>
     </div>

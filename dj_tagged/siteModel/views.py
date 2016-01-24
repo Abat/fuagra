@@ -71,9 +71,12 @@ def comments(request, pk):
     context['news_pk'] = pk
     return render(request, 'siteModel/comments.html', context)
 
-def submit(request):
-    context = {}
-    return render(request, 'siteModel/submit.html', context)
+#def submit(request):
+#    context = {}
+#    if request.user.is_anonymous():
+#        return HttpResponseRedirect('/login')
+#    else:
+#        return render(request, 'siteModel/submit.html', context)
 
 # User Registration/Authentication
 
@@ -207,9 +210,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
-
    
-        news_category = request.GET.get('category', None)
+        news_category = self.request.query_params.get('category', None)
         news_list = None
 
         #Getting news list/filtering
@@ -219,20 +221,18 @@ class NewsViewSet(viewsets.ModelViewSet):
             if news_category_objects.count() > 0:
                 news_list = News.objects.filter(category=news_category)
             else:
-                #TODO THROW EXCEPTION CATEGORY DOES NOT EXIST
-                pass
+                news_list = News.objects.all()
         else: #If no filtering, pass in all news
             news_list = News.objects.all()
                 
         #sort style
         sort_style = None
-        if request.GET.get('sort') is not None:
-            sort_style = request.GET.get('sort')
+        if self.request.query_params.get('sort') is not None:
+            sort_style = self.request.query_params.get('sort')
 
         rankAlgo = RankHelper.parse_rank_style(sort_style)
 
         self.queryset = rankAlgo.sort_list_of_news(news_list)
-
         return super(NewsViewSet, self).list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -340,7 +340,12 @@ class CommentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
-        serializer.save(owner=user, username=user.username)
+        comment = serializer.save(owner=user, username=user.username)
+        if comment is not None:
+            news_object = News.objects.get(id=int(comment.news_id))
+            news_object.num_comments += 1
+            news_object.save()
+
 
 
 # class ApiEndpoint(ProtectedResourceView):
