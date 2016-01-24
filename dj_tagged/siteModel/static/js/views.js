@@ -62,8 +62,8 @@ define([
                     console.log(downvoteDelta);
                     self.model.set({upvotes: self.model.get('upvotes') + upvoteDelta, downvotes: self.model.get('downvotes') + downvoteDelta})
                 },
-                error: function(model, response){
-                    console.log(response.responseText);
+                error: function(model, xhr, options){
+                    console.log(xhr);
                 }
             });
         },
@@ -83,8 +83,8 @@ define([
                     console.log(downvoteDelta);
                     self.model.set({downvotes: self.model.get('downvotes') + downvoteDelta, upvotes: self.model.get('upvotes') + upvoteDelta})
                 },
-                error: function(model, response){
-                    console.log(response.responseText);
+                error: function(model, xhr, options){
+                    console.log(xhr);
                 }
             });
         },

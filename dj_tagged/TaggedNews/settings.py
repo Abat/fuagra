@@ -58,11 +58,11 @@ MIDDLEWARE_CLASSES = (
  #    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 )
 
-# AUTHENTICATION_BACKENDS = (
-#     'django.contrib.auth.backends.ModelBackend',
-#     'oauth2_provider.backends.OAuth2Backend',
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    # 'oauth2_provider.backends.OAuth2Backend',
     
-# )
+)
 
 ROOT_URLCONF = 'TaggedNews.urls'
 

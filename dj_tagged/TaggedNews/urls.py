@@ -69,10 +69,8 @@ urlpatterns = patterns('',
     url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
     url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
-    url(r'^api/news/vote/(?P<news_id>[0-9]+)/(?P<pk>[0-9]+)/?$', vote_detail, name='vote-detail'),
     url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
     url(r'^api/news/(?P<news_id>[0-9]+)/downvote/?$', vote_downvote, name='downvote'),
-    # url(r'^api/vote/?$', vote_list, name='vote-list'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),
 
