@@ -136,9 +136,9 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'siteModel.User'
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'fuagrakz@gmail.com'
-EMAIL_HOST_PASSWORD = 'FuaGra123'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_HOST_USER = 'support@fuagra.kz'
+EMAIL_HOST_PASSWORD = 'KKGAASayat'
 EMAIL_PORT = 587
 
 LOGGING = {
