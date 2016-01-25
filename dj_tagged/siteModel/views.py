@@ -392,7 +392,7 @@ class VoteViewSet(viewsets.ModelViewSet):
                     vote.save()
                     news.save()
                     return Response({'upvote':'1'})
-                if vote.vote_status == Vote.DOWNVOTE_STATUS:
+                elif vote.vote_status == Vote.DOWNVOTE_STATUS:
                     vote.vote_status = Vote.UPVOTE_STATUS
                     news.upvotes += 1
                     news.downvotes -= 1
@@ -426,7 +426,7 @@ class VoteViewSet(viewsets.ModelViewSet):
                     vote.save()
                     news.save()
                     return Response({'downvote':'1'})
-                if vote.vote_status == Vote.DOWNVOTE_STATUS:
+                elif vote.vote_status == Vote.DOWNVOTE_STATUS:
                     vote.vote_status = Vote.CLEAR_STATUS
                     news.downvotes -= 1
                     vote.save()
