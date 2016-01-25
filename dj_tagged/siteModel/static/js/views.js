@@ -28,7 +28,9 @@ define([
             };
         }
     })();
-
+    var VoteItem = Backbone.Model.extend({
+        urlRoot: function() { return this.get('url_created') },
+    });
     var NewsItemView = Marionette.ItemView.extend({
         tagName: 'li',
         className: 'newsItem',
@@ -46,23 +48,42 @@ define([
         },
         upvote: function(e) {
             e.preventDefault();
-            this.model.save({upvotes: this.model.get('upvotes') + 1}, {
-                success: function(model, response, options) {
-                    console.log(response);
-                    console.log(model);
+            var self = this;
+            var vote = new VoteItem({'url_created': '/api/news/' + this.model.id + '/upvote/'});
+
+            vote.save({news:this.model.id}, {
+                success: function(model, response, options){
+                    var upvoteDelta = parseInt(response.upvote);
+                    var downvoteDelta = 0;
+                    if (response.downvote) {
+                        downvoteDelta = parseInt(response.downvote);
+                    }
+                    console.log(upvoteDelta);
+                    console.log(downvoteDelta);
+                    self.model.set({upvotes: self.model.get('upvotes') + upvoteDelta, downvotes: self.model.get('downvotes') + downvoteDelta})
                 },
-                error: function(model, xhr, options) {
+                error: function(model, xhr, options){
                     console.log(xhr);
                 }
             });
         },
         downvote: function(e) {
             e.preventDefault();
-            this.model.save({downvotes: this.model.get('downvotes') + 1}, {
-                success: function(model, response, options) {
-                    console.log(response);
+            var self = this;
+            var vote = new VoteItem({'url_created': '/api/news/' + this.model.id + '/downvote/'});
+
+            vote.save({news:this.model.id}, {
+                success: function(model, response, options){
+                    var downvoteDelta = parseInt(response.downvote);
+                    var upvoteDelta = 0;
+                    if (response.upvote) {
+                        upvoteDelta = parseInt(response.upvote);
+                    }
+                    console.log(upvoteDelta);
+                    console.log(downvoteDelta);
+                    self.model.set({downvotes: self.model.get('downvotes') + downvoteDelta, upvotes: self.model.get('upvotes') + upvoteDelta})
                 },
-                error: function(model, xhr, options) {
+                error: function(model, xhr, options){
                     console.log(xhr);
                 }
             });

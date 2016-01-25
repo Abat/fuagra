@@ -60,7 +60,7 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-#     'oauth2_provider.backends.OAuth2Backend',
+    # 'oauth2_provider.backends.OAuth2Backend',
     
 )
 
@@ -78,7 +78,6 @@ DATABASES = {
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
-        # 'HOST': '69.164.217.97',
     }
 }
 
