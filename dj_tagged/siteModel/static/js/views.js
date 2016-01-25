@@ -58,12 +58,12 @@ define([
                     if (response.downvote) {
                         downvoteDelta = parseInt(response.downvote);
                     }
-                    console.log(upvoteDelta);
-                    console.log(downvoteDelta);
+                    console.log('News have been upvoted: ', self.model.id);
                     self.model.set({upvotes: self.model.get('upvotes') + upvoteDelta, downvotes: self.model.get('downvotes') + downvoteDelta})
+                    $('div.score', self.el).css({"color" : "green", "font-weight" : "bold"});
                 },
                 error: function(model, xhr, options){
-                    console.log(xhr);
+                    console.log('Upvote error: ', xhr);
                 }
             });
         },
@@ -79,12 +79,12 @@ define([
                     if (response.upvote) {
                         upvoteDelta = parseInt(response.upvote);
                     }
-                    console.log(upvoteDelta);
-                    console.log(downvoteDelta);
+                    console.log('News have been downvoted: ', self.model.id);
                     self.model.set({downvotes: self.model.get('downvotes') + downvoteDelta, upvotes: self.model.get('upvotes') + upvoteDelta})
+                    $('div.score', self.el).css({"color" : "red", "font-weight" : "bold"});
                 },
                 error: function(model, xhr, options){
-                    console.log(xhr);
+                    console.log('Downvote error: ', xhr);
                 }
             });
         },
