@@ -51,6 +51,7 @@ urlpatterns = patterns('',
     url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
     url(r'^api/vote/?$', views.VoteList.as_view(), name='vote-detail'),
+    url(r'^api/permissions/', views.set_user_permission, name='set_user_permission'),
     # url(r'^api/vote/?$', vote_list, name='vote-list'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),

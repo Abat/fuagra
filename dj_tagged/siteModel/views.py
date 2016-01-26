@@ -4,6 +4,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from siteModel.models import News
 from siteModel.models import NewsCategory
+from siteModel.models import NewsCategoryUserPermission
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
@@ -19,6 +20,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from django.http import JsonResponse
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime
@@ -26,6 +28,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 import logging
 
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -168,6 +171,142 @@ def user_login(request):
             context['next'] = request.GET.get('next')
         return render(request, 'siteModel/login.html', context)
 
+
+@login_required
+def set_user_permission(request):
+    logger = logging.getLogger("django")
+    #TODO
+    if request.method == 'POST':
+        category = request.POST.get('category', None)
+        username = request.POST.get('username', None)
+        target_user = User.objects.get(username = username)
+        role = request.POST.get('role', None)
+
+        success = validate_user_options(request.user, target_user, category, role)
+
+        if success:
+            news_category = NewsCategory.objects.get(title = category)
+            obj, created = NewsCategoryUserPermission.objects.get_or_create(user = target_user, category = news_category)
+            obj.permission = map_role(role)
+            obj.save()
+            return JsonResponse({'result': 'ok'})
+        else:
+            return HttpResponse('Missing Parameters or unauthorized.', status=401)
+            
+    else:
+        return HttpResponse('Forbidden', status=404)
+
+def can_user_post(user, category):
+    logger = logging.getLogger("django")
+    logger.info("SET USER PERMIS")
+    if not category_exists(category):
+        return False
+    try:
+        user_permission = NewsCategoryUserPermission.objects.get(user = user, category = category)
+        permission = user_permission.permission
+        #Banned and cannot post
+        logger.info("permission" + permission)
+        if permission == 'BN':
+            logger.info("cant post then")
+            return False
+    except NewsCategoryUserPermission.DoesNotExist:
+        logger.info("NO EXIST")
+        #They are a user. and can post.
+        pass
+    return True
+
+def can_user_delete(user, category):
+    if not category_exists(category):
+        return False
+    try:
+        permission = NewsCategoryUserPermission.objects.get(user = user, category = category).permission
+        #Only admin and mods can delete
+        if permission == 'MD' or permission == 'AD':
+            return True
+    except NewsCategoryUserPermission.DoesNotExist:
+        #They are a user
+        pass
+    return False
+
+def validate_user_options(requester_user, target_user, category, role):
+    logger = logging.getLogger("django")
+    logger.info("SET USER PERMIS")
+    if (requester_user.is_anonymous()):
+        logger.info("IS ANONY")
+        return False
+    if target_user is None:
+        logger.info("NO TARGET USER")
+        return False
+    if category is None:
+        logger.info("CATEGORY NONE")
+        return False
+    if not category_exists(category):
+        logger.info("CATAGENORY NO EXIST")
+        return False
+    if role is None:
+        logger.info("NO TARGET ROLE")
+        return False
+
+    req_permission = None
+    try:
+        req_permission = NewsCategoryUserPermission.objects.get(user = requester_user, category = category).permission
+    except NewsCategoryUserPermission.DoesNotExist:
+        logger.info ("WTF REQUESTER INFO NO EXIST")
+        req_permission = None
+
+    cur_permission = None
+    try:
+        cur_permission = NewsCategoryUserPermission.objects.get(user = target_user, category = category).permission
+    except NewsCategoryUserPermission.DoesNotExist:
+        cur_permission = None
+
+    requester_permission = map_permission_values(req_permission)
+    target_user_current_permission = map_permission_values(cur_permission)
+    target_user_permission = map_permission_values(role, True)
+    
+    #Invalid string passed in
+    if (target_user_permission == 0):
+        logger.info("INVALID TARGET USER POERMISSION")
+        return False
+
+    #Can't change someone higher than you
+    if (requester_permission <= target_user_current_permission):
+        logger.info("INVALID RANK" + str(requester_permission) + " " + str(target_user_current_permission))
+        return False
+
+    #No point in setting the same value
+    if (target_user_current_permission == target_user_permission):
+        logger.info("SAME VAL")
+        return False
+
+    #moderator only set by admin.
+    if target_user_permission == 4:
+        return True
+
+    #target_user_permission 1-3 can be set by mod or admin
+    if requester_permission == 4 or requester_permission == 5:
+        return True
+
+def map_role(role):
+    the_dict = {'AD': 'AD', 'MD': 'MD', 'EX': 'EX', 'US': 'US', 'BN': 'BN',
+            'Admin': 'AD', 'Moderator': 'MD', 'Expert': 'EX', 'User': 'US', 'Banned': 'BN'};
+    return the_dict.get(role, 'US')
+
+def map_permission_values (permission, null_check = False):
+    the_dict = {'AD': 5, 'MD': 4, 'EX': 3, 'US': 2, 'BN': 1,
+            'Admin': 5, 'Moderator': 4, 'Expert': 3, 'User': 2, 'Banned': 1};
+    if null_check:
+        return the_dict.get(permission, 0)
+    else:
+        return the_dict.get(permission, 2)
+
+def category_exists(category):
+    if (category is None):
+        return False
+    #Check if news category specified exists.
+    news_category_objects = NewsCategory.objects.filter(title=category)
+    return news_category_objects.count() > 0
+
 @login_required
 def upvote_news(request):
     news_id = None
@@ -273,8 +412,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         #Getting news list/filtering
         if news_category is not None:
             #Check if news category specified exists.
-            news_category_objects = NewsCategory.objects.filter(title=news_category)
-            if news_category_objects.count() > 0:
+            if category_exists(news_category):
                 news_list = News.objects.filter(category=news_category)
             else:
                 news_list = News.objects.all()
@@ -301,12 +439,20 @@ class NewsViewSet(viewsets.ModelViewSet):
         """
         Create news object.
         """
-        return super(NewsViewSet, self).create(request, *args, **kwargs)
+        user = get_user(request)
+        category = request.POST.get('category')
+        can_post = can_user_post(user, category)
+        if can_post:
+            return super(NewsViewSet, self).create(request, *args, **kwargs)
+        else:
+            return HttpResponse('Unauthorized or banned.', status=401)
+        
 
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
         serializer.save(owner=user, username=user.username)
+
 
     def update(self, request, *args, **kwargs):
         """
@@ -329,6 +475,12 @@ class NewsViewSet(viewsets.ModelViewSet):
         Provide id of the news.
         Only the owner of the news can delete it.
         """
+        user = get_user(self.request)
+
+        if user.is_anonymous():
+            return HttpResponse('Unauthorized', status=401)
+
+        news = News.objects.filter(category=news_category)
         return super(NewsViewSet, self).destroy(request, *args, **kwargs)
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -393,9 +545,23 @@ class CommentList(generics.ListCreateAPIView):
 
         return query_set
 
+    def create(self, request, *args, **kwargs):
+        """
+        Create comments object.
+        """
+        news_id = self.kwargs['pk']
+        news = News.objects.get(id=int(news_id))
+        category = news.category.title
+        user = get_user(request)
+        can_post = can_user_post(user, category)
+        if can_post:
+            return super(CommentList, self).create(request, *args, **kwargs)
+        else:
+            return HttpResponse('Unauthorized or banned.', status=401)
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
+
         comment = serializer.save(owner=user, username=user.username)
         if comment is not None:
             news_object = News.objects.get(id=int(comment.news_id))
@@ -442,4 +608,6 @@ class VoteList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
 
