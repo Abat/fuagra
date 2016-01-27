@@ -173,13 +173,14 @@ def user_login(request):
 
 
 @login_required
+@csrf_exempt
 def set_user_permission(request):
     logger = logging.getLogger("django")
     #TODO
     if request.method == 'POST':
         category = request.POST.get('category', None)
         username = request.POST.get('username', None)
-        target_user = User.objects.get(username = username)
+        target_user = User.objects.get_object_or_404(username = username)
         role = request.POST.get('role', None)
 
         success = validate_user_options(request.user, target_user, category, role)
@@ -473,15 +474,15 @@ class NewsViewSet(viewsets.ModelViewSet):
         """
         Delete news. 
         Provide id of the news.
-        Only the owner of the news can delete it.
+        Only the owner of the news can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-
-        if user.is_anonymous():
-            return HttpResponse('Unauthorized', status=401)
-
-        news = News.objects.filter(category=news_category)
-        return super(NewsViewSet, self).destroy(request, *args, **kwargs)
+        category = request.POST.get('category')
+        can_delete = can_user_delete(user, category)
+        if can_delete:
+            return super(NewsViewSet, self).destroy(request, *args, **kwargs)
+        else:
+            return HttpResponse('Unauthorized.', status=401)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -567,6 +568,19 @@ class CommentList(generics.ListCreateAPIView):
             news_object = News.objects.get(id=int(comment.news_id))
             news_object.num_comments += 1
             news_object.save()
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete comment
+        Only the owner of the comment can delete it. ---- need to verify this.
+        """
+        user = get_user(self.request)
+        category = request.POST.get('category')
+        can_delete = can_user_delete(user, category)
+        if can_delete:
+            return super(CommentList, self).destroy(request, *args, **kwargs)
+        else:
+            return HttpResponse('Unauthorized.', status=401)
 
 
 
