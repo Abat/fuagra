@@ -152,7 +152,6 @@ class ViewRankingAlgo(RankingAlgo):
 		views_per_hour = news.num_comments / life_hours
 		return (views_per_hour / self.MAX_SCORE_VIEWS_PER_HOUR)
 		
-# i got no idea what this returns. XD
 class WilsonScoreRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
 		total_votes = news.get_ups() + news.get_downs()
@@ -169,7 +168,6 @@ def time_since_epoch_seconds(date):
 	delta = date.replace(tzinfo=None) - epoch
 	return delta.days * 86400 + delta.seconds + (float(delta.microseconds) / 1000000)
 
-# i got no idea what this returns. XD
 class HotRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
 		vote_score = news.get_ups() - news.get_downs()
@@ -181,7 +179,7 @@ class HotRankingAlgo(RankingAlgo):
 			sign = 0
 		else:
 			sign = -1
-		seconds = time_since_epoch_seconds(news.get_creation_date()) - 5555555
+		seconds = time_since_epoch_seconds(news.get_creation_date()) - 1454102930
 		return round(sign * order + seconds / 45000, 7)
 
 		
