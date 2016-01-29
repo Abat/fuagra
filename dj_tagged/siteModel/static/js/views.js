@@ -8,8 +8,9 @@ define([
     'comment_views',
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
-    'text!templates/contentView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, contentT) {
+    'text!templates/submitLinkView.html',
+    'text!templates/administerView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, submitLinkT, administerT) {
 
     'use strict';
 
@@ -102,12 +103,12 @@ define([
         }
     });
 
-    var ContentView = Marionette.ItemView.extend({
+    var SubmitLinkView = Marionette.ItemView.extend({
         tagName: 'div',
-        className: 'contentView',
-        template: _.template(contentT),
+        className: 'submitLinkView',
+        template: _.template(submitLinkT),
         initialize: function() {
-            console.log('Initializing ContentView...');
+            console.log('Initializing SubmitLinkView...');
         },
         events: {
             'submit form#newPost': 'newPost'
@@ -115,14 +116,14 @@ define([
         newPost: function(e) {
             var self = this;
             e.preventDefault();
-            console.log('New post...');
+            console.log('New link post...');
             var post = this.collection.create({
                 title: $("input[name='title']", this.el).val(),
                 url: $("input[name='url']", this.el).val(),
                 category: $("select[name='category']", this.el).val(),
             }, {
                 success: function(resp) {
-                    console.log("Success, a new post: ", resp);
+                    console.log("Success, a new link post: ", resp);
                     $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
                 },
                 error: function(err) {
@@ -130,6 +131,15 @@ define([
                     $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
                 }
             });
+        }
+    });
+
+    var AdministerView = Marionette.ItemView.extend({
+        tagName: 'div',
+        className: 'administerView',
+        template: _.template(administerT),
+        initialize: function() {
+            console.log('Initializing AdministerView...');
         }
     });
 
@@ -181,6 +191,7 @@ define([
     return {
         'NewsView': NewsView,
         'NewsItemView': NewsItemView,
-        'ContentView': ContentView
+        'SubmitLinkView': SubmitLinkView,
+        'AdministerView': AdministerView
     };
 });

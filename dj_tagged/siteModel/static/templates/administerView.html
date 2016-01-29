@@ -1,0 +1,31 @@
+<form action="/api/permissions/" method="post" enctype="application/json">
+    <fieldset>
+        <legend>Modify User Role</legend>
+        <b>Username:</b><br>
+        <input type="text" name="username">
+        <br>
+        <b>Role:</b><br>
+        <select required name="role">
+            <option value="Moderator"> Moderator </option>
+            <option value="User"> User </option>
+            <option value="Expert"> Expert </option>
+            <option value="Banned"> Banned </option>
+        </select>
+        <br>
+        <b>Category:</b><br>
+        <select required name="category">
+            <option value="News"> News </option>
+            <option value="Funny"> Funny </option>
+            <option value="Sport"> Sport </option>
+            <option value="Science_Tech"> Science&Tech </option>
+            <option value="Economics"> Economics </option>
+            <option value="Life_stories"> Life stories </option>
+            <option value="Movies"> Movies </option>
+            <option value="Inspire"> Inspire </option>
+            <option value="Music"> Music </option>
+            <option value="Raznoe"> Raznoe </option>
+        </select>
+        <br><br>
+        <input type="submit" value="Modify">
+    </fieldset>
+</form>	

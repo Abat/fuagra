@@ -24,6 +24,7 @@ define([
             "submit": "submit",
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
+            "administer": "administer",
             "*nomatch": "notFound"
         },
 
@@ -45,8 +46,8 @@ define([
             var news = new Collections.NewsListCollection();
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            var contentView = new Views.ContentView({ collection: news });
-            App.rootLayout.getRegion('content').show(contentView);
+            var submitLinkView = new Views.SubmitLinkView({ collection: news });
+            App.rootLayout.getRegion('content').show(submitLinkView);
             App.rootLayout.getRegion('side').show(sideView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },
@@ -75,6 +76,11 @@ define([
                     App.rootLayout.getRegion('content').show(commentsView);
                 }});
             }});
+        },
+        administer: function() {
+            console.log("administer route triggered...");
+            var administerView = new Views.AdministerView();
+            App.rootLayout.getRegion('content').show(administerView);
         },
         notFound: function() {
             console.log("Route not found: ", arguments);
