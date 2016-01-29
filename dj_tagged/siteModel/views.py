@@ -578,7 +578,11 @@ class CommentList(generics.ListCreateAPIView):
         category = request.POST.get('category')
         can_delete = can_user_delete(user, category)
         if can_delete:
-            return super(CommentList, self).destroy(request, *args, **kwargs)
+            comment_id = self.kwargs['pk']
+            comment = Comments.objects.get_object_or_404(pk = comment_id)
+            comment.content = "This message has been deleted."
+            comment.save()
+            return JsonResponse({'result':'success'})
         else:
             return HttpResponse('Unauthorized.', status=401)
 
