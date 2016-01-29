@@ -105,6 +105,10 @@ class DateRanking(Ranking):
 		date_algo = RankingObject(1.0, DateRankingAlgo())
 		super(DateRanking, self).__init__([date_algo, ])
 
+class HotRanking(Ranking):
+	def __init__(self):
+		hot_algo = RankingObject(1.0, HotRankingAlgo())
+		super(HotRanking, self).__init__([hot_algo, ])
 '''
 Ranking Algorithms
 '''
@@ -115,8 +119,6 @@ class DateRankingAlgo(RankingAlgo):
 	CUTOFF_FACTOR = 12.0
 
 	def _evaluate_news(self, news):
-		logger = logging.getLogger("django");
-		logger.info("Using date ranking");
 		life_seconds = self._get_news_life_since_now_in_seconds(news)
 		life_hours = life_seconds / 60.0 / 60.0;
 		#return ( 1.0/log(life_hours/self.CUTOFF_FACTOR) )
@@ -153,12 +155,33 @@ class ViewRankingAlgo(RankingAlgo):
 # i got no idea what this returns. XD
 class WilsonScoreRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
-		logger = logging.getLogger("django")
-		logger.info("USing wilson rankning")
 		total_votes = news.get_ups() + news.get_downs()
 		if (total_votes == 0):
 			return 0
 		z = 1.0 #1.0 = 85%, 1.6 = 95%
 		phat = float(news.get_ups()) / total_votes
 		return (phat+z*z/(2*total_votes)-z*sqrt((phat*(1-phat)+z*z/(4*total_votes))/total_votes)) / (1+z*z/total_votes)
+
+
+
+def time_since_epoch_seconds(date):
+	epoch = datetime(1970, 1, 1)
+	delta = date.replace(tzinfo=None) - epoch
+	return delta.days * 86400 + delta.seconds + (float(delta.microseconds) / 1000000)
+
+# i got no idea what this returns. XD
+class HotRankingAlgo(RankingAlgo):
+	def _evaluate_news(self, news):
+		vote_score = news.get_ups() - news.get_downs()
+		order = log(max(abs(vote_score), 1), 10)
+		sign = 0
+		if (vote_score > 0):
+			sign = 1
+		elif (vote_score == 0):
+			sign = 0
+		else:
+			sign = -1
+		seconds = time_since_epoch_seconds(news.get_creation_date()) - 5555555
+		return round(sign * order + seconds / 45000, 7)
+
 		
