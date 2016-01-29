@@ -204,7 +204,7 @@ def list_category(request):
     if request.method == "GET":
         categories = NewsCategory.objects.all()
         data = [{'title': item.title} for item in categories]
-        return HttpResponse(json.dumps(data))
+        return HttpResponse(json.dumps(data), content_type="application/json")
     raise Http404("Category List invalid method.")
 
 class NewsViewSet(viewsets.ModelViewSet):

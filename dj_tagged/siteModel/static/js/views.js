@@ -94,12 +94,6 @@ define([
             e.preventDefault();
             console.log('comments view triggered');
             App.router.navigate('comments/' + self.model.get('id'), {trigger: true});
-            /*
-            var comments = new Collections.CommentsListCollection([], { newsId: this.model.get('id') });
-            comments.fetch({ success: function(items, response, options) {
-                var commentsView = new Comment_Views.CommentsView({ newsId: self.model.get('id'), collection: items }); 
-                commentsView.render();
-            }});*/
         }
     });
 
@@ -109,6 +103,23 @@ define([
         template: _.template(submitLinkT),
         initialize: function() {
             console.log('Initializing SubmitLinkView...');
+        },
+        onBeforeRender: function() {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: "/api/categories",
+                success: function(data) {
+                    $('select[name="category"] option').remove();
+                    $.each(data, function(index, item) {
+                        $('select[name="category"]').append(
+                            $("<option></option>")
+                                .text(item.title)
+                                .val(item.title)
+                        );
+                    });
+                }
+            });
         },
         events: {
             'submit form#newPost': 'newPost'
@@ -140,6 +151,23 @@ define([
         template: _.template(administerT),
         initialize: function() {
             console.log('Initializing AdministerView...');
+        },
+        onBeforeRender: function() {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: "/api/categories",
+                success: function(data) {
+                    $('select[name="category"] option').remove();
+                    $.each(data, function(index, item) {
+                        $('select[name="category"]').append(
+                            $("<option></option>")
+                                .text(item.title)
+                                .val(item.title)
+                            );
+                    });
+                }
+            });
         }
     });
 
