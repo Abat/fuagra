@@ -19,13 +19,14 @@ from django.contrib.auth import logout
 from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from django.http import Http404
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
-
+import json
 
 
 # Create your views here.
@@ -201,8 +202,10 @@ def resend_confirmation_email(request):
 
 def list_category(request):
     if request.method == "GET":
-        return NewsCategory.objects.all()
-    return HttpResponseNotFound('<h1>Page not found</h1>')
+        categories = NewsCategory.objects.all()
+        data = [{'title': item.title} for item in categories]
+        return HttpResponse(json.dumps(data))
+    raise Http404("Category List invalid method.")
 
 class NewsViewSet(viewsets.ModelViewSet):
 

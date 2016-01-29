@@ -71,6 +71,7 @@ urlpatterns = patterns('',
     url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
     url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
     url(r'^api/news/(?P<news_id>[0-9]+)/downvote/?$', vote_downvote, name='downvote'),
+    url(r'^api/categories/?$', views.list_category, name='list_category'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),
 
