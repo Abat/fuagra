@@ -199,6 +199,11 @@ def resend_confirmation_email(request):
             [email], fail_silently=False)
     return HttpResponse("uhh ok")
 
+def list_category(request):
+    if request.method == "GET":
+        return NewsCategory.objects.all()
+    return HttpResponseNotFound('<h1>Page not found</h1>')
+
 class NewsViewSet(viewsets.ModelViewSet):
 
     serializer_class = NewsSerializer
