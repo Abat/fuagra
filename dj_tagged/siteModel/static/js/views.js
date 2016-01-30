@@ -47,6 +47,16 @@ define([
         modelEvents: {
             'change': 'render'
         },
+        onRender: function() {
+            var self = this;
+            if (this.model.get('has_voted') == 1) {
+                $('div.score', self.el).css({"color" : "green", "font-weight" : "bold"});
+            } else if (this.model.get('has_voted') == -1) {
+                $('div.score', self.el).css({"color" : "red", "font-weight" : "bold"});
+            } else {
+                // nothing for now
+            }
+        },
         upvote: function(e) {
             e.preventDefault();
             var self = this;
