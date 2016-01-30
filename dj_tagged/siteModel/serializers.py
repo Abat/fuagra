@@ -10,7 +10,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
 	def get_has_voted(self, obj):
 		request = self.context.get('request', None)
-		if request is not None:
+		if request is not None and not request.user.is_anonymous():
 			try:
 				vote = Vote.objects.get(news = obj, user = request.user)
 				return vote.vote_status;
