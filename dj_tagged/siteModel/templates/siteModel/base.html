@@ -47,7 +47,9 @@
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}
                             {% csrf_token %}
-                            <li><a href='/administer' style="color:red;"> administer | </a></li>
+                                {% if user.is_staff %}
+                                    <li><a href='/administer' style="color:red;"> administer | </a></li>
+                                {% endif %}
                             <li><a href="#">Hello, {{ user }} |</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                             {% else %}
