@@ -42,7 +42,7 @@ class Ranking(object):
 
 		#http://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
 		#Apparently this is faster than news_dict, news_dict.key
-		sorted_news_list_tuples = sorted(news_dict.items(), key=operator.itemgetter(1))
+		sorted_news_list_tuples = sorted(news_dict.items(), key=operator.itemgetter(1), reverse=True)
 		sorted_news_list = [item[0] for item in sorted_news_list_tuples]
 
 		#for news in sorted_news_list:

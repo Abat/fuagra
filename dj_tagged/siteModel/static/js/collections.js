@@ -12,7 +12,7 @@ define([
         model: Models.NewsItemModel,
         url: '/api/news/',
         parse: function(response) {
-            return response.results.reverse();
+            return response.results;
         }
     });
 
