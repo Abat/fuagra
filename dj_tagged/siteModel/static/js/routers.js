@@ -22,6 +22,7 @@ define([
         routes: {
             "": "home",
             "submit": "submit",
+            "submitText": "submitText",
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
             "administer": "administer",
@@ -48,6 +49,16 @@ define([
             var specialTopView = new Top_Views.SpecialTopView();
             var submitLinkView = new Views.SubmitLinkView({ collection: news });
             App.rootLayout.getRegion('content').show(submitLinkView);
+            App.rootLayout.getRegion('side').show(sideView);
+            App.rootLayout.getRegion('special_top').show(specialTopView);
+        },
+        submitText: function() {
+            console.log("submitText route triggered...");
+            var news = new Collections.NewsListCollection();
+            var sideView = new Side_Views.SideView();
+            var specialTopView = new Top_Views.SpecialTopView();
+            var submitTextView = new Views.SubmitTextView({ collection: news });
+            App.rootLayout.getRegion('content').show(submitTextView);
             App.rootLayout.getRegion('side').show(sideView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },

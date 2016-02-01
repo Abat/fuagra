@@ -9,8 +9,9 @@ define([
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
     'text!templates/submitLinkView.html',
+    'text!templates/submitTextView.html',
     'text!templates/administerView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, submitLinkT, administerT) {
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
 
     'use strict';
 
@@ -155,6 +156,54 @@ define([
         }
     });
 
+    var SubmitTextView = Marionette.ItemView.extend({
+        tagName: 'div',
+        className: 'submitTextView',
+        template: _.template(submitTextT),
+        initialize: function() {
+            console.log('Initializing SubmitTextView...');
+        },
+        onBeforeRender: function() {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: "/api/categories",
+                success: function(data) {
+                    $('select[name="category"] option').remove();
+                    $.each(data, function(index, item) {
+                        $('select[name="category"]').append(
+                            $("<option></option>")
+                                .text(item.title)
+                                .val(item.title)
+                        );
+                    });
+                }
+            });
+        },
+        events: {
+            'submit form#newPost': 'newPost'
+        },
+        newPost: function(e) {
+            var self = this;
+            e.preventDefault();
+            console.log('New link post...');
+            var post = this.collection.create({
+                title: $("input[name='title']", this.el).val(),
+                content: $("input[name='content']", this.el).val(),
+                category: $("select[name='category']", this.el).val(),
+            }, {
+                success: function(resp) {
+                    console.log("Success, a new link post: ", resp);
+                    $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
+                },
+                error: function(err) {
+                    console.log("Error: ", err);
+                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                }
+            });
+        }
+    });
+
     var AdministerView = Marionette.ItemView.extend({
         tagName: 'div',
         className: 'administerView',
@@ -230,6 +279,7 @@ define([
         'NewsView': NewsView,
         'NewsItemView': NewsItemView,
         'SubmitLinkView': SubmitLinkView,
+        'SubmitTextView': SubmitTextView,
         'AdministerView': AdministerView
     };
 });
