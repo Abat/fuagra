@@ -1,11 +1,11 @@
-<form action="/api/news/" method="post" enctype="application/json" id="newPost">
+<form action="/api/news/" method="post" enctype="application/json" id="newTextPost">
     <fieldset>
-        <legend>Submit a Text Postk</legend>
+        <legend>Submit a new text post</legend>
         <b>Title:</b><br>
         <input type="text" name="title">
         <br>
         <b>Content:</b><br>
-        <input type="text" name="content">
+        <textarea name='content' wrap='hard' rows='20' cols='20'></textarea>
         <br>
         <b>Category:</b><br>
         <select required name="category">

@@ -6,12 +6,13 @@ define([
     'collections',
     'models',
     'comment_views',
+    'markdown',
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
     'text!templates/submitLinkView.html',
     'text!templates/submitTextView.html',
     'text!templates/administerView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, Micromarkdown, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
 
     'use strict';
 
@@ -38,7 +39,10 @@ define([
         className: 'newsItem',
         template: _.template(newsItemT),
         templateHelpers: function() {
-            return { urlParsed: parseUrl(this.model.get('url')) };
+            return { urlParsed: parseUrl(this.model.get('url')), textPost: this.textPost };
+        },
+        initialize: function(attr) {
+            this.textPost = attr.textPost;
         },
         events: {
             'click a.up': 'upvote',
@@ -56,6 +60,9 @@ define([
                 $('div.score', self.el).css({"color" : "red", "font-weight" : "bold"});
             } else {
                 // nothing for now
+            }
+            if (this.textPost) {
+                $('p.textPost', self.el).html(Micromarkdown.parse(self.textPost.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
             }
         },
         upvote: function(e) {
@@ -133,7 +140,7 @@ define([
             });
         },
         events: {
-            'submit form#newPost': 'newPost'
+            'submit form#newLinkPost': 'newPost'
         },
         newPost: function(e) {
             var self = this;
@@ -181,19 +188,19 @@ define([
             });
         },
         events: {
-            'submit form#newPost': 'newPost'
+            'submit form#newTextPost': 'newPost'
         },
         newPost: function(e) {
             var self = this;
             e.preventDefault();
-            console.log('New link post...');
+            console.log('New text post...');
             var post = this.collection.create({
                 title: $("input[name='title']", this.el).val(),
-                content: $("input[name='content']", this.el).val(),
+                content: $("textarea[name='content']", this.el).val(),
                 category: $("select[name='category']", this.el).val(),
             }, {
                 success: function(resp) {
-                    console.log("Success, a new link post: ", resp);
+                    console.log("Success, a new text post: ", resp);
                     $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
                 },
                 error: function(err) {

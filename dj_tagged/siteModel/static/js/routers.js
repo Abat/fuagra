@@ -81,7 +81,7 @@ define([
             var news = new Collections.NewsListCollection();
             news.fetch({ success: function(items, response, options) {
                 var newsModel = items.get(newsId);
-                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel}));  
+                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel, textPost: newsModel.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
                     var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
                     App.rootLayout.getRegion('content').show(commentsView);
