@@ -22,6 +22,7 @@ define([
         routes: {
             "": "home",
             "submit": "submit",
+            "submitText": "submitText",
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
             "administer": "administer",
@@ -51,6 +52,16 @@ define([
             App.rootLayout.getRegion('side').show(sideView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },
+        submitText: function() {
+            console.log("submitText route triggered...");
+            var news = new Collections.NewsListCollection();
+            var sideView = new Side_Views.SideView();
+            var specialTopView = new Top_Views.SpecialTopView();
+            var submitTextView = new Views.SubmitTextView({ collection: news });
+            App.rootLayout.getRegion('content').show(submitTextView);
+            App.rootLayout.getRegion('side').show(sideView);
+            App.rootLayout.getRegion('special_top').show(specialTopView);
+        },
         subfuas: function(category) {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
@@ -70,7 +81,7 @@ define([
             var news = new Collections.NewsListCollection();
             news.fetch({ success: function(items, response, options) {
                 var newsModel = items.get(newsId);
-                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel}));  
+                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel, textPost: newsModel.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
                     var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
                     App.rootLayout.getRegion('content').show(commentsView);
