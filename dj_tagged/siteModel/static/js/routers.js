@@ -64,11 +64,10 @@ define([
         subfuas: function(category) {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
-            var news = new Collections.NewsListCollection();
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items });
+            App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
+                var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);

@@ -246,9 +246,11 @@ define([
         childView: NewsItemView,
         childViewContainer: 'ul',
 
-        initialize: function() {
+        initialize: function(attr) {
             console.log('Initializing NewsView...');
             this.pageNum = 1;
+            this.category = attr.category;
+            this.sort = attr.sort;
         },
 
         events: {
@@ -261,6 +263,12 @@ define([
 
         newsSync: function() {
             console.log('News collection synced');    
+            var self = this;
+            if (this.pageNum == 1) {
+                $('a#prevPage', self.el).hide();
+            } else {
+                $('a#prevPage', self.el).show();
+            }
         },
         nextPage: function(e) {
             e.preventDefault();
@@ -274,8 +282,13 @@ define([
         },
         fetch: function() {
             var self = this;
-            this.collection.fetch({data: {page: this.pageNum},  success: function(items, response, options) {
+            this.collection.fetch({data: $.param({page: this.pageNum, category: self.category, sort: self.sort }),  success: function(items, response, options) {
                 console.log('success: ', response);
+                if (response.next == null) {
+                    $('a#nextPage', self.el).hide();
+                } else {
+                    $('a#nextPage', self.el).show();
+                }
             }, error: function(collection, response, options) {
                 console.log('error: ', response);
                 self.pageNum = 1;
