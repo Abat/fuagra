@@ -7,12 +7,13 @@ define([
     'models',
     'comment_views',
     'markdown',
+    'timeago',
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
     'text!templates/submitLinkView.html',
     'text!templates/submitTextView.html',
     'text!templates/administerView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, Micromarkdown, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
+], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, Micromarkdown, Timeago, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
 
     'use strict';
 
@@ -64,6 +65,7 @@ define([
             if (this.textPost) {
                 $('p.textPost', self.el).html(Micromarkdown.parse(self.textPost.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
             }
+            $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
         },
         upvote: function(e) {
             e.preventDefault();

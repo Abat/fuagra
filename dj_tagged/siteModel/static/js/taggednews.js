@@ -50,5 +50,6 @@ define([
     });    
 
     taggedApp.news = new Collections.NewsListCollection();
+
     return taggedApp;
 });

@@ -82,7 +82,7 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 40, # old val 20, changed to 40 for testing purposes
+    'PAGINATE_BY': 25, # old val 40; original 20
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
     #     'oauth2_provider.ext.rest_framework.OAuth2Authentication',
     # ]
