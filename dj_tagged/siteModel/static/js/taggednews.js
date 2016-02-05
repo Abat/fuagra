@@ -3,10 +3,11 @@ define([
     'underscore',
     'backbone',
     'marionette',
+    'collections',
     'routers',
     'views',
     'text!templates/layout.html',
-], function($, _, Backbone, Marionette, Routers, Views, layoutT) {
+], function($, _, Backbone, Marionette, Collections, Routers, Views, layoutT) {
 
     var taggedApp;
 
@@ -47,5 +48,7 @@ define([
         console.log('App start triggered...');
         Backbone.history.start({ pushState: true });
     });    
+
+    taggedApp.news = new Collections.NewsListCollection();
     return taggedApp;
 });

@@ -32,10 +32,9 @@ define([
         home: function() {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
-            var news = new Collections.NewsListCollection();
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
+            App.news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
                 var newsView = new Views.NewsView({ collection: items });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
@@ -78,10 +77,9 @@ define([
         comments: function(newsId) {
             console.log("comments route triggered: ", newsId);
             var comments = new Collections.CommentsListCollection([], { newsId: newsId });
-            var news = new Collections.NewsListCollection();
-            news.fetch({ success: function(items, response, options) {
-                var newsModel = items.get(newsId);
-                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel, textPost: newsModel.get('content')}));  
+            var newsModel = new Models.NewsItemModel({ id: newsId });
+            newsModel.fetch({ success: function(model, response, options) {
+                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
                     var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
                     App.rootLayout.getRegion('content').show(commentsView);
