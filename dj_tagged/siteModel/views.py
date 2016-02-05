@@ -188,7 +188,7 @@ def set_user_permission(request):
         if success:
             news_category = NewsCategory.objects.get(title = category)
             obj, created = NewsCategoryUserPermission.objects.get_or_create(user = target_user, category = news_category)
-            obj.permission = map_role(role)
+            obj.permission = map_role_to_code(role)
             obj.save()
             return JsonResponse({'result': 'ok'})
         else:
@@ -288,10 +288,14 @@ def validate_user_options(requester_user, target_user, category, role):
     if requester_permission == 4 or requester_permission == 5:
         return True
 
-def map_role(role):
+def map_role_to_code(role):
     the_dict = {'AD': 'AD', 'MD': 'MD', 'EX': 'EX', 'US': 'US', 'BN': 'BN',
             'Admin': 'AD', 'Moderator': 'MD', 'Expert': 'EX', 'User': 'US', 'Banned': 'BN'};
     return the_dict.get(role, 'US')
+
+def map_code_to_role(role):
+    the_dict = {'AD': 'Admin', 'MD': 'Moderator', 'EX': 'Expert', 'US': 'User', 'BN': 'Banned'};
+    return the_dict.get(role, 'User')
 
 def map_permission_values (permission, null_check = False):
     the_dict = {'AD': 5, 'MD': 4, 'EX': 3, 'US': 2, 'BN': 1,
@@ -365,6 +369,20 @@ def downvote_news(request):
         Vote.objects.create(news=news_object, user=request.user, upvoted=True)
 
 @login_required
+def check_user_permission(request, category):
+    if not category_exists(category):
+        return HttpResponse('Error.', status=404)
+    else:
+        try:
+            user_permission = NewsCategoryUserPermission.objects.get(user = request.user, category = category)
+            permission = user_permission.permission
+            string_permission = map_code_to_role(permission);
+            return HttpResponse(string_permission)
+        except NewsCategoryUserPermission.DoesNotExist:
+            string_permission = map_code_to_role("NotFound");
+            return HttpResponse(string_permission)
+
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
@@ -400,7 +418,6 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
     model = News
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,)
     def list(self, request, *args, **kwargs):
         """
         Return a list of News paginated by 20 items.
