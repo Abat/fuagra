@@ -67,6 +67,10 @@ def about(request):
     context = {}
     return render(request, 'siteModel/about.html', context)
 
+def faq(request):
+    context = {}
+    return render(request, 'siteModel/faq.html', context)
+
 def comments(request, pk):
     context = {}
     context['news_pk'] = pk

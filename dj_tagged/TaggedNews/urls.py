@@ -57,6 +57,7 @@ vote_downvote = VoteViewSet.as_view({
 
 urlpatterns = patterns('',
     url(r'^about/?$', views.about, name='about'),
+    url(r'^faq/?$', views.faq, name='faq'),
     #url(r'^submit/?$', views.submit, name='submit'),
     url(r'^register/?$', views.register, name='register'),
     url(r'^login/?$', views.user_login, name='login'),

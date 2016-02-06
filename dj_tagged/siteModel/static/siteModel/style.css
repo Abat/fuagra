@@ -204,6 +204,14 @@ div.bottomArea {
     margin-bottom: 5px;
 }
 
+p.footer_p {
+    margin: 2px auto 3px auto;
+}
+
+a.footer_links {
+    margin: auto 10px auto 10px;
+}
+
 span.help {
     float: right;
 }

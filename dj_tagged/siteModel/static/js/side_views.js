@@ -13,13 +13,24 @@ define([
         className: 'sideContainer',
         template: _.template(sideT),
 
-        initialize: function() {
+        initialize: function(attr) {
+            this.category = attr.category;
             console.log('Initializing SideView...');
+        },
+
+        onRender: function() {
+            var self = this;
+
+            if (self.category) {
+                $('a[name="submitLink"]', self.el).attr('href', "/f/" + self.category + "/submit");
+                $('a[name="submitText"]', self.el).attr('href', "/f/" + self.category + "/submitText");
+            }
+
+
+            if (this.category == "Help" || this.category == "Feedback") {
+                $('a[name="submitLink"]', self.el).hide();
+            }
         }
-
-
-
-
     });
 
 

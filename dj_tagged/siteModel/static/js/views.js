@@ -121,25 +121,40 @@ define([
         tagName: 'div',
         className: 'submitLinkView',
         template: _.template(submitLinkT),
-        initialize: function() {
+        initialize: function(attr) {
             console.log('Initializing SubmitLinkView...');
+            this.category = attr.category;
         },
         onBeforeRender: function() {
+            if (!this.category) { 
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/categories",
+                    success: function(data) {
+                        $('select[name="category"] option').remove();
+                        $.each(data, function(index, item) {
+                            if (item.title != "Help" && item.title != "Feedback") {
+                                $('select[name="category"]').append(
+                                    $("<option></option>")
+                                        .text(item.title)
+                                        .val(item.title)
+                                );
+                            }
+                        });
+                    }
+                });
+            } 
+        },
+        onRender: function() {
             var self = this;
-            $.ajax({
-                type: 'GET',
-                url: "/api/categories",
-                success: function(data) {
-                    $('select[name="category"] option').remove();
-                    $.each(data, function(index, item) {
-                        $('select[name="category"]').append(
-                            $("<option></option>")
-                                .text(item.title)
-                                .val(item.title)
-                        );
-                    });
-                }
-            });
+            if (self.category) {
+                $('select[name="category"] option', self.el).remove();
+                $('select[name="category"]', self.el).append(
+                    $("<option></option>")
+                        .text(self.category)
+                        .val(self.category)
+                );
+            }
         },
         events: {
             'submit form#newLinkPost': 'newPost'
@@ -169,25 +184,40 @@ define([
         tagName: 'div',
         className: 'submitTextView',
         template: _.template(submitTextT),
-        initialize: function() {
+        initialize: function(attr) {
             console.log('Initializing SubmitTextView...');
+            this.category = attr.category;
         },
         onBeforeRender: function() {
+            if (!this.category) {
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/categories",
+                    success: function(data) {
+                        $('select[name="category"] option').remove();
+                        $.each(data, function(index, item) {
+                            if (item.title != "Help" && item.title != "Feedback") {
+                                $('select[name="category"]').append(
+                                    $("<option></option>")
+                                        .text(item.title)
+                                        .val(item.title)
+                                );
+                            }
+                        });
+                    }
+                });
+            }
+        },
+        onRender: function() {
             var self = this;
-            $.ajax({
-                type: 'GET',
-                url: "/api/categories",
-                success: function(data) {
-                    $('select[name="category"] option').remove();
-                    $.each(data, function(index, item) {
-                        $('select[name="category"]').append(
-                            $("<option></option>")
-                                .text(item.title)
-                                .val(item.title)
-                        );
-                    });
-                }
-            });
+            if (self.category) {
+                $('select[name="category"] option', self.el).remove();
+                $('select[name="category"]', self.el).append(
+                    $("<option></option>")
+                        .text(self.category)
+                        .val(self.category)
+                );
+            }
         },
         events: {
             'submit form#newTextPost': 'newPost'
