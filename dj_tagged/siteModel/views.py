@@ -377,10 +377,10 @@ def check_user_permission(request, category):
             user_permission = NewsCategoryUserPermission.objects.get(user = request.user, category = category)
             permission = user_permission.permission
             string_permission = map_code_to_role(permission);
-            return HttpResponse(string_permission)
+            return JsonResponse({ "permission" : string_permission })
         except NewsCategoryUserPermission.DoesNotExist:
-            string_permission = map_code_to_role("NotFound");
-            return HttpResponse(string_permission)
+            string_permission = map_code_to_role("Default");
+            return JsonResponse({ "permission" : string_permission })
 
 @login_required
 def user_logout(request):
