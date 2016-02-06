@@ -60,7 +60,7 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-#     'oauth2_provider.backends.OAuth2Backend',
+    # 'oauth2_provider.backends.OAuth2Backend',
     
 )
 
@@ -78,12 +78,11 @@ DATABASES = {
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
-        # 'HOST': '69.164.217.97',
     }
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 40, # old val 20, changed to 40 for testing purposes
+    'PAGINATE_BY': 25, # old val 40; original 20
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
     #     'oauth2_provider.ext.rest_framework.OAuth2Authentication',
     # ]
@@ -136,9 +135,9 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'siteModel.User'
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'fuagrakz@gmail.com'
-EMAIL_HOST_PASSWORD = 'FuaGra123'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_HOST_USER = 'support@fuagra.kz'
+EMAIL_HOST_PASSWORD = 'KKGAASayat'
 EMAIL_PORT = 587
 
 LOGGING = {

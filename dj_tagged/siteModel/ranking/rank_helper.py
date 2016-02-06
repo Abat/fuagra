@@ -8,6 +8,8 @@ class RankHelper(object):
 		rankAlgo = None
 		if (rank_style == 'Newest'):
 			rankAlgo = DateRanking()
-		else:
+		elif (rank_style == 'Wilson'):
 			rankAlgo = WilsonRanking()
+		else:
+			rankAlgo = HotRanking()
 		return rankAlgo

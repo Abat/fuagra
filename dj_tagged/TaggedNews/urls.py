@@ -4,7 +4,7 @@ from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
 from siteModel.views import CommentList
-from siteModel.views import VoteList
+from siteModel.views import VoteViewSet
 
 news_list = NewsViewSet.as_view({
     'get': 'list',
@@ -28,6 +28,25 @@ user_detail = UserViewSet.as_view({
     'delete': 'destroy',
 })
 
+vote_detail = VoteViewSet.as_view({
+    'get' : 'retrieve',
+    'put' : 'update',
+    'patch' : 'partial_update',
+    'delete' : 'destroy',
+})
+
+vote_list = VoteViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+
+vote_upvote = VoteViewSet.as_view({
+    'post': 'upvote',
+})
+
+vote_downvote = VoteViewSet.as_view({
+    'post': 'downvote',
+})
 # vote_detail = VoteViewSet.as_view({
 #     'get': 'retrieve',
 # })
@@ -38,8 +57,8 @@ user_detail = UserViewSet.as_view({
 
 urlpatterns = patterns('',
     url(r'^about/?$', views.about, name='about'),
-    # url(r'^comments/(?P<pk>[0-9]+)/$', views.comments, name='comments'),
-    url(r'^submit/?$', views.submit, name='submit'),
+    url(r'^faq/?$', views.faq, name='faq'),
+    #url(r'^submit/?$', views.submit, name='submit'),
     url(r'^register/?$', views.register, name='register'),
     url(r'^login/?$', views.user_login, name='login'),
     url(r'^logout/?$', views.user_logout, name='logout'),
@@ -51,9 +70,11 @@ urlpatterns = patterns('',
     url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
     url(r'^api/users/(?P<category>\w+)/?$', views.check_user_permission, name='check_user_permission'),
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
-    url(r'^api/vote/?$', views.VoteList.as_view(), name='vote-detail'),
     url(r'^api/permissions/', views.set_user_permission, name='set_user_permission'),
-    # url(r'^api/vote/?$', vote_list, name='vote-list'),
+    url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
+    url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
+    url(r'^api/news/(?P<news_id>[0-9]+)/downvote/?$', vote_downvote, name='downvote'),
+    url(r'^api/categories/?$', views.list_category, name='list_category'),
 
     url(r'^docs/', include('rest_framework_swagger.urls')),
 

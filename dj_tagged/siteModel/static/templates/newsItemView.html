@@ -6,10 +6,11 @@
     </div>
     <div class='newsInfo'>
         <p class='title'>
-            <a target='_blank' href='<%= url %>' class='title'> <%= title %> </a>
+        <a target='<%= url ? "_blank" : "" %>' href='<%= url ? url : "/comments/" + id %>' class='title'> <%= title %> </a>
             <span class='source'> <a target='_blank' href='<%= (urlParsed.protocol=="https://") ? "https://" : "http://" + urlParsed.host %>'> ( <%= urlParsed.hostname %> ) </a> </span>
         </p>
-        <p class='meta'> submitted at <%= date_created %> by <a href='#' class='meta'><%= username %></a> </p>
+        <p class='meta'> submitted <time class="timeago" datetime="<%= date_created %>">January 1, 2016</time> by <a href='#' class='meta'><%= username %></a> </p>
+        <p class='textPost'></p>
         <ul class='buttons'>
             <li class='comments_button'> <a href='/api/comments/<%= id %>' class='comments'> <%= num_comments %> comments </a> </li>
         </ul>

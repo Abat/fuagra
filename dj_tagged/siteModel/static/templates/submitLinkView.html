@@ -1,0 +1,26 @@
+<form action="/api/news/" method="post" enctype="application/json" id="newLinkPost">
+    <fieldset>
+        <legend>Submit a new link</legend>
+        <b>Title:</b><br>
+        <input type="text" name="title">
+        <br>
+        <b>Url:</b><br>
+        <input type="text" name="url">
+        <br>
+        <b>Category:</b><br>
+        <select required name="category">
+            <option value="News"> News </option>
+            <option value="Funny"> Funny </option>
+            <option value="Sport"> Sport </option>
+            <option value="Science_Tech"> Science&Tech </option>
+            <option value="Economics"> Economics </option>
+            <option value="Life_stories"> Life stories </option>
+            <option value="Movies"> Movies </option>
+            <option value="Inspire"> Inspire </option>
+            <option value="Music"> Music </option>
+            <option value="Raznoe"> Raznoe </option>
+        </select>
+        <br><br>
+        <input type="submit" value="Submit">
+    </fieldset>
+</form>	

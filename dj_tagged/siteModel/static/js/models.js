@@ -8,7 +8,7 @@ define([
     'use strict';
 
     var NewsItem = Backbone.Model.extend({
-        
+        urlRoot: '/api/news/'        
     });
 
     var CommentsItem = Backbone.Model.extend({

@@ -36,7 +36,8 @@ class News(models.Model):
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
-    url = models.URLField(unique=True)
+    url = models.URLField(unique=True, null=True, blank=True)
+    content = models.CharField(max_length=2000, null=True, blank=True)
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
@@ -97,10 +98,17 @@ class UserProfile(models.Model):
         return self.user.username
 
 class Vote(models.Model):
+    CLEAR_STATUS = 0
+    DOWNVOTE_STATUS = -1
+    UPVOTE_STATUS = 1
+    VOTE_CHOICES = (
+        (CLEAR_STATUS, 'Clear'),
+        (DOWNVOTE_STATUS, 'Downvote'),
+        (UPVOTE_STATUS, 'Upvote'),
+    )
     news = models.ForeignKey(News)
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    upvoted = models.BooleanField(default=False)
-    downvoted = models.BooleanField(default=False)
+    vote_status = models.SmallIntegerField(choices=VOTE_CHOICES, default=0)
 
     class Meta:
         unique_together = ('user', 'news',)

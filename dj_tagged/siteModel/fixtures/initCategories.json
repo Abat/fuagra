@@ -62,7 +62,25 @@
   {
     "model": "siteModel.newscategory",
     "fields": {
+      "title": "Music"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
       "title": "Raznoe"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Help"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Feedback"
     }
   }
 ]
