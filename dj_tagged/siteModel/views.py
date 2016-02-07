@@ -172,6 +172,49 @@ def user_login(request):
         if request.GET.get('next') is not None:
             context['next'] = request.GET.get('next')
         return render(request, 'siteModel/login.html', context)
+'''
+def reset_password_request(request):
+
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        username = username.lower();
+        
+        try:
+            user = User.objects.get(username = username);
+            email = user.email
+            
+            if email is None:
+                return HttpResponse("Acc does not have a confirmed email.", status=200)
+            send_mail('Reset Password', 'Use http://www.fuagra.kz/accounts/confirmation?key=%s to reset your password. If you did not request this, please ignore this email. The link is valid for 1 hour.' % confirmation_key, settings.EMAIL_HOST_USER,
+            [email], fail_silently=False)
+            return HttpResponse("Ok.", status=200)
+        except User.DoesNotExist:
+            return HttpResponse("No account with that username.", status=200)
+
+def reset_password(request):
+
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        username = username.lower();
+        
+        try:
+            user = User.objects.get(username = username);
+            email = user.email
+            
+            if email is None:
+                return HttpResponse("Acc does not have a confirmed email.", status=200)
+            send_mail('Reset Password', 'Use http://www.fuagra.kz/accounts/confirmation?key=%s to reset your password. If you did not request this, please ignore this email. The link is valid for 1 hour.' % confirmation_key, settings.EMAIL_HOST_USER,
+            [email], fail_silently=False)
+            return HttpResponse("Ok.", status=200)
+        except User.DoesNotExist:
+            return HttpResponse("No account with that username.", status=200)
+'''
 
 @login_required
 def user_logout(request):
