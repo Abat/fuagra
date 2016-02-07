@@ -185,7 +185,10 @@ def set_user_permission(request):
     if request.method == 'POST':
         category = request.POST.get('category', None)
         username = request.POST.get('username', None)
-        target_user = User.objects.get_object_or_404(username = username)
+        try:
+            target_user = User.objects.get(username = username)
+        except User.DoesNotExist:
+            return createAPIErrorJsonReponse('User does not exist.', 404)
         role = request.POST.get('role', None)
 
         success = validate_user_options(request.user, target_user, category, role)
