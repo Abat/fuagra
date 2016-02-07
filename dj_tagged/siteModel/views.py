@@ -190,12 +190,12 @@ def set_user_permission(request):
             obj, created = NewsCategoryUserPermission.objects.get_or_create(user = target_user, category = news_category)
             obj.permission = map_role_to_code(role)
             obj.save()
-            return JsonResponse({'result': 'ok'})
+            return createAPISuccessJsonReponse({'result': 'ok'})
         else:
-            return HttpResponse('Missing Parameters or unauthorized.', status=401)
+            return createAPIErrorJsonReponse('Missing Parameters or unauthorized.', 401)
             
     else:
-        return HttpResponse('Forbidden', status=404)
+        return createAPIErrorJsonReponse('Forbidden', 404)
 
 def can_user_post(user, category):
     logger = logging.getLogger("django")
@@ -371,16 +371,16 @@ def downvote_news(request):
 @login_required
 def check_user_permission(request, category):
     if not category_exists(category):
-        return HttpResponse('Error.', status=404)
+        return createAPIErrorJsonReponse('Category does not exist.', 404)
     else:
         try:
             user_permission = NewsCategoryUserPermission.objects.get(user = request.user, category = category)
             permission = user_permission.permission
             string_permission = map_code_to_role(permission);
-            return JsonResponse({ "permission" : string_permission })
+            return createAPISuccessJsonReponse({ "permission" : string_permission })
         except NewsCategoryUserPermission.DoesNotExist:
             string_permission = map_code_to_role("Default");
-            return JsonResponse({ "permission" : string_permission })
+            return createAPISuccessJsonReponse({ "permission" : string_permission })
 
 @login_required
 def user_logout(request):
@@ -463,7 +463,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         if can_post:
             return super(NewsViewSet, self).create(request, *args, **kwargs)
         else:
-            return HttpResponse('Unauthorized or banned.', status=401)
+            return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
         
 
     def perform_create(self, serializer):
@@ -499,7 +499,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         if can_delete:
             return super(NewsViewSet, self).destroy(request, *args, **kwargs)
         else:
-            return HttpResponse('Unauthorized.', status=401)
+            return createAPIErrorJsonReponse('Unauthorized.', 401)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -575,7 +575,7 @@ class CommentList(generics.ListCreateAPIView):
         if can_post:
             return super(CommentList, self).create(request, *args, **kwargs)
         else:
-            return HttpResponse('Unauthorized or banned.', status=401)
+            return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
@@ -599,9 +599,9 @@ class CommentList(generics.ListCreateAPIView):
             comment = Comments.objects.get_object_or_404(pk = comment_id)
             comment.content = "This message has been deleted."
             comment.save()
-            return JsonResponse({'result':'success'})
+            return createAPISuccessJsonReponse({'result':'success'})
         else:
-            return HttpResponse('Unauthorized.', status=401)
+            return createAPIErrorJsonReponse('Unauthorized.', 401)
 
 
 
@@ -646,3 +646,11 @@ class VoteList(generics.ListCreateAPIView):
 
 
 
+def createAPIErrorJsonReponse(msg, code):
+    return JsonResponse({'status': 'error',
+                        'reason': msg}, status=code)
+
+def createAPISuccessJsonReponse(repDict):
+    repDict['status'] = 'success'
+    return JsonResponse(repDict)
+    
