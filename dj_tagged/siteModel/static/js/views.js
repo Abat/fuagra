@@ -247,25 +247,15 @@ define([
         tagName: 'div',
         className: 'administerView',
         template: _.template(administerT),
-        initialize: function() {
+        initialize: function(attr) {
             console.log('Initializing AdministerView...');
+            this.category = attr.category;
         },
-        onBeforeRender: function() {
-            var self = this;
-            $.ajax({
-                type: 'GET',
-                url: "/api/categories",
-                success: function(data) {
-                    $('select[name="category"] option').remove();
-                    $.each(data, function(index, item) {
-                        $('select[name="category"]').append(
-                            $("<option></option>")
-                                .text(item.title)
-                                .val(item.title)
-                            );
-                    });
-                }
-            });
+        onRender: function() {
+            $('select[name="category"] option', this.el).remove();
+            $('select[name="category"]', this.el).append(
+                $("<option></option>").text(this.category).val(this.category)
+            );
         }
     });
 

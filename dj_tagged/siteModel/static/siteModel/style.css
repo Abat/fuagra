@@ -9,6 +9,11 @@ a {
     text-decoration: none;
 }
 
+a.administer {
+    color: red;
+    display: none;
+}
+
 .duck {
     width: 43px;
     height: 43px;

@@ -18,7 +18,8 @@ class NewsCategoryUserPermission(models.Model):
         ('AD', 'Admin'),
         ('MD', 'Moderator'),
         ('EX', 'Expert'),
-        ('US', 'User') #We probably can just assume the user is by default a user.
+        ('US', 'User'), #We probably can just assume the user is by default a user.
+        ('BN', 'Banned')
     )
     permission = models.CharField(max_length=2, choices=USER_TYPES, default = 'US')
     last_updated = models.DateTimeField(default=timezone.now)

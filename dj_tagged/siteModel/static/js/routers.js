@@ -29,7 +29,9 @@ define([
 
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
-            "administer": "administer",
+
+            "f/:category/administer": "administer",
+
             "*nomatch": "notFound"
         },
 
@@ -85,9 +87,9 @@ define([
                 }});
             }});
         },
-        administer: function() {
+        administer: function(category) {
             console.log("administer route triggered...");
-            var administerView = new Views.AdministerView();
+            var administerView = new Views.AdministerView({ category: category });
             App.rootLayout.getRegion('content').show(administerView);
         },
         notFound: function() {

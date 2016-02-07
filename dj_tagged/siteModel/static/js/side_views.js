@@ -17,7 +17,20 @@ define([
             this.category = attr.category;
             console.log('Initializing SideView...');
         },
-
+        onBeforeRender: function() {
+            var self = this;
+            if (self.category) {
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/users/" + self.category,
+                    success: function(data) {
+                        if (data.permission == "Moderator") {
+                            $('a[name="administer"]', self.el).attr('href', "/f/" + self.category + "/administer").show();
+                        }
+                    }
+                });
+            }
+        },
         onRender: function() {
             var self = this;
 
