@@ -207,8 +207,9 @@ def set_user_permission(request):
 
 def can_user_post(user, category):
     logger = logging.getLogger("django")
-    logger.info("SET USER PERMIS")
+    logger.info("SET USER PERMIS" + str(category))
     if not category_exists(category):
+        logger.info("NO EXIST CATEGORY")
         return False
     try:
         user_permission = NewsCategoryUserPermission.objects.get(user = user, category = category)
@@ -417,7 +418,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Create news object.
         """
         user = get_user(request)
-        category = request.POST.get('category')
+        category = request.DATA['category']
         can_post = can_user_post(user, category)
         if can_post:
             return super(NewsViewSet, self).create(request, *args, **kwargs)
@@ -453,7 +454,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Only the owner of the news can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-        category = request.POST.get('category')
+        category = request.DATA['category']
         can_delete = can_user_delete(user, category)
         if can_delete:
             return super(NewsViewSet, self).destroy(request, *args, **kwargs)
@@ -551,7 +552,7 @@ class CommentList(generics.ListCreateAPIView):
         Only the owner of the comment can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-        category = request.POST.get('category')
+        category = request.DATA['category']
         can_delete = can_user_delete(user, category)
         if can_delete:
             comment_id = self.kwargs['pk']
