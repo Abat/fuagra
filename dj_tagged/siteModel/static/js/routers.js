@@ -82,8 +82,56 @@ define([
             newsModel.fetch({ success: function(model, response, options) {
                 App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
-                    var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
-                    App.rootLayout.getRegion('content').show(commentsView);
+				
+					console.log("items: ", items);
+					
+					var new_items = items;
+					console.log("new items: ", new_items);
+					
+					//create leveled lists
+					var i;
+					var j;
+					
+					var level0list = [];
+					for(i = 0; i < new_items.length; i ++) {
+						if (new_items.models[i].attributes.parent == null) {
+							level0list.push(new_items.models[i]);
+							new_items.remove(new_items.models[i]);
+							i --;
+						}
+					}
+					
+					var levelLists = [];
+					var prevlevellist = level0list;
+					while(new_items.length > 0) {
+						console.log("new_items.length", new_items.length);
+						console.log("prevlevellist", prevlevellist);
+						var curlevellist = [];
+						for(i = 0; i < new_items.length; i ++) {
+							var flag = false;
+							for(j = 0; j < prevlevellist.length; j ++) {
+								if (new_items.models[i].attributes.parent == prevlevellist[j].attributes.id)
+									flag = true;
+							}
+							if(flag) {
+								curlevellist.push(new_items.models[i]);
+								new_items.remove(new_items.models[i]);
+								i --;
+							}
+						}
+						levelLists.push(curlevellist);
+						prevlevellist = curlevellist;
+					}
+					
+					var lv0 = new Collections.CommentsListCollection([], { newsId: newsId });
+					lv0.add(level0list);
+
+					var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0});
+					
+					commentsView.childCollection = levelLists;
+					//var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});
+					App.rootLayout.getRegion('content').show(commentsView);			
+					
                 }});
             }});
         },
