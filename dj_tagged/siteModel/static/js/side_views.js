@@ -24,7 +24,8 @@ define([
                     type: 'GET',
                     url: "/api/users/" + self.category,
                     success: function(data) {
-                        if (data.permission == "Moderator") {
+                        // show Administer link for moderators and admins
+                        if (data.permission == "Moderator" || data.permission == "Admin") {
                             $('a[name="administer"]', self.el).attr('href', "/f/" + self.category + "/administer").show();
                         }
                     }
@@ -39,7 +40,7 @@ define([
                 $('a[name="submitText"]', self.el).attr('href', "/f/" + self.category + "/submitText");
             }
 
-
+            // Users cannot submit links in  Help and Feedback
             if (this.category == "Help" || this.category == "Feedback") {
                 $('a[name="submitLink"]', self.el).hide();
             }

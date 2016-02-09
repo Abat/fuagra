@@ -182,14 +182,15 @@ def user_login(request):
 def set_user_permission(request):
     logger = logging.getLogger("django")
     #TODO
+    request.DATA = json.loads(request.body.decode("utf-8"))
     if request.method == 'POST':
-        category = request.POST.get('category', None)
-        username = request.POST.get('username', None)
+        category = request.DATA['category']
+        username = request.DATA['username']
         try:
             target_user = User.objects.get(username = username)
         except User.DoesNotExist:
             return createAPIErrorJsonReponse('User does not exist.', 404)
-        role = request.POST.get('role', None)
+        role = request.DATA['role']
 
         success = validate_user_options(request.user, target_user, category, role)
 

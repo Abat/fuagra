@@ -32,9 +32,7 @@ define([
             };
         }
     })();
-    var VoteItem = Backbone.Model.extend({
-        urlRoot: function() { return this.get('url_created') },
-    });
+
     var NewsItemView = Marionette.ItemView.extend({
         tagName: 'li',
         className: 'newsItem',
@@ -70,7 +68,7 @@ define([
         upvote: function(e) {
             e.preventDefault();
             var self = this;
-            var vote = new VoteItem({'url_created': '/api/news/' + this.model.id + '/upvote/'});
+            var vote = new Models.VoteItemModel({'url_created': '/api/news/' + this.model.id + '/upvote/'});
 
             vote.save({news:this.model.id}, {
                 success: function(model, response, options){
@@ -91,7 +89,7 @@ define([
         downvote: function(e) {
             e.preventDefault();
             var self = this;
-            var vote = new VoteItem({'url_created': '/api/news/' + this.model.id + '/downvote/'});
+            var vote = new Models.VoteItemModel({'url_created': '/api/news/' + this.model.id + '/downvote/'});
 
             vote.save({news:this.model.id}, {
                 success: function(model, response, options){
@@ -251,11 +249,53 @@ define([
             console.log('Initializing AdministerView...');
             this.category = attr.category;
         },
+        events: {
+            'submit form#changeUserRole': 'modify'
+        },
+        onBeforeRender: function() {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: "/api/users/" + self.category,
+                success: function(data) {
+                    // show Administer link for moderators and admins
+                    if (data.permission == "Admin") {
+                        $('select[name="role"]', self.el).append(
+                            $('<option></option>').text("Moderator").val("Moderator")
+                        );
+                    }
+                }
+            });
+            
+        },
         onRender: function() {
             $('select[name="category"] option', this.el).remove();
             $('select[name="category"]', this.el).append(
                 $("<option></option>").text(this.category).val(this.category)
             );
+        },
+        modify: function(e) {
+            var self = this;
+            e.preventDefault();
+            console.log('Changing user role...');
+            var userRole = new Models.UserRoleItemModel({
+                username: $("input[name='username']", this.el).val(),
+                role: $("select[name='role']", this.el).val(),
+                category: $("select[name='category']", this.el).val(),
+            });
+            
+            userRole.save({}, {
+                success: function(model, response, options) {
+                    console.log("Succes, user role has changed: ", response);
+                    $('form#changeUserRole', self.el)[0].reset();
+                    $(self.el).append('<br><b> Success, ' + model.attributes.username + '\'s role has changed</b>');
+                },
+                error: function(model, response, options) {
+                    console.log("Error: ", response);
+                    $(self.el).append('<br><b> Error: ' + response.responseJSON.reason + '</b>');
+                }
+            });
+             
         }
     });
 

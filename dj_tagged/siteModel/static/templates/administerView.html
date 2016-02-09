@@ -1,4 +1,4 @@
-<form action="/api/permissions/" method="post" enctype="application/json">
+<form action="/api/permissions/" id="changeUserRole" method="post" enctype="application/json">
     <fieldset>
         <legend>Modify User Role</legend>
         <b>Username:</b><br>
@@ -6,7 +6,6 @@
         <br>
         <b>Role:</b><br>
         <select required name="role">
-            <option value="Moderator"> Moderator </option>
             <option value="User"> User </option>
             <option value="Expert"> Expert </option>
             <option value="Banned"> Banned </option>
