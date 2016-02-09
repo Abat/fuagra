@@ -136,6 +136,7 @@ div.content {
 /* list styles */
 ul.buttons {
     margin-bottom: 5px;
+    padding-left: 0;
 }
 
 .buttons li {
@@ -148,6 +149,7 @@ div.news {
 }
 
 div.newsInfo {
+    padding-left: 40px;
 }
 
 p.textPost {
