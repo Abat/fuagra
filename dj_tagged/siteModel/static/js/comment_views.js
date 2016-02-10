@@ -67,9 +67,11 @@ define([
 			//console.log("CommentsItemView_initialize_collection...", this.collection);
         },
         
-        onRender: function() {
+        onRenderTemplate: function() {
+            var self = this;
 			//console.log("CommentsItemView_render...", this.model);
-            //$('div.content', this.el).html(Micromarkdown.parse(this.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+            // fixes new lines in comments, otherwise renders all comment as one line
+            $('div.content', this.el).html(Micromarkdown.parse(self.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
         },
         
         events: {
@@ -135,13 +137,9 @@ define([
             }, {
                 success: function(resp) {
                     console.log(resp);
-                    /*var newComment = new CommentsItemView({
-                        model: comment
-                    });
-                    $('form#newComment', self.el).remove();
-                    $('div#topComment', self.el).empty();
-                    $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>').append(newComment.render().el);
-                */},
+                    $('form#newComment', self.el)[0].reset();
+                    $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
+                },
                 error: function(err) {
                     console.log(err);
                 }
