@@ -1,5 +1,6 @@
 <html>
     <head>
+        {% load staticfiles %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,12 +47,17 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}
+                            {% load notifications_tags %}
+                            {% notifications_unread as unread_count %}
                             {% csrf_token %}
                                 {% if user.is_staff %}
                                     <li><a href='/administer' style="color:red;"> administer | </a></li>
                                 {% endif %}
                             <li><a href="#">Hello, {{ user }} |</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
+                            {% if unread_count %}
+                            <li><a href='{% url 'fuagra_notifications' %}'>| {{ unread_count }} notifications</a></li>
+                            {% endif %}
                             {% else %}
                             <li><a href="{% url 'register' %}">Register |</a></li>
                             <li><a href="{% url 'login' %}">Login</a></li>
@@ -61,7 +67,6 @@
                 </div>
             </div>
         </nav>
-
         <div class='default_container'>
             {% block content %} this is base template {% endblock %} 
         </div>

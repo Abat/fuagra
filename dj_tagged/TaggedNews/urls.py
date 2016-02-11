@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+import notifications
 from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
@@ -82,7 +83,8 @@ urlpatterns = patterns('',
     # url(r'^secret$', views.secret_page, name='secret'),
     url(r'^accounts/confirmation/?$', views.confirm_email, name='confirm_email'),
     url(r'^accounts/resend_confirmation/$', views.resend_confirmation_email, name='resend_confirmation_email'),
-
+    url(r'^notifications/$', views.notifications, name='fuagra_notifications'),
+    url(r'^inbox/notifications/', include('notifications.urls', namespace='notifications')),
     # catch all
     url(r'^.*$', views.index, name='index'),
 )
