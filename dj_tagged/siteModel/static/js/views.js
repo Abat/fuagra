@@ -58,7 +58,7 @@ define([
             } else if (this.model.get('has_voted') == -1) {
                 $('div.score', self.el).css({"color" : "red", "font-weight" : "bold"});
             } else {
-                // nothing for now
+                $('div.score', self.el).css({"color" : "black"});
             }
             if (this.textPost) {
                 $('p.textPost', self.el).html(Micromarkdown.parse(self.textPost.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
@@ -72,14 +72,8 @@ define([
 
             vote.save({news:this.model.id}, {
                 success: function(model, response, options){
-                    var upvoteDelta = parseInt(response.upvote);
-                    var downvoteDelta = 0;
-                    if (response.downvote) {
-                        downvoteDelta = parseInt(response.downvote);
-                    }
                     console.log('News have been upvoted: ', self.model.id);
-                    self.model.set({upvotes: self.model.get('upvotes') + upvoteDelta, downvotes: self.model.get('downvotes') + downvoteDelta})
-                    $('div.score', self.el).css({"color" : "green", "font-weight" : "bold"});
+                    self.model.fetch();
                 },
                 error: function(model, xhr, options){
                     console.log('Upvote error: ', xhr);
@@ -93,14 +87,8 @@ define([
 
             vote.save({news:this.model.id}, {
                 success: function(model, response, options){
-                    var downvoteDelta = parseInt(response.downvote);
-                    var upvoteDelta = 0;
-                    if (response.upvote) {
-                        upvoteDelta = parseInt(response.upvote);
-                    }
                     console.log('News have been downvoted: ', self.model.id);
-                    self.model.set({downvotes: self.model.get('downvotes') + downvoteDelta, upvotes: self.model.get('upvotes') + upvoteDelta})
-                    $('div.score', self.el).css({"color" : "red", "font-weight" : "bold"});
+                    self.model.fetch();
                 },
                 error: function(model, xhr, options){
                     console.log('Downvote error: ', xhr);
