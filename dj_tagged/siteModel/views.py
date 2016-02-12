@@ -364,11 +364,10 @@ class CommentList(generics.ListCreateAPIView):
             news_object = News.objects.get(id=int(comment.news_id))
             news_object.num_comments += 1
             news_object.save()
-            print(user)
-            print(comment.parent.owner)
             if (comment.parent is not None) and (user != comment.parent.owner):
                 notify.send(user, verb=u'replied to your comment', recipient=comment.parent.owner, action_object=comment, target=news_object)
-
+            else:
+                notify.send(user, verb=u'commented on your post', recipient=news_object.owner, action_object=comment, target=news_object)
 
 
 # class ApiEndpoint(ProtectedResourceView):

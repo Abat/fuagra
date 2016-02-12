@@ -56,7 +56,7 @@
                             <li><a href="#">Hello, {{ user }} |</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                             {% if unread_count %}
-                            <li><a href='{% url 'fuagra_notifications' %}'>| {{ unread_count }} notifications</a></li>
+                            <li><a href='{% url 'fuagra_notifications' %}'>| {{ unread_count }} {% if unread_count == 1 %} notification {% else %} notifications {% endif %}</a></li>
                             {% endif %}
                             {% else %}
                             <li><a href="{% url 'register' %}">Register |</a></li>
