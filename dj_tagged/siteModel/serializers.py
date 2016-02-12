@@ -20,7 +20,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = News
-		fields = ('id', 'title', 'date_created', 'date_updated', 'upvotes', 'downvotes', 'views', 'url', 'num_comments', 'owner', 'username', 'category', 'has_voted') 
+		fields = ('id', 'title', 'date_created', 'date_updated', 'upvotes', 'downvotes', 'views', 'url', 'content', 'num_comments', 'owner', 'username', 'category', 'has_voted') 
 		read_only_fields = ('id', 'date_created', 'date_updated', 'views', 'num_comments', 'owner', 'username', 'has_voted')
 	
 class UserSerializer(serializers.ModelSerializer):

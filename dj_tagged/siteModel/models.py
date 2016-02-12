@@ -18,7 +18,8 @@ class NewsCategoryUserPermission(models.Model):
         ('AD', 'Admin'),
         ('MD', 'Moderator'),
         ('EX', 'Expert'),
-        ('US', 'User') #We probably can just assume the user is by default a user.
+        ('US', 'User'), #We probably can just assume the user is by default a user.
+        ('BN', 'Banned')
     )
     permission = models.CharField(max_length=2, choices=USER_TYPES, default = 'US')
     last_updated = models.DateTimeField(default=timezone.now)
@@ -35,7 +36,8 @@ class News(models.Model):
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
-    url = models.URLField(unique=True)
+    url = models.URLField(unique=True, null=True, blank=True)
+    content = models.CharField(max_length=2000, null=True, blank=True)
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)

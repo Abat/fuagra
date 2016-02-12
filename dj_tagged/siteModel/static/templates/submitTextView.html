@@ -1,15 +1,11 @@
-<form action="/api/permissions/" id="changeUserRole" method="post" enctype="application/json">
+<form action="/api/news/" method="post" enctype="application/json" id="newTextPost">
     <fieldset>
-        <legend>Modify User Role</legend>
-        <b>Username:</b><br>
-        <input type="text" name="username">
+        <legend>Submit a new text post</legend>
+        <b>Title:</b><br>
+        <input type="text" name="title">
         <br>
-        <b>Role:</b><br>
-        <select required name="role">
-            <option value="User"> User </option>
-            <option value="Expert"> Expert </option>
-            <option value="Banned"> Banned </option>
-        </select>
+        <b>Content:</b><br>
+        <textarea name='content' wrap='hard' rows='20' cols='20'></textarea>
         <br>
         <b>Category:</b><br>
         <select required name="category">
@@ -25,6 +21,6 @@
             <option value="Raznoe"> Raznoe </option>
         </select>
         <br><br>
-        <input type="submit" value="Modify">
+        <input type="submit" value="Submit">
     </fieldset>
 </form>	

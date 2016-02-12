@@ -70,5 +70,17 @@
     "fields": {
       "title": "Raznoe"
     }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Help"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Feedback"
+    }
   }
 ]

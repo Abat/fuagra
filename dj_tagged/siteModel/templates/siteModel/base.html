@@ -50,9 +50,6 @@
                             {% load notifications_tags %}
                             {% notifications_unread as unread_count %}
                             {% csrf_token %}
-                                {% if user.is_staff %}
-                                    <li><a href='/administer' style="color:red;"> administer | </a></li>
-                                {% endif %}
                             <li><a href="#">Hello, {{ user }} |</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                             {% if unread_count %}
@@ -71,8 +68,10 @@
             {% block content %} this is base template {% endblock %} 
         </div>
         <div class="navbar-default navbar-static-bottom">
-            <div class="container-fluid">
-                <p class="navbar-text pull-left">Site built by <a href="/about"> elerteni LTD </a></p>
+            <div class="container-fluid text-center">
+                <p class="text-muted credit footer_p"><a href="/about" class="footer_links"> about </a> <a href="/faq" class="footer_links"> FAQ </a> <a href="/f/Help" class="footer_links"> help </a> <a href="/f/Feedback" class="footer_links"> feedback </a> </p>
+                <p class="text-muted credit footer_p">Use of this site constitutes acceptance of our User Agreement and Privacy Policy.</p>
+                <p class="text-muted credit footer_p">© 2016 Fuagra.kz. All rights reserved.</p>
             </div>
         </div>
 

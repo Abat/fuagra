@@ -10,13 +10,14 @@ requirejs.config({
         'marionette': 'js/marionette/backbone.marionette.min',
         'bootstrap': 'js/bootstrap/bootstrap.min',
         'url': 'js/url/url.min',
+        'timeago': 'js/timeago/timeago',
         'models': 'js/models',
         'collections': 'js/collections',
         'views': 'js/views',
         'comment_views': 'js/comment_views',
         'side_views': 'js/side_views',
         'top_views': 'js/top_views',
-        'routers': 'js/routers'
+        'routers': 'js/routers',
     }
 });
 

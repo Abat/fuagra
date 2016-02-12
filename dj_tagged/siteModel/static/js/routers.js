@@ -21,44 +21,55 @@ define([
 
         routes: {
             "": "home",
+
             "submit": "submit",
+            "submitText": "submitText",
+            "f/:category/submit": "submit",
+            "f/:category/submitText": "submitText",
+
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
-            "administer": "administer",
+
+            "f/:category/administer": "administer",
+
             "*nomatch": "notFound"
         },
 
         home: function() {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
-            var news = new Collections.NewsListCollection();
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
+            App.news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
                 var newsView = new Views.NewsView({ collection: items });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
             }});
         },
-        submit: function() {
+        submit: function(category) {
             console.log("submit route triggered...");
             var news = new Collections.NewsListCollection();
-            var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            var submitLinkView = new Views.SubmitLinkView({ collection: news });
+            var submitLinkView = new Views.SubmitLinkView({ collection: news, category: category });
             App.rootLayout.getRegion('content').show(submitLinkView);
-            App.rootLayout.getRegion('side').show(sideView);
+            App.rootLayout.getRegion('special_top').show(specialTopView);
+        },
+        submitText: function(category) {
+            console.log("submitText route triggered...");
+            var news = new Collections.NewsListCollection();
+            var specialTopView = new Top_Views.SpecialTopView();
+            var submitTextView = new Views.SubmitTextView({ collection: news, category: category });
+            App.rootLayout.getRegion('content').show(submitTextView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },
         subfuas: function(category) {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
-            var news = new Collections.NewsListCollection();
-            var sideView = new Side_Views.SideView();
+            var sideView = new Side_Views.SideView({ category: category });
             var specialTopView = new Top_Views.SpecialTopView();
-            news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items });
+            App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
+                var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
@@ -67,19 +78,66 @@ define([
         comments: function(newsId) {
             console.log("comments route triggered: ", newsId);
             var comments = new Collections.CommentsListCollection([], { newsId: newsId });
-            var news = new Collections.NewsListCollection();
-            news.fetch({ success: function(items, response, options) {
-                var newsModel = items.get(newsId);
-                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: newsModel}));  
+            var newsModel = new Models.NewsItemModel({ id: newsId });
+            newsModel.fetch({ success: function(model, response, options) {
+                App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
-                    var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items }); 
-                    App.rootLayout.getRegion('content').show(commentsView);
+				
+					console.log("items: ", items);
+					
+					var new_items = items;
+					console.log("new items: ", new_items);
+					
+					//create leveled lists
+					var i;
+					var j;
+					
+					var level0list = [];
+					for(i = 0; i < new_items.length; i ++) {
+						if (new_items.models[i].attributes.parent == null) {
+							level0list.push(new_items.models[i]);
+							new_items.remove(new_items.models[i]);
+							i --;
+						}
+					}
+					
+					var levelLists = [];
+					var prevlevellist = level0list;
+					while(new_items.length > 0) {
+						console.log("new_items.length", new_items.length);
+						console.log("prevlevellist", prevlevellist);
+						var curlevellist = [];
+						for(i = 0; i < new_items.length; i ++) {
+							var flag = false;
+							for(j = 0; j < prevlevellist.length; j ++) {
+								if (new_items.models[i].attributes.parent == prevlevellist[j].attributes.id)
+									flag = true;
+							}
+							if(flag) {
+								curlevellist.push(new_items.models[i]);
+								new_items.remove(new_items.models[i]);
+								i --;
+							}
+						}
+						levelLists.push(curlevellist);
+						prevlevellist = curlevellist;
+					}
+					
+					var lv0 = new Collections.CommentsListCollection([], { newsId: newsId });
+					lv0.add(level0list);
+
+					var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0});
+					
+					commentsView.childCollection = levelLists;
+					//var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});
+					App.rootLayout.getRegion('content').show(commentsView);			
+					
                 }});
             }});
         },
-        administer: function() {
+        administer: function(category) {
             console.log("administer route triggered...");
-            var administerView = new Views.AdministerView();
+            var administerView = new Views.AdministerView({ category: category });
             App.rootLayout.getRegion('content').show(administerView);
         },
         notFound: function() {

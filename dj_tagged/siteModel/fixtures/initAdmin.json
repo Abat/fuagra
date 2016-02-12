@@ -1,0 +1,10 @@
+[{
+	"pk": 1,
+	"fields": {
+		"category": "Raznoe",
+		"user": 1,
+		"permission": "AD",
+		"last_updated": "2016-02-08T16:32:10.932Z"
+	},
+	"model": "siteModel.newscategoryuserpermission"
+}]
