@@ -27,6 +27,7 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.core.mail import send_mail
 from django.conf import settings
+from notifications.signals import notify
 import logging
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -374,6 +375,16 @@ def list_category(request):
         return HttpResponse(json.dumps(data), content_type="application/json")
     raise Http404("Category List invalid method.")
 
+@login_required
+def notifications(request):
+    context = {}
+
+    user = request.user
+    # Get all News (write better solution later)
+    context['notifications'] = user.notifications.unread()
+
+    return render(request, 'siteModel/notifications.html', context)
+
 class NewsViewSet(viewsets.ModelViewSet):
 
     serializer_class = NewsSerializer
@@ -546,6 +557,10 @@ class CommentList(generics.ListCreateAPIView):
             news_object = News.objects.get(id=int(comment.news_id))
             news_object.num_comments += 1
             news_object.save()
+            if (comment.parent is not None) and (user != comment.parent.owner):
+                notify.send(user, verb=u'replied to your comment', recipient=comment.parent.owner, action_object=comment, target=news_object)
+            else:
+                notify.send(user, verb=u'commented on your post', recipient=news_object.owner, action_object=comment, target=news_object)
 
     def destroy(self, request, *args, **kwargs):
         """

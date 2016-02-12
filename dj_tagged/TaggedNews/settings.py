@@ -39,11 +39,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'notifications',
     'siteModel',
 	# 'oauth2_provider',
  #    'corsheaders',
  #    'simple_email_confirmation',
 	
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.request"
 )
 
 MIDDLEWARE_CLASSES = (
