@@ -105,10 +105,10 @@ def register(request):
             the_username = user.username
             the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
-            confirmation_key = user.add_unconfirmed_email(new_email)
-            
-            send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
-            [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
+            if new_email:
+                confirmation_key = user.add_unconfirmed_email(new_email)
+                send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
+                [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
             user.set_password(the_password)
             user.save()

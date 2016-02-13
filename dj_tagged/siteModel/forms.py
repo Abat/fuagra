@@ -6,7 +6,7 @@ import string
 
 class UserForm(forms.ModelForm):
 	password = forms.CharField(widget=forms.PasswordInput())
-	email_address = forms.CharField(widget=forms.EmailInput())
+	email_address = forms.CharField(widget=forms.EmailInput(), required=False)
 	MIN_USERNAME_LENGTH = 4
 	MIN_PASSWORD_LENGTH = 8
 
