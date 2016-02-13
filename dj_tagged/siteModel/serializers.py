@@ -31,7 +31,7 @@ class NewsSerializer(serializers.ModelSerializer):
 				return 'E'
 		except NewsCategoryUserPermission.DoesNotExist:
 			pass
-		return "S"
+		return "U"
 
 	class Meta:
 		model = News
@@ -43,9 +43,31 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
 
 class CommentSerializer(serializers.ModelSerializer):
+
+	submitter_role = serializers.SerializerMethodField()
+	is_submitter = serializers.SerializerMethodField()
+	def get_submitter_role(self, obj):
+		try:
+			user_permission = NewsCategoryUserPermission.objects.get(user = obj.owner, category = obj.news.category)
+			permission = user_permission.permission
+			if permission == 'AD':
+				return 'A'
+			elif permission == 'MD':
+				return 'M'
+			elif permission == 'EX':
+				return 'E'
+		except NewsCategoryUserPermission.DoesNotExist:
+			pass
+		return "U"
+
+	def get_is_submitter(self, obj):
+		if obj.owner == obj.news.owner:
+			return 1
+		return 0
+		
 	class Meta:
 		model = Comments
-		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role')
+		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role', 'is_submitter')
 
 class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
