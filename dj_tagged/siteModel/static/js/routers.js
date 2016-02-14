@@ -66,14 +66,20 @@ define([
         subfuas: function(category) {
             var sort_sort = url('?sort') ? url('?sort') : 'None';
 
-            var sideView = new Side_Views.SideView({ category: category });
-            var specialTopView = new Top_Views.SpecialTopView();
-            App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort });
-                App.rootLayout.getRegion('content').show(newsView);
-                App.rootLayout.getRegion('side').show(sideView);
-                App.rootLayout.getRegion('special_top').show(specialTopView);
-            }});
+            $.ajax({
+                type: 'GET',
+                url: "/api/users/" + category,
+                success: function(data) {
+                    var sideView = new Side_Views.SideView({ category: category, permission: data.permission });
+                    var specialTopView = new Top_Views.SpecialTopView();
+                    App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
+                        var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort, permission: data.permission });
+                        App.rootLayout.getRegion('content').show(newsView);
+                        App.rootLayout.getRegion('side').show(sideView);
+                        App.rootLayout.getRegion('special_top').show(specialTopView);
+                    }});
+                }
+            });
         },
         comments: function(newsId) {
             console.log("comments route triggered: ", newsId);

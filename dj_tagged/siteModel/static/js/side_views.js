@@ -15,22 +15,8 @@ define([
 
         initialize: function(attr) {
             this.category = attr.category;
+            this.permission = attr.permission;
             console.log('Initializing SideView...');
-        },
-        onBeforeRender: function() {
-            var self = this;
-            if (self.category) {
-                $.ajax({
-                    type: 'GET',
-                    url: "/api/users/" + self.category,
-                    success: function(data) {
-                        // show Administer link for moderators and admins
-                        if (data.permission == "Moderator" || data.permission == "Admin") {
-                            $('a[name="administer"]', self.el).attr('href', "/f/" + self.category + "/administer").show();
-                        }
-                    }
-                });
-            }
         },
         onRender: function() {
             var self = this;
@@ -38,6 +24,10 @@ define([
             if (self.category) {
                 $('a[name="submitLink"]', self.el).attr('href', "/f/" + self.category + "/submit");
                 $('a[name="submitText"]', self.el).attr('href', "/f/" + self.category + "/submitText");
+                // show Administer link for moderators and admins
+                if (self.permission == "Moderator" || self.permission == "Admin") {
+                    $('a[name="administer"]', self.el).attr('href', "/f/" + self.category + "/administer").show();
+                }
             }
 
             // Users cannot submit links in  Help and Feedback

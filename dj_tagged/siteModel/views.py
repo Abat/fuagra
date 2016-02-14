@@ -466,7 +466,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Only the owner of the news can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-        category = request.DATA['category']
+        category = News.objects.get(id=int(self.kwargs['pk'])).category.title
         can_delete = can_user_delete(user, category)
         if can_delete:
             return super(NewsViewSet, self).destroy(request, *args, **kwargs)

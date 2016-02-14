@@ -78,11 +78,6 @@ div.collapsed {
     height: 23px;
 }
 
-time {
-    font-size: 10px;
-    color: #888;
-}
-
 #wrapper {
     min-height:100%;
     position:relative;
@@ -112,7 +107,7 @@ p.title {
 
 p.meta {
     color: #888;
-    font-size: 0.9em;
+    font-size: 0.85em;
     margin: 5px 0 0 0;
 }
 
@@ -130,6 +125,10 @@ p.tagline {
     color: #888;
     font-weight: bold;
     font-size: 0.8em;
+}
+
+.comments_buttons a.moderating {
+    color: #E9967A;
 }
 
 .source a {
@@ -155,6 +154,7 @@ ul.comments_buttons {
 
 .buttons li {
     display: inline-block;
+    margin-right: 3px;
 }
 
 div.news {

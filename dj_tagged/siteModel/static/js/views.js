@@ -3,6 +3,7 @@ define([
     'underscore',
     'backbone',
     'marionette',
+    'bootstrap',
     'collections',
     'models',
     'comment_views',
@@ -13,7 +14,7 @@ define([
     'text!templates/submitLinkView.html',
     'text!templates/submitTextView.html',
     'text!templates/administerView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Comment_Views, Micromarkdown, Timeago, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
+], function($, _, Backbone, Marionette, Bootstrap, Collections, Models, Comment_Views, Micromarkdown, Timeago, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
 
     'use strict';
 
@@ -38,15 +39,17 @@ define([
         className: 'newsItem',
         template: _.template(newsItemT),
         templateHelpers: function() {
-            return { urlParsed: parseUrl(this.model.get('url')), textPost: this.textPost };
+            return { urlParsed: parseUrl(this.model.get('url')), textPost: this.textPost, moderating: this.moderating };
         },
         initialize: function(attr) {
             this.textPost = attr.textPost;
+            this.moderating = attr.moderating;
         },
         events: {
             'click a.up': 'upvote',
             'click a.down': 'downvote',
-            'click a.comments': 'comments'
+            'click a.comments': 'comments',
+            'click a[name="delete_news"]': 'delete_news',
         },
         modelEvents: {
             'change': 'render'
@@ -64,6 +67,9 @@ define([
                 $('p.textPost', self.el).html(Micromarkdown.parse(self.textPost.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
+            if (this.moderating) {
+                $('ul.buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_news'> delete </a></li>");
+            }
         },
         upvote: function(e) {
             e.preventDefault();
@@ -100,6 +106,27 @@ define([
             e.preventDefault();
             console.log('comments view triggered');
             App.router.navigate('comments/' + self.model.get('id'), {trigger: true});
+        },
+        delete_news: function(e) {
+            var self = this;
+            e.preventDefault();
+            var newsId = this.model.get('id');
+            var newsTitle = this.model.get('title');
+            
+            this.model.destroy({ 
+                success: function() {
+                    console.log('Successfully deleted news:', newsId);
+                    $('#myModal .modal-title').text('News deleted');
+                    $('#myModal .modal-body').text(newsTitle);
+                    $('#myModal').modal({ show: true });
+                },
+                error: function(model, response, options) {
+                    console.log('Error:', response);
+                    $('#myModal .modal-title').text('Error');
+                    $('#myModal .modal-body').text(response.responseJSON.reason);
+                    $('#myModal').modal({ show: true });
+                }
+            });
         }
     });
 
@@ -293,12 +320,20 @@ define([
 
         childView: NewsItemView,
         childViewContainer: 'ul',
+        childViewOptions: function() {
+            return {
+                moderating: this.moderating
+            }
+        },
 
         initialize: function(attr) {
             console.log('Initializing NewsView...');
             this.pageNum = 1;
             this.category = attr.category;
             this.sort = attr.sort;
+            if (attr.permission == "Admin" || attr.permission == "Moderator") {
+                this.moderating = true;
+            }
         },
 
         events: {

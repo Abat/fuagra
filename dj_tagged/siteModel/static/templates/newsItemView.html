@@ -12,7 +12,9 @@
         <p class='meta'> submitted <time class="timeago" datetime="<%= date_created %>">January 1, 2016</time> by <a href='#' class='meta'><%= username %></a> to <a href='/f/<%= category %>' class='meta'> <%= category %> </a> </p>
         <p class='textPost'></p>
         <ul class='buttons'>
-            <li class='comments_buttons'> <a href='/api/comments/<%= id %>' class='comments'> <%= num_comments %> comments </a> </li>
+            <li class='comments_buttons'>
+                <a href='/api/comments/<%= id %>' class='comments'> <%= num_comments %> comments </a>
+            </li>
         </ul>
     </div>
 </div>
