@@ -24,14 +24,14 @@ class NewsSerializer(serializers.ModelSerializer):
 			user_permission = NewsCategoryUserPermission.objects.get(user = obj.owner, category = obj.category)
 			permission = user_permission.permission
 			if permission == 'AD':
-				return 'A'
+				return 'AD'
 			elif permission == 'MD':
-				return 'M'
+				return 'MD'
 			elif permission == 'EX':
-				return 'E'
+				return 'EX'
 		except NewsCategoryUserPermission.DoesNotExist:
 			pass
-		return "U"
+		return "US"
 
 	class Meta:
 		model = News
@@ -51,14 +51,14 @@ class CommentSerializer(serializers.ModelSerializer):
 			user_permission = NewsCategoryUserPermission.objects.get(user = obj.owner, category = obj.news.category)
 			permission = user_permission.permission
 			if permission == 'AD':
-				return 'A'
+				return 'AD'
 			elif permission == 'MD':
-				return 'M'
+				return 'MD'
 			elif permission == 'EX':
-				return 'E'
+				return 'EX'
 		except NewsCategoryUserPermission.DoesNotExist:
 			pass
-		return "U"
+		return "US"
 
 	def get_is_submitter(self, obj):
 		if obj.owner == obj.news.owner:
