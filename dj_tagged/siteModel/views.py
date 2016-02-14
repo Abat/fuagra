@@ -30,6 +30,7 @@ from django.conf import settings
 from notifications.signals import notify
 import logging
 from django.views.decorators.csrf import csrf_exempt
+import uuid
 import json
 
 
@@ -143,6 +144,13 @@ def _create_email_confirmation_message(user_name, confirmation_key):
 def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
 
+def create_password_reset_message(todo_site, uuid):
+    return """
+    Hello,<br><br> 
+    It seems that you have requested a password change for your account at Fuagrakz. 
+    Please visit this <a href="{0}?key={1}">link</a> to confirm the creation of your account.<br><br>
+    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team""".format(todo_site, uuid)
+
 def user_login(request):
 
     if not request.user.is_anonymous():
@@ -177,6 +185,57 @@ def user_login(request):
             context['next'] = request.GET.get('next')
         return render(request, 'siteModel/login.html', context)
 
+def request_password_reset(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        email = request.POST.get('email_address')
+
+        try:
+            user = User.objects.get(email_address = email)
+            try:
+                pass_request = PasswordResetRequest.objects.get(email_address = email) 
+                if not pass_request.is_expired():
+                    return createAPIErrorJsonReponse('Please wait before trying again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+                else:
+                    #Delete it and create new request.
+                    pass_request.delete()
+            except PasswordResetRequest.DoesNotExist:
+                pass
+        except User.DoesNotExist:
+            return createAPIErrorJsonReponse('No user with that email exists (Perhaps you haven\'t confirmed your email?).', 401)
+
+        #creating request
+        request_id = str(uuid.uuid4())
+        valid_until_date = datetime.now() + PasswordResetRequest.expire_time_delta()
+        PasswordResetRequest.objects.create (email_address = email, request_id = request_id, date_valid = valid_until_date)
+        send_mail('Confirm', create_password_reset_message("TODOSITE", request_id), settings.EMAIL_HOST_USER,
+                [email], fail_silently=False, html_message=create_password_reset_message(user.username, confirmation_key))
+        return createAPISuccessJsonReponse({'result': 'ok'})
+    else:
+        return createAPIErrorJsonReponse('Forbidden.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+
+def submit_password_change(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        new_pass = request.POST.get('password')
+        request_id = request.post.get('request_id')
+        try:
+            pass_request = PasswordResetRequest.objects.get(request_id = request_id) 
+            user = User.objects.get(email_address = pass_request.email)
+            if not pass_request.is_expired():
+                user.set_password(new_pass)
+                pass_request.delete()
+                return createAPISuccessJsonReponse({'result': 'ok'})
+            else:
+                pass_request.delete()
+                return createAPIErrorJsonReponse('This url is expired, please request a password change again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        except PasswordResetRequest.DoesNotExist:
+            pass
+    return createAPIErrorJsonReponse('Forbidden.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
 
 @login_required
 @csrf_exempt
