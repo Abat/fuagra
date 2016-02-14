@@ -72,6 +72,14 @@ define([
 			//console.log("CommentsItemView_render...", this.model);
             // fixes new lines in comments, otherwise renders all comment as one line
             $('div.content', this.el).html(Micromarkdown.parse(self.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+            if (this.model.get('is_op')) {
+                $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
+            }
+            if (this.model.get('submitter_role') == 'MD') {
+                $('a#comment_author', this.el).css("color", "purple").append('[M]'); 
+            } else if (this.model.get('submitter_role') == 'AD') {
+                $('a#comment_author', this.el).css("color", "red").append('[A]'); 
+            }
         },
         
         events: {

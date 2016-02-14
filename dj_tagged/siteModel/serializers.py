@@ -45,7 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
 
 	submitter_role = serializers.SerializerMethodField()
-	is_submitter = serializers.SerializerMethodField()
+	is_op = serializers.SerializerMethodField()
 	def get_submitter_role(self, obj):
 		try:
 			user_permission = NewsCategoryUserPermission.objects.get(user = obj.owner, category = obj.news.category)
@@ -60,14 +60,14 @@ class CommentSerializer(serializers.ModelSerializer):
 			pass
 		return "US"
 
-	def get_is_submitter(self, obj):
+	def get_is_op(self, obj):
 		if obj.owner == obj.news.owner:
 			return 1
 		return 0
 		
 	class Meta:
 		model = Comments
-		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role', 'is_submitter')
+		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role', 'is_op')
 
 class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
