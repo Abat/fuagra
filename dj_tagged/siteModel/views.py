@@ -519,21 +519,29 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
-class CommentList(generics.ListCreateAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
+
     serializer_class = CommentSerializer
+    queryset = Comments.objects.all()
+    model = Comments
     
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         news_id = self.kwargs['pk']
         comments = Comments.objects.filter(news=news_id)
         
         #sort style
-        sort_style = self.request.QUERY_PARAMS.get('sort', None)
+        sort_style = self.request.query_params.get('sort', None)
 
         rankAlgo = RankHelper.parse_rank_style(sort_style)
 
-        query_set = rankAlgo.sort_list_of_news(comments)
+        self.queryset = rankAlgo.sort_list_of_news(comments)
+        return super(CommentViewSet, self).list(request, *args, **kwargs)
 
-        return query_set
+    def retrieve(self, request, *args, **kwargs):
+        comment_id = self.kwargs['comment_pk']
+        comment = get_object_or_404(Comments, pk=comment_id)
+        serializer = self.get_serializer(comment)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """
@@ -545,9 +553,10 @@ class CommentList(generics.ListCreateAPIView):
         user = get_user(request)
         can_post = can_user_post(user, category)
         if can_post:
-            return super(CommentList, self).create(request, *args, **kwargs)
+            return super(CommentViewSet, self).create(request, *args, **kwargs)
         else:
             return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
+
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
@@ -565,15 +574,14 @@ class CommentList(generics.ListCreateAPIView):
     def destroy(self, request, *args, **kwargs):
         """
         Delete comment
-        Only the owner of the comment can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-        category = request.DATA['category']
+        category = News.objects.get(id=int(self.kwargs['pk'])).category.title
         can_delete = can_user_delete(user, category)
         if can_delete:
-            comment_id = self.kwargs['pk']
-            comment = Comments.objects.get_object_or_404(pk = comment_id)
-            comment.content = "This message has been deleted."
+            comment_id = self.kwargs['comment_pk']
+            comment = get_object_or_404(Comments, pk = comment_id)
+            comment.content = "[deleted]"
             comment.save()
             return createAPISuccessJsonReponse({'result':'success'})
         else:

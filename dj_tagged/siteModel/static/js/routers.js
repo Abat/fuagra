@@ -132,12 +132,17 @@ define([
 					var lv0 = new Collections.CommentsListCollection([], { newsId: newsId });
 					lv0.add(level0list);
 
-					var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0});
-					
-					commentsView.childCollection = levelLists;
-					//var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});
-					App.rootLayout.getRegion('content').show(commentsView);			
-					
+                    $.ajax({
+                        type: 'GET',
+                        url: "/api/users/" + model.get('category'),
+                        success: function(data) {
+                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0, permission: data.permission });
+                            
+                            commentsView.childCollection = levelLists;
+                            //var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});
+                            App.rootLayout.getRegion('content').show(commentsView);			
+                        }
+                    });
                 }});
             }});
         },

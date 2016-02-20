@@ -4,7 +4,7 @@ import notifications
 from siteModel import views
 from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
-from siteModel.views import CommentList
+from siteModel.views import CommentViewSet
 from siteModel.views import VoteViewSet
 
 news_list = NewsViewSet.as_view({
@@ -12,6 +12,17 @@ news_list = NewsViewSet.as_view({
     'post': 'create'
 })
 news_detail = NewsViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
+
+comment_list = CommentViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+comment_detail = CommentViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'patch': 'partial_update',
@@ -70,7 +81,8 @@ urlpatterns = patterns('',
     url(r'^api/users/?$', user_list, name='user-list'),
     url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
     url(r'^api/users/(?P<category>\w+)/?$', views.check_user_permission, name='check_user_permission'),
-    url(r'^api/comments/(?P<pk>[0-9]+)/?$', views.CommentList.as_view(), name='comments-list'),
+    url(r'^api/comments/(?P<pk>[0-9]+)/(?P<comment_pk>[0-9]+)/?$', comment_detail, name='comment-detail'),
+    url(r'^api/comments/(?P<pk>[0-9]+)/?$', comment_list, name='comment-list'),
     url(r'^api/permissions/', views.set_user_permission, name='set_user_permission'),
     url(r'^api/news/vote/(?P<news_id>[0-9]+)/?$', vote_list, name='vote-list'),
     url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
