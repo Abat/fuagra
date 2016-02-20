@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from simple_email_confirmation import SimpleEmailConfirmationUserMixin
@@ -112,3 +112,19 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('user', 'news',)
+
+# Create your models here.
+class PasswordResetRequest(models.Model):
+    
+    date_valid = models.DateTimeField('Valid until', default=timezone.now)
+    email = models.EmailField(primary_key=True)
+    request_id = models.CharField(max_length=64,unique=True)
+    
+    def is_expired(self):
+        if timezone.now() >= self.date_valid:
+            return True
+        return False
+    
+    @staticmethod
+    def expire_time_delta():
+        return timedelta(hours = 1)

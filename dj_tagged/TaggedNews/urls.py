@@ -91,11 +91,8 @@ urlpatterns = patterns('',
 
     url(r'^docs/', include('rest_framework_swagger.urls')),
 
-    #Auth stuff
-    # url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    # url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'siteModel/testOauth.html'}),
-    # url(r'^api/hello', views.ApiEndpoint.as_view()),  # and also a resource server!
-    # url(r'^secret$', views.secret_page, name='secret'),
+    url(r'^accounts/request_password_reset/?$', views.request_password_reset, name='request_password_reset'),
+    url(r'^accounts/reset_password/?$', views.submit_password_change, name='submit_password_change'),
     url(r'^accounts/confirmation/?$', views.confirm_email, name='confirm_email'),
     url(r'^accounts/resend_confirmation/$', views.resend_confirmation_email, name='resend_confirmation_email'),
     url(r'^notifications/$', views.notifications, name='fuagra_notifications'),

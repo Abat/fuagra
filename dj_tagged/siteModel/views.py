@@ -9,6 +9,7 @@ from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
+from siteModel.models import PasswordResetRequest
 from siteModel.ranking.ranking import *
 from siteModel.ranking.rank_helper import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
@@ -30,6 +31,7 @@ from django.conf import settings
 from notifications.signals import notify
 import logging
 from django.views.decorators.csrf import csrf_exempt
+import uuid
 import json
 
 
@@ -105,10 +107,10 @@ def register(request):
             the_username = user.username
             the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
-            confirmation_key = user.add_unconfirmed_email(new_email)
-            
-            send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
-            [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
+            if new_email:
+                confirmation_key = user.add_unconfirmed_email(new_email)
+                send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
+                [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
             user.set_password(the_password)
             user.save()
@@ -142,6 +144,13 @@ def _create_email_confirmation_message(user_name, confirmation_key):
 #Probably want https later.
 def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
+
+def create_password_reset_message(uuid):
+    return """
+    Hello,<br><br> 
+    It seems that you have requested a password change for your account at Fuagrakz. 
+    Please visit here <a href="http://www.fuagra.kz/accounts/reset_password/?request_id={0}">http://www.fuagra.kz/accounts/reset_password/?request_id={0}</a> to change your password.<br><br>
+    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team""".format(uuid)
 
 def user_login(request):
 
@@ -177,9 +186,92 @@ def user_login(request):
             context['next'] = request.GET.get('next')
         return render(request, 'siteModel/login.html', context)
 
+def request_password_reset(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if not email:
+            return createAPIErrorJsonReponse('??.', 404)
+        logger = logging.getLogger("django")
+        logger.info("reset email is " + email)
+        try:
+            user = User.objects.get(email = email)
+            try:
+                pass_request = PasswordResetRequest.objects.get(email = email) 
+                if not pass_request.is_expired():
+                    return createAPIErrorJsonReponse('Please wait before trying again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+                else:
+                    #Delete it and create new request.
+                    pass_request.delete()
+            except PasswordResetRequest.DoesNotExist:
+                pass
+        except User.DoesNotExist:
+            return createAPIErrorJsonReponse('No user with that email exists (Perhaps you haven\'t confirmed your email?).', 401)
+
+        #creating request
+        request_id = str(uuid.uuid4())
+        valid_until_date = timezone.now() + PasswordResetRequest.expire_time_delta()
+        request_pass = PasswordResetRequest.objects.create (email = email, request_id = request_id, date_valid = valid_until_date)
+        request_pass.save();
+        html_message = create_password_reset_message(request_id)
+        send_mail('Confirm', html_message, settings.EMAIL_HOST_USER,
+                [email], fail_silently=False, html_message=html_message)
+        return createAPISuccessJsonReponse({'result': 'ok'})
+    else:
+        context = {}
+        if request.GET.get('request_id') is not None:
+            context['request_id'] = request.GET.get('request_id')
+        return render(request, 'siteModel/resetPasswordRequest.html', context)  
+
+def submit_password_change(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        new_pass = request.POST.get('password')
+        new_pass_confirm = request.POST.get('confirm_password')
+        logger = logging.getLogger("django")
+        logger.info("pass restglegnS" + str(new_pass))
+        logger.info("SET USER PERMIS" + str(new_pass_confirm))
+        if new_pass != new_pass_confirm:
+            return createAPIErrorJsonReponse('Passwords don\'t match...', 200) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        if not is_valid_password(new_pass):
+            return createAPIErrorJsonReponse('Password is not valid.', 200) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        
+        request_id = request.POST.get('request_id', None)
+        if not request_id:
+            return createAPIErrorJsonReponse('No request id.', 404)
+        try:
+            pass_request = PasswordResetRequest.objects.get(request_id = request_id) 
+            user = User.objects.get(email = pass_request.email)
+            if not pass_request.is_expired():
+                user.set_password(new_pass)
+                user.save()
+                pass_request.delete()
+                return createAPISuccessJsonReponse({'result': 'ok'})
+            else:
+                pass_request.delete()
+                return createAPIErrorJsonReponse('This url is expired, please request a password change again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        except PasswordResetRequest.DoesNotExist:
+            pass
+    else:
+        #This is the key used by django to redirect (notice next= ... in redirects!)
+        context = {}
+        if request.GET.get('request_id') is not None:
+            context['request_id'] = request.GET.get('request_id')
+        return render(request, 'siteModel/passwordReset.html', context)
+
+    return createAPIErrorJsonReponse('Forbidden.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+
+#TODO merge with the one is forms.py
+def is_valid_password(password):
+    if (not password or len(password) < 8):
+        return False
+    return True
 
 @login_required
-@csrf_exempt
 def set_user_permission(request):
     logger = logging.getLogger("django")
     #TODO
