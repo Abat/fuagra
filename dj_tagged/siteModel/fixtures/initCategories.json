@@ -82,5 +82,11 @@
     "fields": {
       "title": "Feedback"
     }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Krasota_Iskusstvo"
+    }
   }
 ]

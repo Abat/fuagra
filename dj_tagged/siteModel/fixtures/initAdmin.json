@@ -1,10 +1,10 @@
 [{
-	"pk": 5,
+	"pk": 7,
 	"fields": {
-		"category": "Feedback",
-		"user": 1,
-		"permission": "AD",
-		"last_updated": "2016-02-14T16:32:10.932Z"
+		"category": "Krasota_Iskusstvo",
+		"user": 24,
+		"permission": "MD",
+		"last_updated": "2016-02-21T16:32:10.932Z"
 	},
 	"model": "siteModel.newscategoryuserpermission"
 }]
