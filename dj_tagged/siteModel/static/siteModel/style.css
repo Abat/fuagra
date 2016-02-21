@@ -43,7 +43,7 @@ div#bottom {
 
 .nav li a {
     font-size: 1em;
-    padding: 5px 5px 5px 5px;
+    padding: 5px 5px 5px 7px;
 }
 
 ul.navbar-right {
@@ -246,6 +246,7 @@ span.help {
 
 li.commentsItem {
     padding-left: 10px;
+    list-style-type: none;
 }
 
 div#special_top {

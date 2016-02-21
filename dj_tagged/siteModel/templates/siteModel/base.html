@@ -20,16 +20,16 @@
                 <div id="top">
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                            <li><a href="/f/News">News |</a></li>
-                            <li><a href="/f/Funny">Funny |</a></li>
-                            <li><a href="/f/Sport">Sport |</a></li>
-                            <li><a href="/f/Science_Tech">Science&Tech |</a></li>
-                            <li><a href="/f/Economics">Economics |</a></li>
-                            <li><a href="/f/Life_stories">Life stories |</a></li>
-                            <li><a href="/f/Movies">Movies |</a></li>
-                            <li><a href="/f/Inspire">Inspire |</a></li>
-                            <li><a href="/f/Music">Music |</a></li>
-                            <li><a href="/f/Raznoe">Raznoe |</a></li>
+                            <li><a href="/f/News">News</a></li>
+                            <li><a href="/f/Funny">Funny</a></li>
+                            <li><a href="/f/Sport">Sport</a></li>
+                            <li><a href="/f/Science_Tech">Science&Tech</a></li>
+                            <li><a href="/f/Economics">Economics</a></li>
+                            <li><a href="/f/Life_stories">Life stories</a></li>
+                            <li><a href="/f/Movies">Movies</a></li>
+                            <li><a href="/f/Inspire">Inspire</a></li>
+                            <li><a href="/f/Music">Music</a></li>
+                            <li><a href="/f/Raznoe">Raznoe</a></li>
                         </ul>
                     </div>
                 </div>
@@ -49,11 +49,11 @@
                             {% load notifications_tags %}
                             {% notifications_unread as unread_count %}
                             {% csrf_token %}
-                            <li><a href="#">Hello, {{ user }} |</a></li>
+                            <li><a href="#">Hello, {{ user }}</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                             {% if unread_count %}
                             <li>
-                            <a href='{% url 'fuagra_notifications' %}'>| {{ unread_count }} 
+                            <a href='{% url 'fuagra_notifications' %}'> {{ unread_count }} 
                             {% if unread_count == 1 %} 
                             notification 
                             {% else %}
@@ -63,7 +63,7 @@
                             </li>
                             {% endif %}
                             {% else %}
-                            <li><a href="{% url 'register' %}">Register |</a></li>
+                            <li><a href="{% url 'register' %}">Register</a></li>
                             <li><a href="{% url 'login' %}">Login</a></li>
                             {% endif %}
                         </ul>
