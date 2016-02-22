@@ -42,6 +42,9 @@ class News(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
+
+    ##TODO
+    ##thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
     # class Meta:
     #     ordering = ['-date_updated']
 
