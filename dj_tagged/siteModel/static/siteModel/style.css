@@ -56,7 +56,7 @@ ul.navbar-left {
 }
 
 a.comment-control {
-    color: #386;
+    color: #369;
 }
 
 textarea {
@@ -119,6 +119,7 @@ div.content {
 /* paragraph styles */
 p.tagline {
     margin: 0 0 5px 0;
+    font-size: 0.85em;
 }
 /* url styles */
  .buttons li a, .comments_buttons li a {

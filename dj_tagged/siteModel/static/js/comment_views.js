@@ -7,10 +7,11 @@ define([
     'models',
     'routers',
     'markdown',
+    'timeago',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
     'text!templates/commentsTextareaView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT, commentsTextareaT) {
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, Timeago, commentsItemT, commentsT, commentsTextareaT) {
 
     'use strict';
     
@@ -82,6 +83,7 @@ define([
             } else if (this.model.get('submitter_role') == 'AD') {
                 $('a#comment_author', this.el).css("color", "red").append('[A]'); 
             }
+            $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
             // delete button for Moderators and Admins
             if (this.moderating) {
                 $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
