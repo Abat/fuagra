@@ -180,6 +180,6 @@ class HotRankingAlgo(RankingAlgo):
 		else:
 			sign = -1
 		seconds = time_since_epoch_seconds(news.get_creation_date()) - 1454102930
-		return round(sign * order + seconds / 360000, 7)
+		return round(sign * order + seconds / 180000, 7)
 
 		
