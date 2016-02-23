@@ -49,11 +49,13 @@ INSTALLED_APPS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.request"
+    "django.core.context_processors.request",
+    "django.core.context_processors.i18n",
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,6 +64,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	# 'corsheaders.middleware.CorsMiddleware',
  #    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+)
+
+ugettext = lambda s: s
+
+LANGUAGES = (
+    ('ru', ugettext('Russian')),
+    ('en', ugettext('English')),
+    ('kk', ugettext('Kazakh')),
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -96,6 +106,10 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAuthenticated',
     # ),
 }
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 SWAGGER_SETTINGS = {
     'exclude_namespaces': [],
