@@ -61,7 +61,7 @@ msgstr "Экономика"
 
 #: siteModel/templates/siteModel/base.html:31
 msgid "Life stories"
-msgstr "Жизненные истории"
+msgstr "Жизненные Истории"
 
 #: siteModel/templates/siteModel/base.html:32
 msgid "Movies"
