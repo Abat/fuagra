@@ -52,7 +52,7 @@ msgstr "Спорт"
 
 #: siteModel/templates/siteModel/base.html:29
 msgid "Science&Tech"
-msgstr "Ғылым мен технология"
+msgstr "Ғылым мен Технология"
 
 #: siteModel/templates/siteModel/base.html:30
 msgid "Economics"
@@ -80,7 +80,7 @@ msgstr "Әртүрлі"
 
 #: siteModel/templates/siteModel/base.html:36
 msgid "Beauty & art"
-msgstr "Көркемдік пен өнер"
+msgstr "Көркемдік пен Өнер"
 
 #: siteModel/templates/siteModel/base.html:48
 msgid "Hot"

@@ -79,7 +79,7 @@ msgstr "Random"
 
 #: siteModel/templates/siteModel/base.html:36
 msgid "Beauty & art"
-msgstr "Beauty & art"
+msgstr "Beauty & Art"
 
 #: siteModel/templates/siteModel/base.html:48
 msgid "Hot"
