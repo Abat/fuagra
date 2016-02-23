@@ -82,13 +82,6 @@ def comments(request, pk):
     context['news_pk'] = pk
     return render(request, 'siteModel/comments.html', context)
 
-#def submit(request):
-#    context = {}
-#    if request.user.is_anonymous():
-#        return HttpResponseRedirect('/login')
-#    else:
-#        return render(request, 'siteModel/submit.html', context)
-
 # User Registration/Authentication
 
 def register(request):
@@ -128,15 +121,16 @@ def register(request):
             login(request, user_acc)
 
         else:
-            print(user_form.errors, profile_form.errors)
-            return HttpResponse("Error: {0}, {1}".format(user_form.errors, profile_form.errors))
+            errors = user_form.errors.copy()
+            errors.update(profile_form.errors)
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
 
     return render(request, 'siteModel/register.html', {'user_form':user_form,
-     'profile_form':profile_form,
-      'registered':registered})
+        'profile_form':profile_form,
+        'registered':registered})
 
 def _create_email_confirmation_message(user_name, confirmation_key):
     return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
@@ -175,10 +169,11 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect(redirect)
             else:
-                return HttpResponse("Your Account is disabled.")
+                errors = {"error" : "Your Account is disabled." }
+                return render(request, 'siteModel/errors.html', {"errors": errors})
         else:
-            print("Invalid login details :{0}, {1}".format(username, password))
-            return HttpResponse("Invalid login details supplied.")
+            errors = {"error" : "Invalid login details" }
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         #This is the key used by django to redirect (notice next= ... in redirects!)
         context = {}

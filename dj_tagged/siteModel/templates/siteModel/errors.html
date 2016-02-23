@@ -1,0 +1,18 @@
+{% extends "siteModel/base.html" %}
+
+{% block title %} :( Errors {% endblock %}
+
+{% block content %}
+
+<div class="layout_view">
+	<fieldset>
+	<legend> We encountered some errors </legend>
+    <ul>
+	{% for key, value in errors.items %}
+    <li>{{key}} - {{value}}</li>
+	{% endfor %}
+    </ul>
+	<br>
+	</fieldset>
+</div>
+{% endblock %}
