@@ -82,5 +82,23 @@
     "fields": {
       "title": "Feedback"
     }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Krasota_Iskusstvo"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Sayasat"
+    }
+  },
+  {
+    "model": "siteModel.newscategory",
+    "fields": {
+      "title": "Tarih"
+    }
   }
 ]

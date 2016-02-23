@@ -9,6 +9,7 @@ from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
+from siteModel.models import PasswordResetRequest
 from siteModel.ranking.ranking import *
 from siteModel.ranking.rank_helper import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
@@ -30,6 +31,7 @@ from django.conf import settings
 from notifications.signals import notify
 import logging
 from django.views.decorators.csrf import csrf_exempt
+import uuid
 import json
 
 
@@ -80,13 +82,6 @@ def comments(request, pk):
     context['news_pk'] = pk
     return render(request, 'siteModel/comments.html', context)
 
-#def submit(request):
-#    context = {}
-#    if request.user.is_anonymous():
-#        return HttpResponseRedirect('/login')
-#    else:
-#        return render(request, 'siteModel/submit.html', context)
-
 # User Registration/Authentication
 
 def register(request):
@@ -105,10 +100,10 @@ def register(request):
             the_username = user.username
             the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
-            confirmation_key = user.add_unconfirmed_email(new_email)
-            
-            send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
-            [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
+            if new_email:
+                confirmation_key = user.add_unconfirmed_email(new_email)
+                send_mail('Confirm', _create_email_confirmation_message(the_username, confirmation_key), settings.EMAIL_HOST_USER,
+                [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
             user.set_password(the_password)
             user.save()
@@ -126,15 +121,16 @@ def register(request):
             login(request, user_acc)
 
         else:
-            print(user_form.errors, profile_form.errors)
-            return HttpResponse("Error: {0}, {1}".format(user_form.errors, profile_form.errors))
+            errors = user_form.errors.copy()
+            errors.update(profile_form.errors)
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
 
     return render(request, 'siteModel/register.html', {'user_form':user_form,
-     'profile_form':profile_form,
-      'registered':registered})
+        'profile_form':profile_form,
+        'registered':registered})
 
 def _create_email_confirmation_message(user_name, confirmation_key):
     return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
@@ -142,6 +138,13 @@ def _create_email_confirmation_message(user_name, confirmation_key):
 #Probably want https later.
 def _create_html_email_confirmation_message(user_name, confirmation_key):
     return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
+
+def create_password_reset_message(uuid):
+    return """
+    Hello,<br><br> 
+    It seems that you have requested a password change for your account at Fuagrakz. 
+    Please visit here <a href="http://www.fuagra.kz/accounts/reset_password/?request_id={0}">http://www.fuagra.kz/accounts/reset_password/?request_id={0}</a> to change your password.<br><br>
+    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team""".format(uuid)
 
 def user_login(request):
 
@@ -166,10 +169,11 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect(redirect)
             else:
-                return HttpResponse("Your Account is disabled.")
+                errors = {"error" : "Your Account is disabled." }
+                return render(request, 'siteModel/errors.html', {"errors": errors})
         else:
-            print("Invalid login details :{0}, {1}".format(username, password))
-            return HttpResponse("Invalid login details supplied.")
+            errors = {"error" : "Invalid login details" }
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         #This is the key used by django to redirect (notice next= ... in redirects!)
         context = {}
@@ -177,9 +181,92 @@ def user_login(request):
             context['next'] = request.GET.get('next')
         return render(request, 'siteModel/login.html', context)
 
+def request_password_reset(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if not email:
+            return createAPIErrorJsonReponse('??.', 404)
+        logger = logging.getLogger("django")
+        logger.info("reset email is " + email)
+        try:
+            user = User.objects.get(email = email)
+            try:
+                pass_request = PasswordResetRequest.objects.get(email = email) 
+                if not pass_request.is_expired():
+                    return createAPIErrorJsonReponse('Please wait before trying again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+                else:
+                    #Delete it and create new request.
+                    pass_request.delete()
+            except PasswordResetRequest.DoesNotExist:
+                pass
+        except User.DoesNotExist:
+            return createAPIErrorJsonReponse('No user with that email exists (Perhaps you haven\'t confirmed your email?).', 401)
+
+        #creating request
+        request_id = str(uuid.uuid4())
+        valid_until_date = timezone.now() + PasswordResetRequest.expire_time_delta()
+        request_pass = PasswordResetRequest.objects.create (email = email, request_id = request_id, date_valid = valid_until_date)
+        request_pass.save();
+        html_message = create_password_reset_message(request_id)
+        send_mail('Confirm', html_message, settings.EMAIL_HOST_USER,
+                [email], fail_silently=False, html_message=html_message)
+        return createAPISuccessJsonReponse({'result': 'ok'})
+    else:
+        context = {}
+        if request.GET.get('request_id') is not None:
+            context['request_id'] = request.GET.get('request_id')
+        return render(request, 'siteModel/resetPasswordRequest.html', context)  
+
+def submit_password_change(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        new_pass = request.POST.get('password')
+        new_pass_confirm = request.POST.get('confirm_password')
+        logger = logging.getLogger("django")
+        logger.info("pass restglegnS" + str(new_pass))
+        logger.info("SET USER PERMIS" + str(new_pass_confirm))
+        if new_pass != new_pass_confirm:
+            return createAPIErrorJsonReponse('Passwords don\'t match...', 200) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        if not is_valid_password(new_pass):
+            return createAPIErrorJsonReponse('Password is not valid.', 200) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        
+        request_id = request.POST.get('request_id', None)
+        if not request_id:
+            return createAPIErrorJsonReponse('No request id.', 404)
+        try:
+            pass_request = PasswordResetRequest.objects.get(request_id = request_id) 
+            user = User.objects.get(email = pass_request.email)
+            if not pass_request.is_expired():
+                user.set_password(new_pass)
+                user.save()
+                pass_request.delete()
+                return createAPISuccessJsonReponse({'result': 'ok'})
+            else:
+                pass_request.delete()
+                return createAPIErrorJsonReponse('This url is expired, please request a password change again.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+        except PasswordResetRequest.DoesNotExist:
+            pass
+    else:
+        #This is the key used by django to redirect (notice next= ... in redirects!)
+        context = {}
+        if request.GET.get('request_id') is not None:
+            context['request_id'] = request.GET.get('request_id')
+        return render(request, 'siteModel/passwordReset.html', context)
+
+    return createAPIErrorJsonReponse('Forbidden.', 404) #TODO WHAT TO DO IF GUY TRYING TO SPAM ONE EMAIL ADDRESS?
+
+#TODO merge with the one is forms.py
+def is_valid_password(password):
+    if (not password or len(password) < 8):
+        return False
+    return True
 
 @login_required
-@csrf_exempt
 def set_user_permission(request):
     logger = logging.getLogger("django")
     #TODO
@@ -519,21 +606,29 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
 
-class CommentList(generics.ListCreateAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
+
     serializer_class = CommentSerializer
+    queryset = Comments.objects.all()
+    model = Comments
     
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         news_id = self.kwargs['pk']
         comments = Comments.objects.filter(news=news_id)
         
         #sort style
-        sort_style = self.request.QUERY_PARAMS.get('sort', None)
+        sort_style = self.request.query_params.get('sort', None)
 
         rankAlgo = RankHelper.parse_rank_style(sort_style)
 
-        query_set = rankAlgo.sort_list_of_news(comments)
+        self.queryset = rankAlgo.sort_list_of_news(comments)
+        return super(CommentViewSet, self).list(request, *args, **kwargs)
 
-        return query_set
+    def retrieve(self, request, *args, **kwargs):
+        comment_id = self.kwargs['comment_pk']
+        comment = get_object_or_404(Comments, pk=comment_id)
+        serializer = self.get_serializer(comment)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """
@@ -545,9 +640,10 @@ class CommentList(generics.ListCreateAPIView):
         user = get_user(request)
         can_post = can_user_post(user, category)
         if can_post:
-            return super(CommentList, self).create(request, *args, **kwargs)
+            return super(CommentViewSet, self).create(request, *args, **kwargs)
         else:
             return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
+
     def perform_create(self, serializer):
         # save the owner of the news
         user = self.request.user
@@ -565,15 +661,14 @@ class CommentList(generics.ListCreateAPIView):
     def destroy(self, request, *args, **kwargs):
         """
         Delete comment
-        Only the owner of the comment can delete it. ---- need to verify this.
         """
         user = get_user(self.request)
-        category = request.DATA['category']
+        category = News.objects.get(id=int(self.kwargs['pk'])).category.title
         can_delete = can_user_delete(user, category)
         if can_delete:
-            comment_id = self.kwargs['pk']
-            comment = Comments.objects.get_object_or_404(pk = comment_id)
-            comment.content = "This message has been deleted."
+            comment_id = self.kwargs['comment_pk']
+            comment = get_object_or_404(Comments, pk = comment_id)
+            comment.content = "[deleted]"
             comment.save()
             return createAPISuccessJsonReponse({'result':'success'})
         else:

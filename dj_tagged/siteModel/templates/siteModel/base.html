@@ -22,6 +22,8 @@
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
                             <li><a href="/f/News">{% trans "News" %} |</a></li>
+                            <li><a href="/f/Sayasat">{% trans "Politics" %}</a></li>
+                            <li><a href="/f/Tarih">{% trans "History" %}</a></li>
                             <li><a href="/f/Funny">{% trans "Funny" %} |</a></li>
                             <li><a href="/f/Sport">{% trans "Sport" %} |</a></li>
                             <li><a href="/f/Science_Tech">{% trans "Science&Tech" %} |</a></li>
@@ -31,6 +33,7 @@
                             <li><a href="/f/Inspire">{% trans "Inspire" %} |</a></li>
                             <li><a href="/f/Music">{% trans "Music" %} |</a></li>
                             <li><a href="/f/Raznoe">{% trans "Random" %} |</a></li>
+                            <li><a href="/f/Krasota_Iskusstvo">{% trans "Beauty & art" %}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -54,7 +57,7 @@
                             <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
                             {% if unread_count %}
                             <li>
-                            <a href='{% url 'fuagra_notifications' %}'>| {{ unread_count }} 
+                            <a href='{% url 'fuagra_notifications' %}'> {{ unread_count }} 
                             {% if unread_count == 1 %} 
                             notification 
                             {% else %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-23 14:59-0500\n"
+"POT-Creation-Date: 2016-02-23 16:40-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,74 +36,86 @@ msgid "News"
 msgstr "Новости"
 
 #: siteModel/templates/siteModel/base.html:25
+msgid "Politics"
+msgstr "Политика"
+
+#: siteModel/templates/siteModel/base.html:26
+msgid "History"
+msgstr "История"
+
+#: siteModel/templates/siteModel/base.html:27
 msgid "Funny"
 msgstr "Смешное"
 
-#: siteModel/templates/siteModel/base.html:26
+#: siteModel/templates/siteModel/base.html:28
 msgid "Sport"
 msgstr "Спорт"
 
-#: siteModel/templates/siteModel/base.html:27
+#: siteModel/templates/siteModel/base.html:29
 msgid "Science&Tech"
 msgstr "Наука и Технологии"
 
-#: siteModel/templates/siteModel/base.html:28
+#: siteModel/templates/siteModel/base.html:30
 msgid "Economics"
 msgstr "Экономика"
 
-#: siteModel/templates/siteModel/base.html:29
+#: siteModel/templates/siteModel/base.html:31
 msgid "Life stories"
 msgstr "Жизненные истории"
 
-#: siteModel/templates/siteModel/base.html:30
+#: siteModel/templates/siteModel/base.html:32
 msgid "Movies"
 msgstr "Кино"
 
-#: siteModel/templates/siteModel/base.html:31
+#: siteModel/templates/siteModel/base.html:33
 msgid "Inspire"
 msgstr "Вдохновение"
 
-#: siteModel/templates/siteModel/base.html:32
+#: siteModel/templates/siteModel/base.html:34
 msgid "Music"
 msgstr "Музыка"
 
-#: siteModel/templates/siteModel/base.html:33
+#: siteModel/templates/siteModel/base.html:35
 msgid "Random"
 msgstr "Разное"
 
-#: siteModel/templates/siteModel/base.html:45
+#: siteModel/templates/siteModel/base.html:36
+msgid "Beauty & art"
+msgstr "Красота и Искусство"
+
+#: siteModel/templates/siteModel/base.html:48
 msgid "Hot"
 msgstr "Горячее"
 
-#: siteModel/templates/siteModel/base.html:46
+#: siteModel/templates/siteModel/base.html:49
 msgid "Newest"
 msgstr "Новое"
 
-#: siteModel/templates/siteModel/base.html:53
+#: siteModel/templates/siteModel/base.html:56
 msgid "Hello"
 msgstr "Здравствуй"
 
-#: siteModel/templates/siteModel/base.html:54
+#: siteModel/templates/siteModel/base.html:57
 msgid "Logout"
 msgstr "Выйти"
 
-#: siteModel/templates/siteModel/base.html:67
+#: siteModel/templates/siteModel/base.html:70
 msgid "Register"
 msgstr "Регистрация"
 
-#: siteModel/templates/siteModel/base.html:68
+#: siteModel/templates/siteModel/base.html:71
 msgid "Login"
 msgstr "Вход"
 
-#: siteModel/templates/siteModel/base.html:97
+#: siteModel/templates/siteModel/base.html:100
 msgid "about"
 msgstr "о нас"
 
-#: siteModel/templates/siteModel/base.html:99
+#: siteModel/templates/siteModel/base.html:102
 msgid "help"
 msgstr "помощь"
 
-#: siteModel/templates/siteModel/base.html:100
+#: siteModel/templates/siteModel/base.html:103
 msgid "feedback"
 msgstr "отзывы"
 

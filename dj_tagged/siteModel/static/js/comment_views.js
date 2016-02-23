@@ -7,10 +7,11 @@ define([
     'models',
     'routers',
     'markdown',
+    'timeago',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
     'text!templates/commentsTextareaView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT, commentsTextareaT) {
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, Timeago, commentsItemT, commentsT, commentsTextareaT) {
 
     'use strict';
     
@@ -48,6 +49,7 @@ define([
                 collection: new_items,
                 newsId: this.newsId, 
 				childColl: childcoll,
+                moderating: this.moderating,
             }
         },
 
@@ -60,6 +62,7 @@ define([
             this.newsId = attr.newsId;
 			if(attr.childColl != null)
 				this.childCollection = attr.childColl;
+            this.moderating = attr.moderating;
 			
 			console.log("This collection", this.collection);
 			
@@ -80,14 +83,20 @@ define([
             } else if (this.model.get('submitter_role') == 'AD') {
                 $('a#comment_author', this.el).css("color", "red").append('[A]'); 
             }
+            $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
+            // delete button for Moderators and Admins
+            if (this.moderating) {
+                $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
+            }
         },
         
         events: {
             'click a.expand': 'expand',
-            'click a.reply': 'reply'
+            'click a.reply': 'reply',
+            'click a[name="delete_comment"]': 'delete_comment',
         },
         modelEvents: {
-            'change': 'render'
+            'change': 'render',
         },
 
         expand: function(e){
@@ -105,12 +114,26 @@ define([
         },
         reply: function(e) {
             e.preventDefault();
-			console.log("e: ", e);
-			//e.stopImmediatePropagation();
+			e.stopImmediatePropagation();
             if (!$('form', this.el)[0]) {
                 var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id') });
                 $(this.el).append(commentsTextareaView.render().el);
             }
+        },
+        delete_comment: function(e) {
+            e.preventDefault();
+			e.stopImmediatePropagation();
+            var commentId = this.model.get('id');
+            var newsTitle = this.model.get('content');
+
+            this.model.destroy({
+                success: function(model, response, options) {
+                    console.log('Successfully deleted comment:', commentId);
+                },
+                error: function(model, response, options) {
+                    console.log('Error:', response);
+                }
+            });
         }
     });
 
@@ -199,6 +222,7 @@ define([
             return {
                 collection: new_items,
                 newsId: this.newsId,
+                moderating: this.moderating,
 				childColl: childcoll,
             }
         },
@@ -211,9 +235,11 @@ define([
         },
 
         initialize: function(attr){			
-			
-            this.newsId = attr.newsId;
             console.log('Initializing CommentsView...');
+            this.newsId = attr.newsId;
+            if (attr.permission == "Admin" || attr.permission == "Moderator") {
+                this.moderating = true;
+            }
         },
     });
 	

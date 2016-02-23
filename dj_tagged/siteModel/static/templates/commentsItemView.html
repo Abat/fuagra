@@ -7,12 +7,10 @@
         <p class='tagline'>
             <a href='#' class='comment-control expand'> [-] </a>
             <a href='#' class='comment-control' id='comment_author'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
-            <time datetime='<%= date_created %>'> <%= date_created %> </time>
+            <time class="timeago" datetime='<%= date_created %>'> <%= date_created %> </time>
         </p>
         <div class='content'> <%= content %> </div>
         <ul class='comments_buttons'>
-            <li class='comments_buttons'> <a href='#'> permalink </a> </li>
-            <li class='comments_buttons'> <a href='#'> parent </a> </li>
             <li class='comments_buttons'> <a href='#' class='reply'> reply </a> </li>
         </ul>
     </div>
