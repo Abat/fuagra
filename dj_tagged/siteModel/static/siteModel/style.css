@@ -298,3 +298,7 @@ div#side {
     background:#ee5;
     text-align:center;
 }
+
+form.language {
+    margin: 7px auto 7px auto;
+}

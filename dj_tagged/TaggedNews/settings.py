@@ -69,9 +69,9 @@ MIDDLEWARE_CLASSES = (
 ugettext = lambda s: s
 
 LANGUAGES = (
+    ('kk', ugettext('Kazakh')),
     ('ru', ugettext('Russian')),
     ('en', ugettext('English')),
-    ('kk', ugettext('Kazakh')),
 )
 
 AUTHENTICATION_BACKENDS = (
