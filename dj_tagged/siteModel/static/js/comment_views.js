@@ -6,12 +6,12 @@ define([
     'collections',
     'models',
     'routers',
-    'markdown',
+    'marked',
     'timeago',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
     'text!templates/commentsTextareaView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, Timeago, commentsItemT, commentsT, commentsTextareaT) {
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Marked, Timeago, commentsItemT, commentsT, commentsTextareaT) {
 
     'use strict';
     
@@ -73,8 +73,7 @@ define([
         onRenderTemplate: function() {
             var self = this;
 			//console.log("CommentsItemView_render...", this.model);
-            // fixes new lines in comments, otherwise renders all comment as one line
-            $('div.content', this.el).html(Micromarkdown.parse(self.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+            $('div.content', this.el).html(Marked(self.model.get('content')));
             if (this.model.get('is_op')) {
                 $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
             }

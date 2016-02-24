@@ -7,14 +7,14 @@ define([
     'collections',
     'models',
     'comment_views',
-    'markdown',
+    'marked',
     'timeago',
     'text!templates/newsView.html',
     'text!templates/newsItemView.html',
     'text!templates/submitLinkView.html',
     'text!templates/submitTextView.html',
     'text!templates/administerView.html',
-], function($, _, Backbone, Marionette, Bootstrap, Collections, Models, Comment_Views, Micromarkdown, Timeago, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
+], function($, _, Backbone, Marionette, Bootstrap, Collections, Models, Comment_Views, Marked, Timeago, newsT, newsItemT, submitLinkT, submitTextT, administerT) {
 
     'use strict';
 
@@ -64,7 +64,7 @@ define([
                 $('div.score', self.el).css({"color" : "black"});
             }
             if (this.textPost) {
-                $('p.textPost', self.el).html(Micromarkdown.parse(self.textPost.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+                $('p.textPost', self.el).html(Marked(self.textPost));
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
             if (this.moderating) {
