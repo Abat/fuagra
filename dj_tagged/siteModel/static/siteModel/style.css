@@ -6,6 +6,19 @@ body {
     font: normal small verdana,arial,helvetica,sans-serif;
 }
 
+/* About */
+p.about {
+    margin: 20px auto 30px auto;
+    font-size: 1.2em;
+}
+
+div.about-questions {
+    margin-bottom: 60px;
+}
+
+
+/* end of About */
+
 a {
     text-decoration: none;
 }
@@ -37,7 +50,7 @@ div#bottom {
     padding-left: 15px;
     height: 50px;
     margin: 0 auto 0 auto;
-    background-color: #F5DEB3;
+    background-color: #F5DE74;
     /*border: 1px solid black;*/
 }
 
