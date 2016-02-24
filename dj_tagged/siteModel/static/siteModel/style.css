@@ -176,6 +176,7 @@ p.textPost {
 
 div.comments {
     padding-bottom: 5px;
+    border-left: 2px dotted #eee;
 }
 
 div.newsVote {
@@ -246,7 +247,7 @@ span.help {
 }
 
 li.commentsItem {
-    padding-left: 10px;
+    padding-left: 15px;
     list-style-type: none;
 }
 
