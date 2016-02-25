@@ -4,6 +4,13 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from simple_email_confirmation import SimpleEmailConfirmationUserMixin
 from django.conf import settings
+import urllib.request
+from urllib.parse import urlparse
+import os
+import logging
+from siteModel.opengraph.opengraph import *
+from django.core.files import File
+
 
 class User(SimpleEmailConfirmationUserMixin, AbstractUser):
     pass
@@ -42,9 +49,10 @@ class News(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
-
+    thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
+    thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
-    ##thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
+    #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
     # class Meta:
     #     ordering = ['-date_updated']
 
@@ -62,6 +70,32 @@ class News(models.Model):
 
     def get_downs(self):
         return self.downvotes
+
+    def save(self, *args, **kwargs):
+        
+
+        logger = logging.getLogger("django")
+        logger.info("INSIDE SAVE")
+        logger.info("url " + str(self.url))
+
+        if self.url and not self.thumbnail_url:
+            #try:
+            og = IMPORTMEPLZ(self.url)
+            if og.is_valid():
+                image_link = og.image
+                if (image_link):
+                    self.thumbnail_url = str(image_link)
+                        #TODO image.
+            #except:
+            #    logger.info("WTF HAPPENED")
+            #    pass
+
+        if self.thumbnail_url and not self.thumbnail_image:
+            file_save_dir = 'media/news_images'
+            filename = urlparse(self.thumbnail_url).path.split('/')[-1]
+            urllib.request.urlretrieve(self.thumbnail_url, os.path.join(file_save_dir, filename))
+            self.thumbnail_image = os.path.join(file_save_dir, filename)
+        super(News, self).save(*args, **kwargs) # Call the "real" save() method.
 
 
 class Comments(models.Model):
