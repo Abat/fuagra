@@ -468,7 +468,7 @@ def notifications(request):
 
     user = request.user
     # Get all News (write better solution later)
-    context['notifications'] = user.notifications.unread()
+    context['notifications'] = user.notifications.all()
 
     return render(request, 'siteModel/notifications.html', context)
 

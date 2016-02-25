@@ -10,11 +10,19 @@
 {% if notifications %}
 	<p>
 		<a href="{% url 'notifications:mark_all_as_read' %}?next=/notifications/">Mark All As Read</a>
+	</p>
+{% else %}
 	<p>
+		You have no notifications
+	</p>
 {% endif %}
 <p>
 {% for notification in notifications %} 
-<p><a href="/comments/{{ notification.target_object_id }}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago </a> <a href="{% url 'notifications:mark_as_read' notification.slug %}?next=/notifications/">Mark as read</a>
+<p>
+	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago</a> 
+	{% if notification.unread %}
+	<a href="{% url 'notifications:mark_as_read' notification.slug %}?next=/notifications/">Mark as read</a>
+	{% endif %}
 </p>
 {% endfor %}
 </p>
