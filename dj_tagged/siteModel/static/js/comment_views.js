@@ -232,7 +232,12 @@ define([
             var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
             $(this.el).prepend(commentsTextareaView.render().el);
         },
+        onShow: function() {
+            if (window.location.hash) {
+                $("body, html").animate({ scrollTop: $(window.location.hash + "").offset().top }, 600);
+            }
 
+        },
         initialize: function(attr){			
             console.log('Initializing CommentsView...');
             this.newsId = attr.newsId;
