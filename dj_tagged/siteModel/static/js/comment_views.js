@@ -115,7 +115,7 @@ define([
             e.preventDefault();
 			e.stopImmediatePropagation();
             if (!$('form', this.el)[0]) {
-                var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id') });
+                var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id'), reply: true });
                 $(this.el).append(commentsTextareaView.render().el);
             }
         },
@@ -148,6 +148,7 @@ define([
             console.log('Initializing CommentsTextareaView...');
             this.newsId = attr.newsId;
             this.parentId = attr.parentId;
+            this.reply = attr.reply;
         },
 
         events: {
@@ -167,7 +168,11 @@ define([
             }, {
                 success: function(resp) {
                     console.log(resp);
-                    $('form#newComment', self.el)[0].reset();
+                    if (self.reply) {
+                        $('form#newComment', self.el)[0].remove();
+                    } else {
+                        $('form#newComment', self.el)[0].reset();
+                    }
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
                 },
                 error: function(err) {

@@ -1,9 +1,9 @@
 [{
-	"pk": 17,
+	"pk": 18,
 	"fields": {
-		"category": "Economics",
-		"user": 28,
-		"permission": "MD",
+		"category": "Feedback",
+		"user": 8,
+		"permission": "AD",
 		"last_updated": "2016-02-25T16:32:10.932Z"
 	},
 	"model": "siteModel.newscategoryuserpermission"
