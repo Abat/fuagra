@@ -494,7 +494,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             else:
                 news_list = News.objects.all()
         else: #If no filtering, pass in all news
-            news_list = News.objects.all()
+            news_list = News.objects.all().exclude(category="Feedback")
                 
         #sort style
         sort_style = None
