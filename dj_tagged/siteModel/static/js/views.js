@@ -335,6 +335,13 @@ define([
                 this.moderating = true;
             }
         },
+        onRender: function() {
+            if (this.sort == "Newest") {
+                $('div#bottom a[name="Newest"]').css({ "color": "red" });
+            } else {
+                $('div#bottom a[name="Hot"]').css({ "color": "red" });
+            }
+        },
 
         events: {
             'click a#nextPage': 'nextPage',

@@ -41,7 +41,7 @@ define([
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
             App.news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items });
+                var newsView = new Views.NewsView({ collection: items, sort: sort_sort });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
