@@ -1,10 +1,10 @@
 [{
-	"pk": 18,
+	"pk": 19,
 	"fields": {
-		"category": "Feedback",
+		"category": "Interviews",
 		"user": 8,
 		"permission": "AD",
-		"last_updated": "2016-02-25T16:32:10.932Z"
+		"last_updated": "2016-02-26T16:32:10.932Z"
 	},
 	"model": "siteModel.newscategoryuserpermission"
 }]
