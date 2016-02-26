@@ -54,17 +54,15 @@
                                 {% load notifications_tags %}
                                 {% notifications_unread as unread_count %}
                                 {% csrf_token %}
-                                {% if unread_count %} 
-                                    <li>
-                                    <a href='{% url 'fuagra_notifications' %}' style="color:red"> {{ unread_count }} 
-                                    {% if unread_count == 1 %} 
-                                        notification 
-                                    {% else %}
-                                        notifications 
-                                    {% endif %}
-                                    </a>
-                                    </li>
+                                <li>
+                                <a href='{% url 'fuagra_notifications' %}' {% if unread_count %} style="color:red" {% endif %}> {{ unread_count }} 
+                                {% if unread_count == 1 %}
+                                    notification 
+                                {% else %}
+                                    notifications 
                                 {% endif %}
+                                </a>
+                                </li>
                                 <li><a href="#">{% trans "Hello" %}, {{ user }} |</a></li>
                                 <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
                             {% else %}
