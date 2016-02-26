@@ -131,6 +131,7 @@ p.meta {
 div.content {
     font-size: 1.05em;
     padding-left: 25px;
+    width: 900px;
 }
 
 /* paragraph styles */
@@ -193,7 +194,7 @@ p.textPost {
 
 div.comments {
     padding-bottom: 5px;
-    border-left: 2px dotted #eee;
+    border-left: none;
 }
 
 div.newsVote {
@@ -266,6 +267,7 @@ span.help {
 li.commentsItem {
     padding-left: 15px;
     list-style-type: none;
+    border-left: 1px dotted #ddf;
 }
 
 div#special_top {

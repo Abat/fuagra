@@ -494,7 +494,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             else:
                 news_list = News.objects.all()
         else: #If no filtering, pass in all news
-            news_list = News.objects.all()
+            news_list = News.objects.all().exclude(category="Feedback")
                 
         #sort style
         sort_style = None
@@ -528,8 +528,14 @@ class NewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
-        serializer.save(owner=user, username=user.username)
-
+        category = self.request.DATA['category']
+        news = serializer.save(owner=user, username=user.username)
+        if news is not None:
+            if category == "Feedback":
+                permissions = NewsCategoryUserPermission.objects.filter(category=category, permission="AD")
+                for permission in permissions:
+                    recipient = permission.user
+                    notify.send(user, verb=u'leaved a feedback', recipient=recipient, target=news, description=news.title)
 
     def update(self, request, *args, **kwargs):
         """
@@ -655,8 +661,8 @@ class CommentViewSet(viewsets.ModelViewSet):
             news_object.save()
             if (comment.parent is not None) and (user != comment.parent.owner):
                 notify.send(user, verb=u'replied to your comment', recipient=comment.parent.owner, action_object=comment, target=news_object)
-            else:
-                notify.send(user, verb=u'commented on your post', recipient=news_object.owner, action_object=comment, target=news_object)
+            elif user != news_object.owner:
+                notify.send(user, verb=u'commented on', recipient=news_object.owner, action_object=comment, target=news_object, description=news_object.title)
 
     def destroy(self, request, *args, **kwargs):
         """

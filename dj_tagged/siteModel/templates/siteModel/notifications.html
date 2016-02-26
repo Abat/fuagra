@@ -19,7 +19,11 @@
 <p>
 {% for notification in notifications %} 
 <p>
-	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago</a> 
+	{% if notification.action_object_object_id %}
+	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {{ notification.description|truncatechars:20}} {{ notification.timesince }} ago</a> 
+	{% else %}
+	<a href="/comments/{{ notification.target_object_id }}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago</a> 
+	{% endif %}
 	{% if notification.unread %}
 	<a href="{% url 'notifications:mark_as_read' notification.slug %}?next=/notifications/">Mark as read</a>
 	{% endif %}
