@@ -9,7 +9,7 @@
 <div class="layout_view">
 {% if notifications %}
 	<p>
-		<a href="{% url 'notifications:mark_all_as_read' %}?next=/notifications/">Mark All As Read</a>
+		<a href="{% url 'notifications:mark_all_as_read' %}?next=/notifications/" class='control'>Mark All As Read</a>
 	</p>
 {% else %}
 	<p>

@@ -15,8 +15,6 @@ p.about {
 div.about-questions {
     margin-bottom: 60px;
 }
-
-
 /* end of About */
 
 a {
@@ -26,6 +24,12 @@ a {
 a.administer {
     color: red;
     display: none;
+}
+
+a.control {
+    font-weight: bold;
+    color: #777;
+    text-decoration: underline;
 }
 
 .duck {
