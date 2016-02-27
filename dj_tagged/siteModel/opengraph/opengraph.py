@@ -3,7 +3,7 @@
 # I don't know why I keep getting import errors when name is opengraph.
 
 import re
-import urllib.request
+import urllib
 try:
     from bs4 import BeautifulSoup
 except ImportError:
@@ -49,7 +49,7 @@ class IMPORTMEPLZ(dict):
     def fetch(self, url):
         """
         """
-        raw = urllib.request.urlopen(url)
+        raw = urllib.urlopen(url)
         html = raw.read()
         return self.parser(html)
         

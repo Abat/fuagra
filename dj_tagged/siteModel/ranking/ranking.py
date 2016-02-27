@@ -186,7 +186,7 @@ class HotRankingAlgo(RankingAlgo):
 # encoding: utf-8
 
 import re
-import urllib.request
+import urllib
 try:
     from bs4 import BeautifulSoup
 except ImportError:
@@ -232,7 +232,7 @@ class WhyCantIImportOpenGraph(dict):
     def fetch(self, url):
         """
         """
-        raw = urllib.request.urlopen(url)
+        raw = urllib.urlopen(url)
         html = raw.read()
         return self.parser(html)
         

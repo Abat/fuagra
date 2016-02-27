@@ -4,8 +4,8 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from simple_email_confirmation import SimpleEmailConfirmationUserMixin
 from django.conf import settings
-import urllib.request
-from urllib.parse import urlparse
+import urllib
+from urlparse import urlparse
 import os
 import logging
 from siteModel.opengraph.opengraph import *
@@ -49,7 +49,7 @@ class News(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
-    thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
+    thumbnail_image = models.ImageField(upload_to='thumbnails', null=True, blank=True)
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
@@ -90,15 +90,15 @@ class News(models.Model):
                 logger.info("Failed to dl image, either doesnt exist or error.")
                 pass
         if thumbnail_url:
-            file_save_dir = 'media/news_images'
+            file_save_dir = 'siteModel/static/thumbnails'
             filename = urlparse(thumbnail_url).path.split('/')[-1]
-            urllib.request.urlretrieve(thumbnail_url, os.path.join(file_save_dir, filename))
+            urllib.urlretrieve(thumbnail_url, os.path.join(file_save_dir, filename))
             
             im = Image.open(os.path.join(file_save_dir, filename))
             im_resize = im.resize((70,70), Image.ANTIALIAS)
             im_resize.save(os.path.join(file_save_dir, filename))
             #im_saveImage.open(os.path.join(file_save_dir, filename))
-            self.thumbnail_image = os.path.join(file_save_dir, filename)
+            self.thumbnail_image = os.path.join(filename)
         super(News, self).save(*args, **kwargs) # Call the "real" save() method.
 
 
