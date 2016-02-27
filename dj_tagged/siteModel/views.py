@@ -34,6 +34,7 @@ from django.views.decorators.csrf import csrf_exempt
 import uuid
 import json
 
+#from siteModel.ranking.ranking import *
 
 # Create your views here.
 def index(request):
@@ -519,8 +520,15 @@ class NewsViewSet(viewsets.ModelViewSet):
         user = get_user(request)
         category = request.DATA['category']
         can_post = can_user_post(user, category)
+        
+                #No image url
         if can_post:
+            url = request.DATA['url']
+            logger = logging.getLogger("django")
+            logger.info("url " + str(url))
+            
             return super(NewsViewSet, self).create(request, *args, **kwargs)
+
         else:
             return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
         
