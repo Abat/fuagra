@@ -4,6 +4,9 @@
         <div class='score'> <%= upvotes - downvotes %> </div>
         <div class='arrow'> <a href='#' class='down'> <img src="/images/down.svg" class='arrow'> </a> </div>
     </div>
+    <div class='newsMedia hidden'>
+        <img src='<%=thumbnail_image%>' class='newsThumbnail' alt='(.^.) - quack (.^.) - quack'>
+    </div>
     <div class='newsInfo'>
         <p class='title'>
         <a target='<%= url ? "_blank" : "" %>' href='<%= url ? url : "/comments/" + id %>' class='title'> <%= title %> </a>

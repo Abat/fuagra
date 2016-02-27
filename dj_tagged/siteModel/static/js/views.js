@@ -56,6 +56,7 @@ define([
         },
         onRender: function() {
             var self = this;
+            // vote coloring
             if (this.model.get('has_voted') == 1) {
                 $('div.score', self.el).css({"color" : "green", "font-weight" : "bold"});
             } else if (this.model.get('has_voted') == -1) {
@@ -63,12 +64,19 @@ define([
             } else {
                 $('div.score', self.el).css({"color" : "black"});
             }
+            // show text post
             if (this.textPost) {
                 $('p.textPost', self.el).html(Marked(self.textPost));
             }
+            // convert to timeago
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
+            // show moderating buttons
             if (this.moderating) {
                 $('ul.buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_news'> delete </a></li>");
+            }
+            // show media
+            if (this.model.get('thumbnail_image')) {
+                $('div.newsMedia', this.el).removeClass('hidden');
             }
         },
         upvote: function(e) {

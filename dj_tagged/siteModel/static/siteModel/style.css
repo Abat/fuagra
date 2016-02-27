@@ -182,7 +182,9 @@ div.news {
 }
 
 div.newsInfo {
-    padding-left: 40px;
+    margin: auto auto auto 5px;
+    float: left;
+    width: 90%;
 }
 
 p.textPost {
@@ -201,6 +203,7 @@ div.newsVote {
     float: left;
     margin-right: 7px;
     margin-left: 7px;
+    margin-top: 7px;
     overflow: hidden;
 }
 
@@ -220,6 +223,23 @@ img.arrow {
     height: 20px;
 }
 
+img.newsThumbnail {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    height: auto;
+    max-width: 100%;
+    color: #EEF;
+}
+
+div.newsMedia {
+    float: left;
+    height: 100%;
+    max-width: 70px;
+    max-height: 70px;
+    overflow: hidden;
+}
+
 div.score {
     font-size: 15px;
     text-align: center;
@@ -231,6 +251,7 @@ ul.newsList {
 
 li.newsItem {
     padding-left: 0px;
+    list-style-type: none;
 }
 
 ul#comments {
