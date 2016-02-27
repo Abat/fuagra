@@ -75,8 +75,6 @@ class News(models.Model):
         
 
         logger = logging.getLogger("django")
-        logger.info("INSIDE SAVE")
-        logger.info("url " + str(self.url))
         thumbnail_url = None;
         if self.url and not self.thumbnail_image:
             try:
