@@ -1,4 +1,6 @@
 # encoding: utf-8
+# Done by https://github.com/erikriver/opengraph
+# I don't know why I keep getting import errors when name is opengraph.
 
 import re
 import urllib.request
