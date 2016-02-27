@@ -249,6 +249,7 @@ define([
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
+            $("html, body").animate({ scrollTop: 0 }, 0);
         },
     });
 	
