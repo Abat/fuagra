@@ -16,22 +16,35 @@
 		You have no notifications
 	</p>
 {% endif %}
-<p>
+
+<table class="table-condensed">
+
 {% for notification in notifications %} 
-<p>
+    <tr>
 	{% if notification.action_object_object_id %}
-	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {% if notification.description %}}{{ notification.description|truncatechars:20}}{% endif %} {{ notification.timesince }} ago</a> 
+        <td>
+             {{ notification.actor }}
+        </td>
+        
+        <td>
+            <a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}">{{ notification.verb }} {% if notification.description %}{{ notification.description|truncatechars:20}}{% endif %}
+        </td>
+        <td>{{ notification.timesince }} ago</a></td>
 	{% else %}
-	<a href="/comments/{{ notification.target_object_id }}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago</a> 
+        <td>{{ notification.actor }} </td>
+        <td><a href="/comments/{{ notification.target_object_id }}"> {{ notification.verb }} </td>
+            
+        <td>{{ notification.timesince }} ago</a></td> 
 	{% endif %}
 	{% if notification.unread %}
+    <td>
 	<a href="{% url 'notifications:mark_as_read' notification.slug %}?next=/notifications/">Mark as read</a>
+    </td>
 	{% endif %}
-</p>
+    </tr>
 {% endfor %}
-</p>
 
-
+</table>
 
 </div>
 

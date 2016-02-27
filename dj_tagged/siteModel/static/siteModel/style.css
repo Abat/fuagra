@@ -81,6 +81,10 @@ textarea {
     height: 100px;
 }
 
+table {
+    font: normal small verdana,arial,helvetica,sans-serif;
+}
+
 div#topComment {
     padding-left: 40px;
     margin: 0 0 20px 0;
