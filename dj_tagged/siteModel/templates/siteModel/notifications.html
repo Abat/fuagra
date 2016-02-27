@@ -20,7 +20,7 @@
 {% for notification in notifications %} 
 <p>
 	{% if notification.action_object_object_id %}
-	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {{ notification.description|truncatechars:20}} {{ notification.timesince }} ago</a> 
+	<a href="/comments/{{ notification.target_object_id }}#comment_{{notification.action_object_object_id}}"> {{ notification.actor }} {{ notification.verb }} {% if notification.description %}}{{ notification.description|truncatechars:20}}{% endif %} {{ notification.timesince }} ago</a> 
 	{% else %}
 	<a href="/comments/{{ notification.target_object_id }}"> {{ notification.actor }} {{ notification.verb }} {{ notification.timesince }} ago</a> 
 	{% endif %}
