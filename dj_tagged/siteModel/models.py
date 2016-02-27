@@ -92,6 +92,7 @@ class News(models.Model):
         if thumbnail_url:
             file_save_dir = 'siteModel/static/thumbnails'
             filename = urlparse(thumbnail_url).path.split('/')[-1]
+            filename = "f" + datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + filename
             urllib.urlretrieve(thumbnail_url, os.path.join(file_save_dir, filename))
             
             im = Image.open(os.path.join(file_save_dir, filename))
