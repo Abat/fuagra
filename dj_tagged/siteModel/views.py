@@ -83,13 +83,6 @@ def comments(request, pk):
     context['news_pk'] = pk
     return render(request, 'siteModel/comments.html', context)
 
-#def submit(request):
-#    context = {}
-#    if request.user.is_anonymous():
-#        return HttpResponseRedirect('/login')
-#    else:
-#        return render(request, 'siteModel/submit.html', context)
-
 # User Registration/Authentication
 
 def register(request):
@@ -129,15 +122,16 @@ def register(request):
             login(request, user_acc)
 
         else:
-            print(user_form.errors, profile_form.errors)
-            return HttpResponse("Error: {0}, {1}".format(user_form.errors, profile_form.errors))
+            errors = user_form.errors.copy()
+            errors.update(profile_form.errors)
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
 
     return render(request, 'siteModel/register.html', {'user_form':user_form,
-     'profile_form':profile_form,
-      'registered':registered})
+        'profile_form':profile_form,
+        'registered':registered})
 
 def _create_email_confirmation_message(user_name, confirmation_key):
     return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
@@ -176,10 +170,11 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect(redirect)
             else:
-                return HttpResponse("Your Account is disabled.")
+                errors = {"error" : "Your Account is disabled." }
+                return render(request, 'siteModel/errors.html', {"errors": errors})
         else:
-            print("Invalid login details :{0}, {1}".format(username, password))
-            return HttpResponse("Invalid login details supplied.")
+            errors = {"error" : "Invalid login details" }
+            return render(request, 'siteModel/errors.html', {"errors": errors})
     else:
         #This is the key used by django to redirect (notice next= ... in redirects!)
         context = {}
@@ -474,7 +469,7 @@ def notifications(request):
 
     user = request.user
     # Get all News (write better solution later)
-    context['notifications'] = user.notifications.unread()
+    context['notifications'] = user.notifications.all()
 
     return render(request, 'siteModel/notifications.html', context)
 
@@ -500,7 +495,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             else:
                 news_list = News.objects.all()
         else: #If no filtering, pass in all news
-            news_list = News.objects.all()
+            news_list = News.objects.all().exclude(category="Feedback")
                 
         #sort style
         sort_style = None
@@ -541,8 +536,14 @@ class NewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
-        serializer.save(owner=user, username=user.username)
-
+        category = self.request.DATA['category']
+        news = serializer.save(owner=user, username=user.username)
+        if news is not None:
+            if category == "Feedback":
+                permissions = NewsCategoryUserPermission.objects.filter(category=category, permission="AD")
+                for permission in permissions:
+                    recipient = permission.user
+                    notify.send(user, verb=u'leaved a feedback', recipient=recipient, target=news, description=news.title)
 
     def update(self, request, *args, **kwargs):
         """
@@ -668,8 +669,8 @@ class CommentViewSet(viewsets.ModelViewSet):
             news_object.save()
             if (comment.parent is not None) and (user != comment.parent.owner):
                 notify.send(user, verb=u'replied to your comment', recipient=comment.parent.owner, action_object=comment, target=news_object)
-            else:
-                notify.send(user, verb=u'commented on your post', recipient=news_object.owner, action_object=comment, target=news_object)
+            elif user != news_object.owner:
+                notify.send(user, verb=u'commented on', recipient=news_object.owner, action_object=comment, target=news_object, description=news_object.title)
 
     def destroy(self, request, *args, **kwargs):
         """

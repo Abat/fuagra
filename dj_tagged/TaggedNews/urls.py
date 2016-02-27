@@ -97,6 +97,7 @@ urlpatterns = patterns('',
     url(r'^accounts/resend_confirmation/$', views.resend_confirmation_email, name='resend_confirmation_email'),
     url(r'^notifications/$', views.notifications, name='fuagra_notifications'),
     url(r'^inbox/notifications/', include('notifications.urls', namespace='notifications')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     # catch all
     url(r'^.*$', views.index, name='index'),
 )

@@ -171,7 +171,7 @@ def time_since_epoch_seconds(date):
 class HotRankingAlgo(RankingAlgo):
 	def _evaluate_news(self, news):
 		vote_score = news.get_ups() - news.get_downs()
-		order = log(max(abs(vote_score), 1), 2)
+		order = log(max(abs(vote_score), 1), 4)
 		sign = 0
 		if (vote_score > 0):
 			sign = 1
@@ -180,7 +180,7 @@ class HotRankingAlgo(RankingAlgo):
 		else:
 			sign = -1
 		seconds = time_since_epoch_seconds(news.get_creation_date()) - 1454102930
-		return round(sign * order + seconds / 45000, 7)
+		return round(sign * order + seconds / 180000, 7)
 
 		
 # encoding: utf-8

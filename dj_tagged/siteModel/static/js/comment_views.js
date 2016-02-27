@@ -6,11 +6,12 @@ define([
     'collections',
     'models',
     'routers',
-    'markdown',
+    'marked',
+    'timeago',
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
     'text!templates/commentsTextareaView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Micromarkdown, commentsItemT, commentsT, commentsTextareaT) {
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Marked, Timeago, commentsItemT, commentsT, commentsTextareaT) {
 
     'use strict';
     
@@ -72,8 +73,7 @@ define([
         onRenderTemplate: function() {
             var self = this;
 			//console.log("CommentsItemView_render...", this.model);
-            // fixes new lines in comments, otherwise renders all comment as one line
-            $('div.content', this.el).html(Micromarkdown.parse(self.model.get('content').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br>')));
+            $('div.content', this.el).html(Marked(self.model.get('content')));
             if (this.model.get('is_op')) {
                 $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
             }
@@ -82,6 +82,7 @@ define([
             } else if (this.model.get('submitter_role') == 'AD') {
                 $('a#comment_author', this.el).css("color", "red").append('[A]'); 
             }
+            $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
             // delete button for Moderators and Admins
             if (this.moderating) {
                 $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
@@ -114,7 +115,7 @@ define([
             e.preventDefault();
 			e.stopImmediatePropagation();
             if (!$('form', this.el)[0]) {
-                var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id') });
+                var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id'), reply: true });
                 $(this.el).append(commentsTextareaView.render().el);
             }
         },
@@ -147,6 +148,7 @@ define([
             console.log('Initializing CommentsTextareaView...');
             this.newsId = attr.newsId;
             this.parentId = attr.parentId;
+            this.reply = attr.reply;
         },
 
         events: {
@@ -166,7 +168,11 @@ define([
             }, {
                 success: function(resp) {
                     console.log(resp);
-                    $('form#newComment', self.el)[0].reset();
+                    if (self.reply) {
+                        $('form#newComment', self.el)[0].remove();
+                    } else {
+                        $('form#newComment', self.el)[0].reset();
+                    }
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
                 },
                 error: function(err) {
@@ -231,13 +237,19 @@ define([
             var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
             $(this.el).prepend(commentsTextareaView.render().el);
         },
+        onShow: function() {
+            if (window.location.hash) {
+                $("body, html").animate({ scrollTop: $(window.location.hash + "").offset().top }, 600);
+            }
 
+        },
         initialize: function(attr){			
             console.log('Initializing CommentsView...');
             this.newsId = attr.newsId;
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
+            $("html, body").animate({ scrollTop: 0 }, 0);
         },
     });
 	

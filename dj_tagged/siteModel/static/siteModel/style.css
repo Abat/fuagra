@@ -6,6 +6,17 @@ body {
     font: normal small verdana,arial,helvetica,sans-serif;
 }
 
+/* About */
+p.about {
+    margin: 20px auto 30px auto;
+    font-size: 1.2em;
+}
+
+div.about-questions {
+    margin-bottom: 60px;
+}
+/* end of About */
+
 a {
     text-decoration: none;
 }
@@ -13,6 +24,12 @@ a {
 a.administer {
     color: red;
     display: none;
+}
+
+a.control {
+    font-weight: bold;
+    color: #777;
+    text-decoration: underline;
 }
 
 .duck {
@@ -37,7 +54,7 @@ div#bottom {
     padding-left: 15px;
     height: 50px;
     margin: 0 auto 0 auto;
-    background-color: #F5DEB3;
+    background-color: #F5DE74;
     /*border: 1px solid black;*/
 }
 
@@ -56,7 +73,7 @@ ul.navbar-left {
 }
 
 a.comment-control {
-    color: #386;
+    color: #369;
 }
 
 textarea {
@@ -75,7 +92,7 @@ div.markhelp {
 
 div.collapsed {
     overflow: hidden;
-    height: 23px;
+    height: 20px;
 }
 
 #wrapper {
@@ -114,11 +131,13 @@ p.meta {
 div.content {
     font-size: 1.05em;
     padding-left: 25px;
+    max-width: 900px;
 }
 
 /* paragraph styles */
 p.tagline {
     margin: 0 0 5px 0;
+    font-size: 0.85em;
 }
 /* url styles */
  .buttons li a, .comments_buttons li a {
@@ -168,13 +187,14 @@ div.newsInfo {
 
 p.textPost {
     padding-left: 15px;
-    width: 700px;
+    max-width: 700px;
     background-color: #FFFFF0;
     margin: 5px 0 5px 15px;
 }
 
 div.comments {
     padding-bottom: 5px;
+    border-left: none;
 }
 
 div.newsVote {
@@ -245,8 +265,9 @@ span.help {
 }
 
 li.commentsItem {
-    padding-left: 10px;
+    padding-left: 15px;
     list-style-type: none;
+    border-left: 1px dotted #ddf;
 }
 
 div#special_top {
@@ -286,14 +307,9 @@ div#side {
 .default_container {
     margin-left: auto;
     margin-right: auto;
+    min-height: 100%;
 }
 
-#footer {
-    width:100%;
-    height:80px;
-    position:absolute;
-    bottom:0;
-    left:0;
-    background:#ee5;
-    text-align:center;
+form.language {
+    margin: 7px auto 7px auto;
 }
