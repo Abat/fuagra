@@ -725,6 +725,12 @@ class VoteViewSet(viewsets.ModelViewSet):
         user = self.request.user
         serializer = VoteSerializer(data=request.data)
         news = get_object_or_404(News, pk=news_id)
+
+        category = news.category.title
+        can_post = can_user_post(user, category)
+        if not can_post:
+            return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
+
         if serializer.is_valid():
             try:
                 vote = Vote.objects.get(news=news_id, user=user)
@@ -759,6 +765,12 @@ class VoteViewSet(viewsets.ModelViewSet):
         user = self.request.user
         serializer = VoteSerializer(data=request.data)
         news = get_object_or_404(News, pk=news_id)
+
+        category = news.category.title
+        can_post = can_user_post(user, category)
+        if not can_post:
+            return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
+            
         if serializer.is_valid():
             try:
                 vote = Vote.objects.get(news=news_id, user=user)
