@@ -173,7 +173,7 @@ define([
                 date_created: Date.now()
             }, {
                 success: function(resp) {
-                    console.log(resp);
+                    console.log('New comment created');
                     if (self.reply) {
                         $('form#newComment', self.el)[0].remove();
                     } else {
@@ -181,8 +181,8 @@ define([
                     }
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
                 },
-                error: function(err) {
-                    console.log(err);
+                error: function(model, xhr, options) {
+                    self.dialog('Error:', xhr.responseJSON.reason); 
                 }
             });
         },
@@ -190,6 +190,12 @@ define([
             var self = this;
             e.preventDefault();
             $('div.markhelp', this.el).toggle();
+        },
+        dialog: function(title, body) {
+            console.log('Comments Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 

@@ -90,7 +90,7 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    console.log('Upvote error: ', xhr);
+                    self.dialog('Upvote error:', xhr.responseJSON.reason); 
                 }
             });
         },
@@ -105,7 +105,7 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    console.log('Downvote error: ', xhr);
+                    self.dialog('Downvote error:', xhr.responseJSON.reason); 
                 }
             });
         },
@@ -123,18 +123,18 @@ define([
             
             this.model.destroy({ 
                 success: function() {
-                    console.log('Successfully deleted news:', newsId);
-                    $('#myModal .modal-title').text('News deleted');
-                    $('#myModal .modal-body').text(newsTitle);
-                    $('#myModal').modal({ show: true });
+                    self.dialog('News deleted:', newsTitle); 
                 },
-                error: function(model, response, options) {
-                    console.log('Error:', response);
-                    $('#myModal .modal-title').text('Error');
-                    $('#myModal .modal-body').text(response.responseJSON.reason);
-                    $('#myModal').modal({ show: true });
+                error: function(model, xhr, options) {
+                    self.dialog('Error:', xhr.responseJSON.reason); 
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('News Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
