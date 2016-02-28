@@ -495,8 +495,10 @@ class NewsViewSet(viewsets.ModelViewSet):
         news_category = self.request.query_params.get('category', None)
         news_list = None
         subscriptions_only = self.request.query_params.get('category', None)
+        
         #Testing
-        subscriptions_only = True
+        #subscriptions_only = True
+        
         #Getting news list/filtering
         if news_category is not None:
             #Check if news category specified exists.
