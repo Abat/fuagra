@@ -18,6 +18,12 @@ class User(SimpleEmailConfirmationUserMixin, AbstractUser):
 class NewsCategory(models.Model):
     title = models.CharField(max_length=100, primary_key=True)
 
+class NewsCategorySubscriptions(models.Model):
+    category = models.ForeignKey(NewsCategory)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    class Meta:
+        unique_together = (('user', 'category'),)
+        
 class NewsCategoryUserPermission(models.Model):
     category = models.ForeignKey(NewsCategory)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)

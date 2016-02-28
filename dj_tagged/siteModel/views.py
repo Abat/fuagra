@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from siteModel.models import News
 from siteModel.models import NewsCategory
 from siteModel.models import NewsCategoryUserPermission
+from siteModel.models import NewsCategorySubscriptions
 from siteModel.models import UserProfile
 from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
@@ -12,7 +13,7 @@ from siteModel.models import Vote
 from siteModel.models import PasswordResetRequest
 from siteModel.ranking.ranking import *
 from siteModel.ranking.rank_helper import *
-from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
+from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer, NewsCategorySubscriptionsSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
@@ -120,7 +121,8 @@ def register(request):
             #Login user after registering
             user_acc = authenticate(username=the_username, password=the_password)
             login(request, user_acc)
-
+            onSuccessfulRegistration(user)
+            
         else:
             errors = user_form.errors.copy()
             errors.update(profile_form.errors)
@@ -132,6 +134,12 @@ def register(request):
     return render(request, 'siteModel/register.html', {'user_form':user_form,
         'profile_form':profile_form,
         'registered':registered})
+
+def onSuccessfulRegistration(user):
+    initial_subs = ["News", "Blargh"]
+    for sub in initial_subs:
+        category = NewsCategory.objects.get(title = sub)
+        NewsCategorySubscriptions.objects.create(user = user, category = category).save()
 
 def _create_email_confirmation_message(user_name, confirmation_key):
     return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
@@ -483,10 +491,12 @@ class NewsViewSet(viewsets.ModelViewSet):
         Return a list of News paginated by 20 items.
         Provide page number if necessary.
         """
-   
+        logger = logging.getLogger("django")
         news_category = self.request.query_params.get('category', None)
         news_list = None
-
+        subscriptions_only = self.request.query_params.get('category', None)
+        #Testing
+        subscriptions_only = True
         #Getting news list/filtering
         if news_category is not None:
             #Check if news category specified exists.
@@ -494,6 +504,17 @@ class NewsViewSet(viewsets.ModelViewSet):
                 news_list = News.objects.filter(category=news_category)
             else:
                 news_list = News.objects.all()
+        elif subscriptions_only is not None and not self.request.user.is_anonymous():
+            try:
+                subbed_categories = NewsCategorySubscriptions.objects.filter(user = self.request.user).values('category')
+                if (subbed_categories):
+                    news_list =News.objects.filter(category__in=subbed_categories)
+                else:
+                    news_list = News.objects.all().exclude(category="Feedback")
+            except:
+                news_list = News.objects.all().exclude(category="Feedback")
+                #logger.info("HELLO WORLD bad");
+                pass
         else: #If no filtering, pass in all news
             news_list = News.objects.all().exclude(category="Feedback")
                 
@@ -619,6 +640,44 @@ class UserViewSet(viewsets.ModelViewSet):
         Provide id of the user.
         """
         return super(UserViewSet, self).destroy(request, *args, **kwargs)
+
+class NewsCategorySubscriptionsViewSet(viewsets.ModelViewSet):
+    queryset = NewsCategorySubscriptions.objects.all()
+    serializer_class = NewsCategorySubscriptionsSerializer
+    model = NewsCategorySubscriptions
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create new NewsCategorySubscriptions profile.
+        """
+        user = get_user(request)
+        if user.is_anonymous():
+            return createAPIErrorJsonReponse('Need to be logged in to craete subscription.', 401)
+        category = request.DATA['category']
+        if (category_exists(category)):
+            return super(NewsCategorySubscriptionsViewSet, self).create(request, *args, **kwargs)
+        else:
+            return createAPIErrorJsonReponse('Target category does not exist.', 404)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete NewsCategorySubscriptions
+        Provide id of the NewsCategorySubscriptions.
+        """
+        user = get_user(request)
+        if user.is_anonymous():
+            return createAPIErrorJsonReponse('Need to be logged in to craete subscription.', 401)
+
+        category = request.DATA['category']
+        if (category_exists(category)):
+            try:
+                sub_object = NewsCategorySubscriptions.objects.get(user = user, category = category) 
+                sub_object.delete()
+                return createAPISuccessJsonReponse("Deleted subscription.", 200);
+            except NewsCategorySubscriptions.DoesNotExist:
+                return createAPIErrorJsonReponse('User is not subscribed to target category.', 404)
+        else:
+            return createAPIErrorJsonReponse('Target category does not exist.', 404)
 
 class CommentViewSet(viewsets.ModelViewSet):
 

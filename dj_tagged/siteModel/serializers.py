@@ -5,7 +5,7 @@ from siteModel.models import User
 from siteModel.models import Comments
 from siteModel.models import Vote
 from siteModel.models import NewsCategoryUserPermission
-
+from siteModel.models import NewsCategorySubscriptions
 
 class NewsSerializer(serializers.ModelSerializer):
 	has_voted = serializers.SerializerMethodField()
@@ -42,6 +42,10 @@ class NewsSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+
+class NewsCategorySubscriptionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsCategorySubscriptions
 
 class CommentSerializer(serializers.ModelSerializer):
 

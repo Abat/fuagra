@@ -6,6 +6,7 @@ from siteModel.views import NewsViewSet
 from siteModel.views import UserViewSet
 from siteModel.views import CommentViewSet
 from siteModel.views import VoteViewSet
+from siteModel.views import NewsCategorySubscriptionsViewSet
 
 news_list = NewsViewSet.as_view({
     'get': 'list',
@@ -38,6 +39,11 @@ user_detail = UserViewSet.as_view({
     'put': 'update',
     'patch': 'partial_update',
     'delete': 'destroy',
+})
+
+subscriptions = NewsCategorySubscriptionsViewSet.as_view({
+    'post': 'create',
+    'delete' : 'destroy',
 })
 
 vote_detail = VoteViewSet.as_view({
@@ -88,7 +94,7 @@ urlpatterns = patterns('',
     url(r'^api/news/(?P<news_id>[0-9]+)/upvote/?$', vote_upvote, name='upvote'),
     url(r'^api/news/(?P<news_id>[0-9]+)/downvote/?$', vote_downvote, name='downvote'),
     url(r'^api/categories/?$', views.list_category, name='list_category'),
-
+    url(r'^api/categories/subscriptions/?$', subscriptions, name='subscriptions'),
     url(r'^docs/', include('rest_framework_swagger.urls')),
 
     url(r'^accounts/request_password_reset/?$', views.request_password_reset, name='request_password_reset'),
