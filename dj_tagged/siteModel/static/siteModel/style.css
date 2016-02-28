@@ -40,6 +40,10 @@ a.control {
     text-decoration: underline;
 }
 
+a.comment_vote {
+    color: #ddd;
+}
+
 .duck {
     width: 130px;
     height: 50px;

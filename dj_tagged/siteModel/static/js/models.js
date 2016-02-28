@@ -19,6 +19,10 @@ define([
         urlRoot: function() { return this.get('url_created') },
     });
 
+    var CommentVoteItem = Backbone.Model.extend({
+        urlRoot: function() { return this.get('url_created') },
+    });
+
     var UserRoleItem = Backbone.Model.extend({
         urlRoot: '/api/permissions/'
     });
@@ -27,6 +31,7 @@ define([
         'NewsItemModel': NewsItem,
         'CommentsItemModel': CommentsItem,
         'VoteItemModel': VoteItem,
+        'CommentVoteItemModel': CommentVoteItem,
         'UserRoleItemModel': UserRoleItem
     };
 });

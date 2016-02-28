@@ -1,12 +1,13 @@
 <div class='comments' id="comment_<%= typeof(id) !== 'undefined' ? id : '#' %>">
     <div class='commentsVote'>
-        <div class='arrow'> <a href='#'> + </a> </div>
-        <div class='arrow'> <a href='#'> - </a> </div>
+        <div class='arrow'> <a href='#' class='comment_vote' name='comment_up'> /\ </a> </div>
+        <div class='arrow'> <a href='#' class='comment_vote' name='comment_down'> \/ </a> </div>
     </div>
     <div class='commentsInfo'>
         <p class='tagline'>
             <a href='#' class='comment-control expand'> [-] </a>
             <a href='#' class='comment-control' id='comment_author'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
+            <%= upvotes - downvotes %> points
             <time class="timeago" datetime='<%= date_created %>'> <%= date_created %> </time>
         </p>
         <div class='content'> <%= content %> </div>

@@ -94,11 +94,45 @@ define([
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
         },
+        upvote: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var self = this;
+            var vote = new Models.CommentVoteItemModel({'url_created': '/api/comments/' + this.model.id + '/upvote/'});
+
+            vote.save({comment:this.model.id}, {
+                success: function(model, response, options){
+                    console.log('Comment upvoted:', self.model.id);
+                    self.model.fetch();
+                },
+                error: function(model, xhr, options){
+                    console.log('Comment upvote error:', xhr);
+                }
+            });
+        },
+        downvote: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var self = this;
+            var vote = new Models.CommentVoteItemModel({'url_created': '/api/comments/' + this.model.id + '/downvote/'});
+
+            vote.save({comment:this.model.id}, {
+                success: function(model, response, options){
+                    console.log('Comment downvoted: ', self.model.id);
+                    self.model.fetch();
+                },
+                error: function(model, xhr, options){
+                    console.log('Comment downvote error:', xhr);
+                }
+            });
+        },
         
         events: {
             'click a.expand': 'expand',
             'click a.reply': 'reply',
             'click a[name="delete_comment"]': 'delete_comment',
+            'click a[name="comment_up"]': 'upvote',
+            'click a[name="comment_down"]': 'downvote',
         },
         modelEvents: {
             'change': 'render',
