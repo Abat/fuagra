@@ -73,20 +73,26 @@ define([
         onRenderTemplate: function() {
             var self = this;
 			//console.log("CommentsItemView_render...", this.model);
-            $('div.content', this.el).html(Marked(self.model.get('content')));
-            if (this.model.get('is_op')) {
-                $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
-            }
-            if (this.model.get('submitter_role') == 'MD') {
-                $('a#comment_author', this.el).css("color", "purple").append('[M]'); 
-            } else if (this.model.get('submitter_role') == 'AD') {
-                $('a#comment_author', this.el).css("color", "red").append('[A]'); 
+            if (self.model.get('content') != '[deleted]') {
+                $('div.content', this.el).html(Marked(self.model.get('content')));
+                if (this.model.get('is_op')) {
+                    $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
+                }
+                if (this.model.get('submitter_role') == 'MD') {
+                    $('a#comment_author', this.el).css("color", "purple").append('[M]'); 
+                } else if (this.model.get('submitter_role') == 'AD') {
+                    $('a#comment_author', this.el).css("color", "red").append('[A]'); 
+                }
+                // delete button for Moderators and Admins
+                if (this.moderating) {
+                    $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
+                }
+            } else {
+                $('div.commentsVote', this.el).css('visibility', 'hidden'); 
+                $('ul.comments_buttons', this.el).css('display', 'none');
+                $('a#comment_author', this.el).css('display', 'none');
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
-            // delete button for Moderators and Admins
-            if (this.moderating) {
-                $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
-            }
         },
         
         events: {
