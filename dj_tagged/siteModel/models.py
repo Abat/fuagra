@@ -11,6 +11,9 @@ import logging
 from siteModel.opengraph.opengraph import *
 from django.core.files import File
 from PIL import Image
+import uuid
+import cStringIO
+import imghdr
 
 class User(SimpleEmailConfirmationUserMixin, AbstractUser):
     pass
@@ -50,6 +53,7 @@ class News(models.Model):
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
     thumbnail_image = models.ImageField(upload_to='thumbnails', null=True, blank=True)
+    number_of_tries = models.IntegerField(default=0)
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
@@ -76,8 +80,9 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image:
+        if self.url and not self.thumbnail_image and self.number_of_tries < 3:
             try:
+                self.number_of_tries += 1
                 og = IMPORTMEPLZ(self.url)
                 if og.is_valid():
                     image_link = og.image
@@ -86,17 +91,23 @@ class News(models.Model):
                         #TODO image.
             except:
                 logger.info("Failed to dl image, either doesnt exist or error.")
-                pass
         if thumbnail_url:
+            
             file_save_dir = 'siteModel/static/thumbnails'
-            filename = urlparse(thumbnail_url).path.split('/')[-1]
-            filename = "f" + datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + filename
-            urllib.urlretrieve(thumbnail_url, os.path.join(file_save_dir, filename))
+
+            response = urllib.urlopen(thumbnail_url)
+            data = response.read()
+            text_data = cStringIO.StringIO(data)
+            image_type = imghdr.what(text_data)
+            filename = self.category.title + '-' + str (uuid.uuid4()) + '.' + str(image_type)
+
+            saved_img = open(os.path.join(file_save_dir, filename), 'wb')
+            saved_img.write(data)
+            saved_img.close()
             
             im = Image.open(os.path.join(file_save_dir, filename))
             im_resize = im.resize((70,70), Image.ANTIALIAS)
             im_resize.save(os.path.join(file_save_dir, filename))
-            #im_saveImage.open(os.path.join(file_save_dir, filename))
             self.thumbnail_image = os.path.join(filename)
         super(News, self).save(*args, **kwargs) # Call the "real" save() method.
 

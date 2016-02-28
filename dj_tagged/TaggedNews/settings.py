@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'siteModel',
 	# 'oauth2_provider',
  #    'corsheaders',
- #    'simple_email_confirmation',
+    'simple_email_confirmation',
 	
 )
 

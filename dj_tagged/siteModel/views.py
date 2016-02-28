@@ -521,14 +521,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         category = request.DATA['category']
         can_post = can_user_post(user, category)
         
-                #No image url
         if can_post:
-            url = request.DATA['url']
-            logger = logging.getLogger("django")
-            logger.info("url " + str(url))
-            
             return super(NewsViewSet, self).create(request, *args, **kwargs)
-
         else:
             return createAPIErrorJsonReponse('Unauthorized or banned.', 401)
         
