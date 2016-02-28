@@ -193,11 +193,22 @@ define([
                     console.log("Success, a new link post: ", resp);
                     $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
                 },
-                error: function(err) {
-                    console.log("Error: ", err);
-                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                error: function(model, xhr, options) {
+                    $('form', self.el)[0].reset(); 
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Something went wrong:', xhr.responseJSON.reason); 
+                    } else {
+                        console.log("Error: ", xhr);
+                        $(self.el).append('<br><p><b>Something went wrong...</b></p>');
+                    }
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('Submit link Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
@@ -256,11 +267,22 @@ define([
                     console.log("Success, a new text post: ", resp);
                     $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
                 },
-                error: function(err) {
-                    console.log("Error: ", err);
-                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                error: function(model, xhr, options) {
+                    $('form', self.el)[0].reset(); 
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Something went wrong:', xhr.responseJSON.reason); 
+                    } else {
+                        console.log("Error: ", xhr);
+                        $(self.el).append('<br><p><b>Something went wrong...</b></p>');
+                    }
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('Submit text Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
