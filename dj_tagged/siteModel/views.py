@@ -10,9 +10,10 @@ from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
 from siteModel.models import PasswordResetRequest
+from siteModel.models import CommentVote
 from siteModel.ranking.ranking import *
 from siteModel.ranking.rank_helper import *
-from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer
+from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer, CommentVoteSerializer
 from siteModel.forms import UserForm, UserProfileForm
 from siteModel.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, login
@@ -801,7 +802,101 @@ class VoteViewSet(viewsets.ModelViewSet):
         """
         return super(VoteViewSet, self).retrieve(request, *args, **kwargs)
 
+class CommentVoteViewSet(viewsets.ModelViewSet):
+    model = CommentVote
+    serializer_class = CommentVoteSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    def get_queryset(self):
+        comment_id = self.kwargs['comment_id']
+        return CommentVote.objects.filter(comment=comment_id)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Return a list of News paginated by 20 items.
+        Provide page number if necessary.
+        """
+        return super(CommentVoteViewSet, self).list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create news object.
+        """
+        return super(CommentVoteViewSet, self).create(request, *args, **kwargs)
+
+    def upvote(self, request, comment_id):
+        user = self.request.user
+        serializer = CommentVoteSerializer(data=request.data)
+        comment = get_object_or_404(Comments, pk=comment_id)
+        if serializer.is_valid():
+            try:
+                vote = CommentVote.objects.get(comment=comment_id, user=user)
+                if vote.vote_status == CommentVote.CLEAR_STATUS:
+                    vote.vote_status = CommentVote.UPVOTE_STATUS
+                    comment.upvotes += 1
+                    vote.save()
+                    comment.save()
+                    return Response({'upvote':'1'})
+                elif vote.vote_status == CommentVote.DOWNVOTE_STATUS:
+                    vote.vote_status = CommentVote.UPVOTE_STATUS
+                    comment.upvotes += 1
+                    comment.downvotes -= 1
+                    vote.save()
+                    comment.save()
+                    return Response({'upvote':'1', 'downvote':'-1'})
+                else:
+                    vote.vote_status = CommentVote.CLEAR_STATUS
+                    comment.upvotes -= 1
+                    vote.save()
+                    comment.save()
+                    return Response({'upvote':'-1'})
+            except CommentVote.DoesNotExist:
+                serializer.save(user=user, vote_status=CommentVote.UPVOTE_STATUS)
+                comment.upvotes += 1
+                comment.save()
+                return Response({'upvote':'1'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def downvote(self, request, comment_id):
+        user = self.request.user
+        serializer = CommentVoteSerializer(data=request.data)
+        comment = get_object_or_404(Comments, pk=comment_id)
+        if serializer.is_valid():
+            try:
+                vote = CommentVote.objects.get(comment=comment_id, user=user)
+                if vote.vote_status == CommentVote.CLEAR_STATUS:
+                    vote.vote_status = CommentVote.DOWNVOTE_STATUS
+                    comment.downvotes += 1
+                    vote.save()
+                    comment.save()
+                    return Response({'downvote':'1'})
+                elif vote.vote_status == CommentVote.DOWNVOTE_STATUS:
+                    vote.vote_status = CommentVote.CLEAR_STATUS
+                    comment.downvotes -= 1
+                    vote.save()
+                    comment.save()
+                    return Response({'downvote':'-1'})
+                else:
+                    vote.vote_status = CommentVote.DOWNVOTE_STATUS
+                    comment.upvotes -= 1
+                    comment.downvotes += 1
+                    vote.save()
+                    comment.save()
+                    return Response({'downvote':'1', 'upvote':'-1'})
+            except CommentVote.DoesNotExist:
+                serializer.save(user=user, vote_status=CommentVote.DOWNVOTE_STATUS)
+                comment.downvotes += 1
+                comment.save()
+                return Response({'downvote':'1'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Return the User for a provided id
+        """
+        return super(CommentVoteViewSet, self).retrieve(request, *args, **kwargs)
 
 
 def createAPIErrorJsonReponse(msg, code):

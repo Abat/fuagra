@@ -115,8 +115,8 @@ class News(models.Model):
 class Comments(models.Model):
     news = models.ForeignKey(News)
     parent = models.ForeignKey('self', related_name='parent_comment', null=True)
-    thumbs_up = models.IntegerField(default=0)
-    thumbs_down = models.IntegerField(default=0)
+    upvotes = models.IntegerField(default=0)
+    downvotes = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     username = models.CharField(max_length=100)
@@ -133,10 +133,10 @@ class Comments(models.Model):
         return self.date_created
 
     def get_ups(self):
-        return self.thumbs_up
+        return self.upvotes
 
     def get_downs(self):
-        return self.thumbs_down
+        return self.downvotes
 
 
 
@@ -163,6 +163,22 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('user', 'news',)
+
+class CommentVote(models.Model):
+    CLEAR_STATUS = 0
+    DOWNVOTE_STATUS = -1
+    UPVOTE_STATUS = 1
+    VOTE_CHOICES = (
+        (CLEAR_STATUS, 'Clear'),
+        (DOWNVOTE_STATUS, 'Downvote'),
+        (UPVOTE_STATUS, 'Upvote'),
+    )
+    comment = models.ForeignKey(Comments)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    vote_status = models.SmallIntegerField(choices=VOTE_CHOICES, default=0)
+
+    class Meta:
+        unique_together = ('user', 'comment',)
 
 # Create your models here.
 class PasswordResetRequest(models.Model):
