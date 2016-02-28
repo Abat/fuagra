@@ -5,6 +5,7 @@ from siteModel.models import User
 from siteModel.models import Comments
 from siteModel.models import Vote
 from siteModel.models import NewsCategoryUserPermission
+from siteModel.models import CommentVote
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -74,3 +75,8 @@ class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Vote
 		fields = ('news', 'vote_status')
+
+class CommentVoteSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CommentVote
+		fields = ('comment', 'vote_status')
