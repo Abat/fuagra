@@ -21,6 +21,14 @@ a {
     text-decoration: none;
 }
 
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 1.1em;
+    font-style: italic;
+    border-left: 5px solid #EEE8AA;
+}
+
 a.administer {
     color: red;
     display: none;
