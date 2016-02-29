@@ -202,6 +202,8 @@ define([
             var comment = this.collection.create({
                 content: $("textarea[name='content']", this.el).val(),
                 news: $("input[name='news']", this.el).val(),
+                upvotes: 0,
+                downvotes: 0,
                 "parent": this.parentId,
                 csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']", this.el).val(),
                 date_created: Date.now()

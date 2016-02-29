@@ -69,7 +69,7 @@ class CommentSerializer(serializers.ModelSerializer):
 		
 	class Meta:
 		model = Comments
-		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role', 'is_op')
+		read_only_fields = ('id', 'date_created', 'upvotes', 'downvotes', 'owner', 'username', 'submitter_role', 'is_op')
 
 class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
