@@ -23,7 +23,7 @@ define([
         model: Models.CommentsItemModel,
         url: function() { return '/api/comments/' + this.options.newsId + '/'; },
         parse: function(response) {
-            return response.results.reverse();
+            return response.results;
         } 
     });
 
