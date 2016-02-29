@@ -218,7 +218,12 @@ define([
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
                 },
                 error: function(model, xhr, options) {
-                    self.dialog('Error:', xhr.responseJSON.reason); 
+                    $('form#newComment', self.el)[0].reset();
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Error:', xhr.responseJSON.reason); 
+                    } else {
+                        $('div#topComment', self.el).append('<br><p><b>Something went wrong... </b></p>');
+                    }
                 }
             });
         },
