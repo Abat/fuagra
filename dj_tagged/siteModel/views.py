@@ -532,7 +532,10 @@ class NewsViewSet(viewsets.ModelViewSet):
         # save the owner of the news
         user = get_user(self.request)
         category = self.request.DATA['category']
-        news = serializer.save(owner=user, username=user.username)
+        news = serializer.save(owner=user, username=user.username, upvotes=1)
+        vote = Vote(user=user, news=news, vote_status=Vote.UPVOTE_STATUS)
+        vote.save()
+
         if news is not None:
             if category == "Feedback":
                 permissions = NewsCategoryUserPermission.objects.filter(category=category, permission="AD")
