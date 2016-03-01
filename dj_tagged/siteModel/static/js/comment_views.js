@@ -154,9 +154,9 @@ define([
         reply: function(e) {
             e.preventDefault();
 			e.stopImmediatePropagation();
-            if (!$('form', this.el)[0]) {
+            if (!$('div.comments', this.el).first().has('form').length) {
                 var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id'), reply: true });
-                $(this.el).append(commentsTextareaView.render().el);
+                $('div.comments', this.el).first().append(commentsTextareaView.render().el);
             }
         },
         delete_comment: function(e) {
