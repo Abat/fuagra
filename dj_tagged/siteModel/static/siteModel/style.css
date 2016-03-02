@@ -116,6 +116,11 @@ div.collapsed {
     height: 20px;
 }
 
+div.hidden {
+    overflow: hidden;
+    height: 0px;
+}
+
 #wrapper {
     min-height:100%;
     position:relative;
