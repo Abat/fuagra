@@ -22,9 +22,17 @@ define([
 		
 		//helper data
 		childCollection: [],
+        level: 0,
+        hasChild: 0,
+        //array used as a pointer/reference
+        show: [0],
 		
         childViewOptions: function(model, index) {
-			//console.log("CommentsItemView pass to child", this.childCollection);
+            console.log("CommentsItemView pass to child", this.model.id);
+			console.log("CommentsItemView pass to child", this.show);
+            
+            //news_items: CHILDREN news items
+            //childcoll: CHILDREN's children collections
 			
 			var new_items = new Collections.CommentsListCollection([], { newsId: this.newsId });
 			
@@ -37,8 +45,6 @@ define([
 					}
 				}
 			
-			//console.log("new_items", new_items);
-			
 			//filter out first level of child collection
 			var childcoll = null;
 			if(this.childCollection != null) {
@@ -49,6 +55,8 @@ define([
                 collection: new_items,
                 newsId: this.newsId, 
 				childColl: childcoll,
+                level: (this.level + 1),
+                show: this.show,
                 moderating: this.moderating,
             }
         },
@@ -62,9 +70,26 @@ define([
             this.newsId = attr.newsId;
 			if(attr.childColl != null)
 				this.childCollection = attr.childColl;
+            this.level = attr.level;
+            if(this.level > 4)
+                this.show = attr.show;
             this.moderating = attr.moderating;
 			
-			console.log("This collection", this.collection);
+            
+            var i = 0;
+			
+			if(this.collection != null)
+				for(i = 0; i < this.collection.models.length; i ++) {
+					if(this.collection.models[i].attributes.parent == this.model.id) {
+						this.hasChild = 1;
+					}
+				}
+                
+                
+            console.log("model id", this.model.id);
+            console.log("hasChild", this.hasChild);
+            
+			//console.log("This collection", this.collection);
 			
 			//console.log("this.childCollection", this.childCollection);
 			//console.log("CommentsItemView_initialize_collection...", this.collection);
@@ -93,7 +118,24 @@ define([
                 $('a#comment_author', this.el).css('display', 'none');
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
+            
+            if(this.level > 4&& this.show[0] == 0) {
+                $('div.comments', this.el).addClass('hidden');
+            }
+            if(this.level == 4 && this.hasChild == 1 && this.show[0] == 0) {
+                $('div.comments', this.el).append("<div class = load>&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='comment-control loadmore'> [click to load more...] </a></div>");
+            }
+            console.log("haschildR", this.hasChild);
         },
+        
+        loadmore: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $('div.load', this.el).addClass('hidden');
+            $('div.comments', this.el).removeClass('hidden');
+            this.show[0] = 1;
+        },
+        
         upvote: function(e) {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -133,6 +175,7 @@ define([
             'click a[name="delete_comment"]': 'delete_comment',
             'click a[name="comment_up"]': 'upvote',
             'click a[name="comment_down"]': 'downvote',
+            'click a.loadmore': 'loadmore',
         },
         modelEvents: {
             'change': 'render',
@@ -198,6 +241,7 @@ define([
         },
 
         newComment: function(e){
+            console.log('New comment creating');
             var self = this;
             e.preventDefault();
             var comment = this.collection.create({
@@ -211,6 +255,7 @@ define([
             }, {
                 success: function(resp) {
                     console.log('New comment created');
+                    comment.show[0] = 1;
                     if (self.reply) {
                         $('form#newComment', self.el)[0].remove();
                     } else {
@@ -282,6 +327,8 @@ define([
                 newsId: this.newsId,
                 moderating: this.moderating,
 				childColl: childcoll,
+                level: 0,
+                show: 0,
             }
         },
 		itemView: CommentsItemView,
