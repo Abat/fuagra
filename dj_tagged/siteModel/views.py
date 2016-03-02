@@ -479,6 +479,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
     model = News
+    paginate_by = 25
     def list(self, request, *args, **kwargs):
         """
         Return a list of News paginated by 20 items.
@@ -623,7 +624,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comments.objects.all()
     model = Comments
-    
+    paginate_by = 100
     def list(self, request, *args, **kwargs):
         news_id = self.kwargs['pk']
         comments = Comments.objects.filter(news=news_id)

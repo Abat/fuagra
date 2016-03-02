@@ -142,7 +142,8 @@ define([
 			//console.log("e: ", e);
             e.preventDefault();
 			e.stopImmediatePropagation();
-            if ($('div.comments', this.el).hasClass('collapsed')) {
+            //console.log("('div.comments', this.el): ", $('div.comments', this.el).first());
+            if ($('div.comments', this.el).first().hasClass('collapsed')) {
                 $('div.comments', this.el).removeClass('collapsed');
                 $('a.expand', this.el).text("[-]");
             } else {
@@ -250,12 +251,12 @@ define([
         childViewContainer: 'ul#comments',
         childViewOptions: function(model, index) {
 			//console.log("pass to child", model);
-			console.log("pass to child", this.collection);
+			//console.log("pass to child", this.collection);
 			var comments = new Collections.CommentsListCollection([], { newsId: this.newsId });
             var new_items = new Collections.CommentsListCollection([], { newsId: this.newsId });
 			//var new_items = $.extend(true, {}, this.collection);
 			
-			console.log("pass to child2", new_items);
+			//console.log("pass to child2", new_items);
 			
 			
 			
