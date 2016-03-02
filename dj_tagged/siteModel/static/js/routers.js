@@ -125,6 +125,7 @@ define([
 								i --;
 							}
 						}
+                        if(curlevellist.length == 0) break;
 						levelLists.push(curlevellist);
 						prevlevellist = curlevellist;
 					}
