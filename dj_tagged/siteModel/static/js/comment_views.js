@@ -255,13 +255,13 @@ define([
             }, {
                 success: function(resp) {
                     console.log('New comment created');
-                    comment.show[0] = 1;
                     if (self.reply) {
                         $('form#newComment', self.el)[0].remove();
                     } else {
                         $('form#newComment', self.el)[0].reset();
                     }
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
+                    comment.show[0] = 1;
                 },
                 error: function(model, xhr, options) {
                     $('form#newComment', self.el)[0].reset();
