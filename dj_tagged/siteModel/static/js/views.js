@@ -90,7 +90,13 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    self.dialog('Upvote error:', xhr.responseJSON.reason); 
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Upvote error:', xhr.responseJSON.reason); 
+                    } else if (xhr.responseJSON.detail) {
+                        self.dialog('Upvote error:', xhr.responseJSON.detail); 
+                    } else {
+                        console.log(xhr);
+                    }
                 }
             });
         },
@@ -105,7 +111,13 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    self.dialog('Downvote error:', xhr.responseJSON.reason); 
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Downvote error:', xhr.responseJSON.reason); 
+                    } else if (xhr.responseJSON.detail) {
+                        self.dialog('Downvote error:', xhr.responseJSON.detail); 
+                    } else {
+                        console.log(xhr);
+                    }
                 }
             });
         },
@@ -183,7 +195,6 @@ define([
         newPost: function(e) {
             var self = this;
             e.preventDefault();
-            console.log('New link post...');
             var post = this.collection.create({
                 title: $("input[name='title']", this.el).val(),
                 url: $("input[name='url']", this.el).val(),
@@ -195,11 +206,11 @@ define([
                 },
                 error: function(model, xhr, options) {
                     $('form', self.el)[0].reset(); 
-                    if (xhr.responseJSON.reason) {
+                    if (xhr.responseJSON) {
                         self.dialog('Something went wrong:', xhr.responseJSON.reason); 
                     } else {
                         console.log("Error: ", xhr);
-                        $(self.el).append('<br><p><b>Something went wrong...</b></p>');
+                        $(self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
                     }
                 }
             });
@@ -269,11 +280,11 @@ define([
                 },
                 error: function(model, xhr, options) {
                     $('form', self.el)[0].reset(); 
-                    if (xhr.responseJSON.reason) {
+                    if (xhr.responseJSON) {
                         self.dialog('Something went wrong:', xhr.responseJSON.reason); 
                     } else {
                         console.log("Error: ", xhr);
-                        $(self.el).append('<br><p><b>Something went wrong...</b></p>');
+                        $(self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
                     }
                 }
             });

@@ -265,10 +265,10 @@ define([
                 },
                 error: function(model, xhr, options) {
                     $('form#newComment', self.el)[0].reset();
-                    if (xhr.responseJSON.reason) {
+                    if (xhr.responseJSON) {
                         self.dialog('Error:', xhr.responseJSON.reason); 
                     } else {
-                        $('div#topComment', self.el).append('<br><p><b>Something went wrong... </b></p>');
+                        $('div#topComment', self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
                     }
                 }
             });
