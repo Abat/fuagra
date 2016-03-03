@@ -145,9 +145,11 @@ define([
             //console.log("('div.comments', this.el): ", $('div.comments', this.el).first());
             if ($('div.comments', this.el).first().hasClass('collapsed')) {
                 $('div.comments', this.el).removeClass('collapsed');
+                $('div.commentsVote', this.el).css("visibility", 'visible');
                 $('a.expand', this.el).text("[-]");
             } else {
                 $('div.comments', this.el).addClass('collapsed');
+                $('div.commentsVote', this.el).css("visibility", 'hidden');
                 $('a.expand', this.el).text("[+]");
             }
 			
