@@ -276,7 +276,7 @@ define([
             }, {
                 success: function(resp) {
                     console.log("Success, a new text post: ", resp);
-                    $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
+                    $(self.el).empty().append('<br><p><b>Thanks for your post!</b></p>');
                 },
                 error: function(model, xhr, options) {
                     $('form', self.el)[0].reset(); 
