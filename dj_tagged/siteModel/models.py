@@ -80,7 +80,9 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image and self.number_of_tries < 1:
+        if self.url and not self.thumbnail_image and self.number_of_tries < 1 and not self.category.title == "News" \
+                                                                              and not self.category.title == "Sayasat" \
+                                                                              and not self.category.title == "Raznoe":
             try:
                 self.number_of_tries += 1
                 og = IMPORTMEPLZ(self.url)
