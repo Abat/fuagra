@@ -53,7 +53,7 @@ class News(models.Model):
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
     thumbnail_image = models.ImageField(upload_to='thumbnails', null=True, blank=True)
-    #number_of_tries = models.IntegerField(default=0)
+    number_of_tries = models.IntegerField(default=0)
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
@@ -80,8 +80,9 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image:
+        if self.url and not self.thumbnail_image and self.number_of_tries < 1:
             try:
+                self.number_of_tries += 1
                 og = IMPORTMEPLZ(self.url)
                 if og.is_valid():
                     image_link = og.image
