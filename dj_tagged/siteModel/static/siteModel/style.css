@@ -11,6 +11,15 @@ img {
     height: auto;
 }
 
+/* Pinned */
+img.pinned {
+    width: 167px;
+    height: 70px;
+}
+
+
+/* Pinned */
+
 /* About */
 p.about {
     margin: 20px auto 30px auto;
