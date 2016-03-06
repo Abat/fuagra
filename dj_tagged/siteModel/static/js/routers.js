@@ -20,7 +20,6 @@ define([
         },
 
         routes: {
-            "(:sort)": "home",
 
             "submit": "submit",
             "submitText": "submitText",
@@ -34,6 +33,7 @@ define([
 
             "f/:category/administer": "administer",
 
+            "(:sort)": "home",
             "*nomatch": "notFound"
         },
 
