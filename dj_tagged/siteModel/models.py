@@ -11,6 +11,7 @@ import logging
 from siteModel.opengraph.opengraph import *
 from django.core.files import File
 from PIL import Image
+from siteModel.constants import Constants
 
 class User(SimpleEmailConfirmationUserMixin, AbstractUser):
     pass
@@ -82,7 +83,7 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image:
+        if self.url and not self.thumbnail_image and not (self.category.title in Constants.categories_excluded_from_thumbnails)::
             try:
                 og = IMPORTMEPLZ(self.url)
                 if og.is_valid():
