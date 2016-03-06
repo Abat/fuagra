@@ -11,6 +11,7 @@ from siteModel.models import Comments
 from siteModel.models import User # Simple email confirm
 from siteModel.models import Vote
 from siteModel.models import PasswordResetRequest
+from siteModel.constants import Constants
 from siteModel.ranking.ranking import *
 from siteModel.ranking.rank_helper import *
 from siteModel.serializers import NewsSerializer, UserSerializer, CommentSerializer, VoteSerializer, NewsCategorySubscriptionsSerializer
@@ -136,7 +137,7 @@ def register(request):
         'registered':registered})
 
 def onSuccessfulRegistration(user):
-    initial_subs = ["News", "Blargh"]
+    initial_subs = Constants.initial_subs
     for sub in initial_subs:
         category = NewsCategory.objects.get(title = sub)
         NewsCategorySubscriptions.objects.create(user = user, category = category).save()
@@ -494,10 +495,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         logger = logging.getLogger("django")
         news_category = self.request.query_params.get('category', None)
         news_list = None
-        subscriptions_only = self.request.query_params.get('category', None)
         
-        #Testing
-        #subscriptions_only = True
         
         #Getting news list/filtering
         if news_category is not None:
@@ -506,7 +504,8 @@ class NewsViewSet(viewsets.ModelViewSet):
                 news_list = News.objects.filter(category=news_category)
             else:
                 news_list = News.objects.all()
-        elif subscriptions_only is not None and not self.request.user.is_anonymous():
+        elif not self.request.user.is_anonymous():
+            logger.info("SUBBED ONLY")
             try:
                 subbed_categories = NewsCategorySubscriptions.objects.filter(user = self.request.user).values('category')
                 if (subbed_categories):
@@ -515,9 +514,8 @@ class NewsViewSet(viewsets.ModelViewSet):
                     news_list = News.objects.all().exclude(category="Feedback")
             except:
                 news_list = News.objects.all().exclude(category="Feedback")
-                #logger.info("HELLO WORLD bad");
-                pass
         else: #If no filtering, pass in all news
+            logger.info("ALL")
             news_list = News.objects.all().exclude(category="Feedback")
                 
         #sort style
