@@ -10,6 +10,11 @@
         <link rel="icon" href="/images/favicon.ico">
 
         <title> Fua - {% block title %}Base{% endblock %} </title>
+        <script>
+            require = {
+                urlArgs: "v=0.0.1.0"
+            };
+        </script>
         <script data-main="/static/js/main" src="/static/js/requirejs/require.js"></script>
         <link rel="stylesheet" type="text/css" href="/static/siteModel/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/static/siteModel/style.css" />
@@ -56,8 +61,8 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-left">
-                            <li><a href="?sort=Hot" name="Hot">{% trans "Hot" %}</a></li>
-                            <li><a href="?sort=Newest" name="Newest">{% trans "Newest" %}</a></li>
+                            <li><a href="Hot" name="Hot">{% trans "Hot" %}</a></li>
+                            <li><a href="Newest" name="Newest">{% trans "Newest" %}</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}

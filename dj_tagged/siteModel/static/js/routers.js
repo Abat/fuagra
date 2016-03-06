@@ -20,7 +20,7 @@ define([
         },
 
         routes: {
-            "": "home",
+            "(:sort)": "home",
 
             "submit": "submit",
             "submitText": "submitText",
@@ -28,6 +28,8 @@ define([
             "f/:category/submitText": "submitText",
 
             "f/:category": "subfuas",
+            "f/:category/:sort": "subfuas",
+
             "comments/:newsId": "comments",
 
             "f/:category/administer": "administer",
@@ -35,13 +37,14 @@ define([
             "*nomatch": "notFound"
         },
 
-        home: function() {
-            var sort_sort = url('?sort') ? url('?sort') : 'None';
+        home: function(sort) {
+            var sort_sort = sort || 'None';
+            var page = url('?page') ? url('?page') : 1;
 
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            App.news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items, sort: sort_sort });
+            App.news.fetch({ data: $.param({ sort: sort_sort, page: page }), success: function(items, response, options) {
+                var newsView = new Views.NewsView({ collection: items, sort: sort_sort, page: page, fetchResponse: response });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
@@ -63,8 +66,9 @@ define([
             App.rootLayout.getRegion('content').show(submitTextView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },
-        subfuas: function(category) {
-            var sort_sort = url('?sort') ? url('?sort') : 'None';
+        subfuas: function(category, sort) {
+            var sort_sort = sort || 'None';
+            var page = url('?page') ? url('?page') : 1;
 
             $.ajax({
                 type: 'GET',
@@ -72,8 +76,8 @@ define([
                 success: function(data) {
                     var sideView = new Side_Views.SideView({ category: category, permission: data.permission });
                     var specialTopView = new Top_Views.SpecialTopView();
-                    App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
-                        var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort, permission: data.permission });
+                    App.news.fetch({ data: $.param({ category: category, sort: sort_sort, page: page }), success: function(items, response, options) {
+                        var newsView = new Views.NewsView({ page: page, collection: items, category: category, sort: sort_sort, permission: data.permission, fetchResponse: response });
                         App.rootLayout.getRegion('content').show(newsView);
                         App.rootLayout.getRegion('side').show(sideView);
                         App.rootLayout.getRegion('special_top').show(specialTopView);
