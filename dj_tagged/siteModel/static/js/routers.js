@@ -19,6 +19,7 @@ define([
 
         },
 
+        // order matters, be careful when changing
         routes: {
 
             "submit": "submit",
@@ -26,12 +27,12 @@ define([
             "f/:category/submit": "submit",
             "f/:category/submitText": "submitText",
 
+            "f/:category/administer": "administer",
+
             "f/:category": "subfuas",
             "f/:category/:sort": "subfuas",
 
             "comments/:newsId": "comments",
-
-            "f/:category/administer": "administer",
 
             "(:sort)": "home",
             "*nomatch": "notFound"
