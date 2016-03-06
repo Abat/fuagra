@@ -35,6 +35,17 @@ a {
     text-decoration: none;
 }
 
+a.title:link {
+    color: blue;
+}
+a.title:visited {
+    color: #551a8b;
+}
+
+a {
+    color: #369;
+}
+
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
