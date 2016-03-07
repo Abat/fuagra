@@ -387,7 +387,7 @@ define([
                 $('div#bottom a[name="Newest"]').attr('href', "/f/" + this.category + "/Newest");
                 $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             } else {
-                $('div#top a[name="' + this.category + '"]').removeAttr('style');
+                $('div#top a').removeAttr('style');
             }
             $('a#prevPage', self.el).attr('href', '?page=' + (this.pageNum - 1));
             $('a#nextPage', self.el).attr('href', '?page=' + (this.pageNum + 1));
