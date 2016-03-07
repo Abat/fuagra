@@ -23,10 +23,10 @@ class UserForm(forms.ModelForm):
  			errorMsg = errorMsg + ('Your username is invalid.')
 
  		if (not self._validate_password(data.get('password'))):
- 			errorMsg = errorMsg + ('Your password is invalid.')
+ 			errorMsg = errorMsg + (' Your password is invalid.')
 
  		if (self._username_exists(username)):
- 			errorMsg = errorMsg + ('Your username "%s" is taken.' % username)
+ 			errorMsg = errorMsg + (' Your username "%s" is taken.' % username)
 
  		if (errorMsg):
  			raise ValidationError(errorMsg)
