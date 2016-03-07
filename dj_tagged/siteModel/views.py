@@ -140,18 +140,18 @@ def register(request):
         'registered':registered})
 
 def _create_email_confirmation_message(user_name, confirmation_key):
-    return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
+    return 'Hello {0},\n\nThanks for registering at Fuagra! Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagra Team'.format(user_name, confirmation_key)
 
 #Probably want https later.
 def _create_html_email_confirmation_message(user_name, confirmation_key):
-    return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
+    return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagra! Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagra Team'.format(user_name, confirmation_key)
 
 def create_password_reset_message(uuid):
     return """
     Hello,<br><br> 
-    It seems that you have requested a password change for your account at Fuagrakz. 
+    It seems that you have requested a password change for your account at fuagra.kz. 
     Please visit here <a href="http://www.fuagra.kz/accounts/reset_password/?request_id={0}">http://www.fuagra.kz/accounts/reset_password/?request_id={0}</a> to change your password.<br><br>
-    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team""".format(uuid)
+    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagra Team""".format(uuid)
 
 def user_login(request):
 
