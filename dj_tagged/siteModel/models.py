@@ -108,7 +108,12 @@ class News(models.Model):
             saved_img.close()
             
             im = Image.open(os.path.join(file_save_dir, filename))
-            im_resize = im.resize((70,70), Image.ANTIALIAS)
+
+            basewidth = 70
+            wpercent = (basewidth/float(im.size[0]))
+            hsize = int((float(im.size[1])*float(wpercent)))
+            im_resize = im.resize((basewidth,hsize), Image.ANTIALIAS)
+
             im_resize.save(os.path.join(file_save_dir, filename))
             self.thumbnail_image = os.path.join(filename)
         super(News, self).save(*args, **kwargs) # Call the "real" save() method.
