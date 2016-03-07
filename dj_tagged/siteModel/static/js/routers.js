@@ -93,11 +93,10 @@ define([
             newsModel.fetch({ success: function(model, response, options) {
                 App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
-				
-					console.log("items: ", items);
+					//console.log("items: ", items);
 					
 					var new_items = items;
-					console.log("new items: ", new_items);
+					//console.log("new items: ", new_items);
 					
 					//create leveled lists
 					var i;
@@ -115,8 +114,8 @@ define([
 					var levelLists = [];
 					var prevlevellist = level0list;
 					while(new_items.length > 0) {
-						console.log("new_items.length", new_items.length);
-						console.log("prevlevellist", prevlevellist);
+						//console.log("new_items.length", new_items.length);
+						//console.log("prevlevellist", prevlevellist);
 						var curlevellist = [];
 						for(i = 0; i < new_items.length; i ++) {
 							var flag = false;
@@ -142,7 +141,7 @@ define([
                         type: 'GET',
                         url: "/api/users/" + model.get('category'),
                         success: function(data) {
-                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0, permission: data.permission });
+                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, newsModel: newsModel, collection: lv0, permission: data.permission });
                             
                             commentsView.childCollection = levelLists;
                             //var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});

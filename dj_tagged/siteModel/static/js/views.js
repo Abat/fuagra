@@ -187,6 +187,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -260,6 +261,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -329,6 +331,7 @@ define([
             $('select[name="category"]', this.el).append(
                 $("<option></option>").text(this.category).val(this.category)
             );
+            $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
         },
         modify: function(e) {
             var self = this;
@@ -382,6 +385,7 @@ define([
             if (this.category && this.category != "None" && this.category != undefined) {
                 $('div#bottom a[name="Hot"]').attr('href', "/f/" + this.category + "/Hot");
                 $('div#bottom a[name="Newest"]').attr('href', "/f/" + this.category + "/Newest");
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
             $('a#prevPage', self.el).attr('href', '?page=' + (this.pageNum - 1));
             $('a#nextPage', self.el).attr('href', '?page=' + (this.pageNum + 1));

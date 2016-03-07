@@ -292,6 +292,9 @@ define([
             console.log('CommentsView onRender...');
             var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
             $(this.el).prepend(commentsTextareaView.render().el);
+            if (this.category) {
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
+            }
         },
         onShow: function() {
             if (window.location.hash) {
@@ -302,6 +305,7 @@ define([
         initialize: function(attr){			
             console.log('Initializing CommentsView...');
             this.newsId = attr.newsId;
+            this.category = attr.newsModel.get('category');
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
