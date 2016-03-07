@@ -16,12 +16,21 @@ class UserForm(forms.ModelForm):
 
 	def clean(self):
  		data = self.cleaned_data
- 		if (not self._validate_user_name(data.get('username'))):
- 			raise ValidationError('BadUserName')
- 			return False
+ 		errorMsg = "";
+
+ 		username = data.get('username')
+ 		if (not self._validate_user_name(username)):
+ 			errorMsg = errorMsg + ('Your username is invalid.')
+
  		if (not self._validate_password(data.get('password'))):
- 			raise ValidationError('BadPassword')
- 			return False
+ 			errorMsg = errorMsg + ('Your password is invalid.')
+
+ 		if (self._username_exists(username)):
+ 			errorMsg = errorMsg + ('Your username "%s" is taken.' % username)
+
+ 		if (errorMsg):
+ 			raise ValidationError(errorMsg)
+
  		return data
 
     #Actually I dunno, think this is directed to non-english.
@@ -39,6 +48,13 @@ class UserForm(forms.ModelForm):
 		if (not password or len(password) < self.MIN_PASSWORD_LENGTH):
 			return False
 		return True
+
+	def _username_exists(self, username):
+		try:
+			user = User.objects.get(username=username)
+		except User.DoesNotExist:
+			return False
+		return True  
 
 class UserProfileForm(forms.ModelForm):
 	class Meta:
