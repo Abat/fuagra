@@ -17,7 +17,9 @@ img.pinned {
     height: 70px;
 }
 
-
+div#showMore {
+    display: none;    
+}
 /* Pinned */
 
 /* About */
