@@ -1,10 +1,10 @@
 [{
-	"pk": 20,
+	"pk": 21,
 	"fields": {
-		"category": "Blargh",
+		"category": "News",
 		"user": 1,
 		"permission": "AD",
-		"last_updated": "2016-02-27T16:32:10.932Z"
+		"last_updated": "2016-02-29T16:32:10.932Z"
 	},
 	"model": "siteModel.newscategoryuserpermission"
 }]

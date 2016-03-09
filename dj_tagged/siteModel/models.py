@@ -12,6 +12,9 @@ from siteModel.opengraph.opengraph import *
 from django.core.files import File
 from PIL import Image
 from siteModel.constants import Constants
+import uuid
+import cStringIO
+import imghdr
 
 class User(SimpleEmailConfirmationUserMixin, AbstractUser):
     pass
@@ -50,18 +53,19 @@ class News(models.Model):
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
-    url = models.URLField(unique=True, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
     content = models.CharField(max_length=2000, null=True, blank=True)
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     username = models.CharField(max_length=100)
     category = models.ForeignKey(NewsCategory, default = "Test")
     thumbnail_image = models.ImageField(upload_to='thumbnails', null=True, blank=True)
+    number_of_tries = models.IntegerField(default=0)
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
-    # class Meta:
-    #     ordering = ['-date_updated']
+    class Meta:
+        unique_together = (('owner', 'url'),)
 
     def __str__(self):
         return self.title
@@ -83,8 +87,9 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image and not (self.category.title in Constants.categories_excluded_from_thumbnails)::
+        if self.url and not self.thumbnail_image and self.number_of_tries < 1 and not (self.category.title in Constants.categories_excluded_from_thumbnails):
             try:
+                self.number_of_tries += 1
                 og = IMPORTMEPLZ(self.url)
                 if og.is_valid():
                     image_link = og.image
@@ -93,17 +98,28 @@ class News(models.Model):
                         #TODO image.
             except:
                 logger.info("Failed to dl image, either doesnt exist or error.")
-                pass
         if thumbnail_url:
+            
             file_save_dir = 'siteModel/static/thumbnails'
-            filename = urlparse(thumbnail_url).path.split('/')[-1]
-            filename = "f" + datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + filename
-            urllib.urlretrieve(thumbnail_url, os.path.join(file_save_dir, filename))
+
+            response = urllib.urlopen(thumbnail_url)
+            data = response.read()
+            text_data = cStringIO.StringIO(data)
+            image_type = imghdr.what(text_data)
+            filename = self.category.title + '-' + str (uuid.uuid4()) + '.' + str(image_type)
+
+            saved_img = open(os.path.join(file_save_dir, filename), 'wb')
+            saved_img.write(data)
+            saved_img.close()
             
             im = Image.open(os.path.join(file_save_dir, filename))
-            im_resize = im.resize((70,70), Image.ANTIALIAS)
+
+            basewidth = 70
+            wpercent = (basewidth/float(im.size[0]))
+            hsize = int((float(im.size[1])*float(wpercent)))
+            im_resize = im.resize((basewidth,hsize), Image.ANTIALIAS)
+
             im_resize.save(os.path.join(file_save_dir, filename))
-            #im_saveImage.open(os.path.join(file_save_dir, filename))
             self.thumbnail_image = os.path.join(filename)
         super(News, self).save(*args, **kwargs) # Call the "real" save() method.
 
@@ -111,8 +127,8 @@ class News(models.Model):
 class Comments(models.Model):
     news = models.ForeignKey(News)
     parent = models.ForeignKey('self', related_name='parent_comment', null=True)
-    thumbs_up = models.IntegerField(default=0)
-    thumbs_down = models.IntegerField(default=0)
+    upvotes = models.IntegerField(default=0)
+    downvotes = models.IntegerField(default=0)
     content = models.CharField(max_length=2000)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     username = models.CharField(max_length=100)
@@ -129,10 +145,10 @@ class Comments(models.Model):
         return self.date_created
 
     def get_ups(self):
-        return self.thumbs_up
+        return self.upvotes
 
     def get_downs(self):
-        return self.thumbs_down
+        return self.downvotes
 
 
 
@@ -159,6 +175,22 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('user', 'news',)
+
+class CommentVote(models.Model):
+    CLEAR_STATUS = 0
+    DOWNVOTE_STATUS = -1
+    UPVOTE_STATUS = 1
+    VOTE_CHOICES = (
+        (CLEAR_STATUS, 'Clear'),
+        (DOWNVOTE_STATUS, 'Downvote'),
+        (UPVOTE_STATUS, 'Upvote'),
+    )
+    comment = models.ForeignKey(Comments)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    vote_status = models.SmallIntegerField(choices=VOTE_CHOICES, default=0)
+
+    class Meta:
+        unique_together = ('user', 'comment',)
 
 # Create your models here.
 class PasswordResetRequest(models.Model):

@@ -6,10 +6,26 @@ body {
     font: normal small verdana,arial,helvetica,sans-serif;
 }
 
+img {
+    width: 30%;
+    height: auto;
+}
+
+/* Pinned */
+img.pinned {
+    width: 167px;
+    height: 70px;
+}
+
+div#showMore {
+    display: none;    
+}
+/* Pinned */
+
 /* About */
 p.about {
     margin: 20px auto 30px auto;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 div.about-questions {
@@ -21,6 +37,25 @@ a {
     text-decoration: none;
 }
 
+a.title:link {
+    color: blue;
+}
+a.title:visited {
+    color: #551a8b;
+}
+
+a {
+    color: #369;
+}
+
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 1.1em;
+    font-style: italic;
+    border-left: 5px solid #EEE8AA;
+}
+
 a.administer {
     color: red;
     display: none;
@@ -30,6 +65,10 @@ a.control {
     font-weight: bold;
     color: #777;
     text-decoration: underline;
+}
+
+a.comment_vote {
+    color: #ddd;
 }
 
 .duck {
@@ -54,7 +93,7 @@ div#bottom {
     padding-left: 15px;
     height: 50px;
     margin: 0 auto 0 auto;
-    background-color: #F5DE74;
+    background-color: #c5e7fc;
     /*border: 1px solid black;*/
 }
 
@@ -96,7 +135,7 @@ div.markhelp {
 
 div.collapsed {
     overflow: hidden;
-    height: 20px;
+    height: 18px;
 }
 
 #wrapper {
@@ -122,7 +161,7 @@ div.collapsed {
 }
 
 p.title {
-    font-size: 1.3em;
+    font-size: 1.2em;
     margin: 0;
 }
 
@@ -134,8 +173,12 @@ p.meta {
 
 div.content {
     font-size: 1.05em;
-    padding-left: 25px;
+    padding-left: 28px;
     max-width: 900px;
+}
+
+div.commentsInfo {
+    margin-bottom: 5px;
 }
 
 /* paragraph styles */
@@ -171,8 +214,8 @@ ul.buttons {
 }
 
 ul.comments_buttons {
-    margin: 5px 0 5px 0;
-    padding-left: 25px;
+    margin: 5px 0 0 0;
+    padding-left: 28px;
 }
 
 .buttons li {
@@ -183,19 +226,21 @@ ul.comments_buttons {
 div.news {
     padding-bottom: 5px;
     overflow: hidden;
+    display: table;
 }
 
 div.newsInfo {
-    margin: auto auto auto 5px;
-    float: left;
-    width: 90%;
+    display:table-cell;
+    float: none;
+    vertical-align: top;
+    padding-left: 5px;
 }
 
 p.textPost {
     padding-left: 15px;
     max-width: 700px;
     background-color: #FFFFF0;
-    margin: 5px 0 5px 15px;
+    margin: 5px 0 5px 10px;
 }
 
 div.comments {
@@ -204,17 +249,18 @@ div.comments {
 }
 
 div.newsVote {
-    float: left;
-    margin-right: 7px;
-    margin-left: 7px;
-    margin-top: 7px;
+    float: none;
     overflow: hidden;
+    vertical-align: top;
+    display: table-cell;
+    padding-top: 5px;
+    width: 25px;
 }
 
 div.commentsVote {
-    float: left;
     margin-right: 7px;
     margin-left: 7px;
+    float: left;
     overflow: hidden;
 }
 
@@ -225,23 +271,26 @@ div.arrow {
 img.arrow {
     width: 20px;
     height: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 img.newsThumbnail {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    height: auto;
-    max-width: 100%;
+    max-height: 70px;
+    width: 70px;
     color: #EEF;
+    display: block;
 }
 
 div.newsMedia {
-    float: left;
-    height: 100%;
-    max-width: 70px;
-    max-height: 70px;
+    float: none;
+    display: table-cell;
+    height: 70px;
+    width: 70px;
     overflow: hidden;
+    vertical-align: top;
+    padding-left: 5px;
 }
 
 div.score {
@@ -313,6 +362,10 @@ div#side {
     margin: 0px 5px 0px 5px;
     /*border: 1px solid black;*/
     overflow: hidden;
+}
+
+div.sideContainer {
+    width: auto;
 }
 
 .layout {

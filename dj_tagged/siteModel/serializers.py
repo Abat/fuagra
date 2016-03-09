@@ -6,6 +6,7 @@ from siteModel.models import Comments
 from siteModel.models import Vote
 from siteModel.models import NewsCategoryUserPermission
 from siteModel.models import NewsCategorySubscriptions
+from siteModel.models import CommentVote
 
 class NewsSerializer(serializers.ModelSerializer):
 	has_voted = serializers.SerializerMethodField()
@@ -72,9 +73,14 @@ class CommentSerializer(serializers.ModelSerializer):
 		
 	class Meta:
 		model = Comments
-		read_only_fields = ('id', 'date_created', 'thumbs_up', 'thumbs_down', 'owner', 'username', 'submitter_role', 'is_op')
+		read_only_fields = ('id', 'date_created', 'upvotes', 'downvotes', 'owner', 'username', 'submitter_role', 'is_op')
 
 class VoteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Vote
 		fields = ('news', 'vote_status')
+
+class CommentVoteSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CommentVote
+		fields = ('comment', 'vote_status')

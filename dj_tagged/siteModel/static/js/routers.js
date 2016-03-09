@@ -19,29 +19,33 @@ define([
 
         },
 
+        // order matters, be careful when changing
         routes: {
-            "": "home",
 
             "submit": "submit",
             "submitText": "submitText",
             "f/:category/submit": "submit",
             "f/:category/submitText": "submitText",
 
-            "f/:category": "subfuas",
-            "comments/:newsId": "comments",
-
             "f/:category/administer": "administer",
 
+            "f/:category": "subfuas",
+            "f/:category/:sort": "subfuas",
+
+            "comments/:newsId": "comments",
+
+            "(:sort)": "home",
             "*nomatch": "notFound"
         },
 
-        home: function() {
-            var sort_sort = url('?sort') ? url('?sort') : 'None';
+        home: function(sort) {
+            var sort_sort = sort || 'None';
+            var page = url('?page') ? url('?page') : 1;
 
             var sideView = new Side_Views.SideView();
             var specialTopView = new Top_Views.SpecialTopView();
-            App.news.fetch({ data: $.param({ sort: sort_sort }), success: function(items, response, options) {
-                var newsView = new Views.NewsView({ collection: items, sort: sort_sort });
+            App.news.fetch({ data: $.param({ sort: sort_sort, page: page }), success: function(items, response, options) {
+                var newsView = new Views.NewsView({ collection: items, sort: sort_sort, page: page, fetchResponse: response });
                 App.rootLayout.getRegion('content').show(newsView);
                 App.rootLayout.getRegion('side').show(sideView);
                 App.rootLayout.getRegion('special_top').show(specialTopView);
@@ -63,8 +67,9 @@ define([
             App.rootLayout.getRegion('content').show(submitTextView);
             App.rootLayout.getRegion('special_top').show(specialTopView);
         },
-        subfuas: function(category) {
-            var sort_sort = url('?sort') ? url('?sort') : 'None';
+        subfuas: function(category, sort) {
+            var sort_sort = sort || 'None';
+            var page = url('?page') ? url('?page') : 1;
 
             $.ajax({
                 type: 'GET',
@@ -72,8 +77,8 @@ define([
                 success: function(data) {
                     var sideView = new Side_Views.SideView({ category: category, permission: data.permission });
                     var specialTopView = new Top_Views.SpecialTopView();
-                    App.news.fetch({ data: $.param({ category: category, sort: sort_sort }), success: function(items, response, options) {
-                        var newsView = new Views.NewsView({ collection: items, category: category, sort: sort_sort, permission: data.permission });
+                    App.news.fetch({ data: $.param({ category: category, sort: sort_sort, page: page }), success: function(items, response, options) {
+                        var newsView = new Views.NewsView({ page: page, collection: items, category: category, sort: sort_sort, permission: data.permission, fetchResponse: response });
                         App.rootLayout.getRegion('content').show(newsView);
                         App.rootLayout.getRegion('side').show(sideView);
                         App.rootLayout.getRegion('special_top').show(specialTopView);
@@ -88,11 +93,10 @@ define([
             newsModel.fetch({ success: function(model, response, options) {
                 App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
-				
-					console.log("items: ", items);
+					//console.log("items: ", items);
 					
 					var new_items = items;
-					console.log("new items: ", new_items);
+					//console.log("new items: ", new_items);
 					
 					//create leveled lists
 					var i;
@@ -110,8 +114,8 @@ define([
 					var levelLists = [];
 					var prevlevellist = level0list;
 					while(new_items.length > 0) {
-						console.log("new_items.length", new_items.length);
-						console.log("prevlevellist", prevlevellist);
+						//console.log("new_items.length", new_items.length);
+						//console.log("prevlevellist", prevlevellist);
 						var curlevellist = [];
 						for(i = 0; i < new_items.length; i ++) {
 							var flag = false;
@@ -125,6 +129,7 @@ define([
 								i --;
 							}
 						}
+                        if(curlevellist.length == 0) break;
 						levelLists.push(curlevellist);
 						prevlevellist = curlevellist;
 					}
@@ -136,7 +141,7 @@ define([
                         type: 'GET',
                         url: "/api/users/" + model.get('category'),
                         success: function(data) {
-                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0, permission: data.permission });
+                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, newsModel: newsModel, collection: lv0, permission: data.permission });
                             
                             commentsView.childCollection = levelLists;
                             //var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});

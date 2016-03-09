@@ -73,26 +73,66 @@ define([
         onRenderTemplate: function() {
             var self = this;
 			//console.log("CommentsItemView_render...", this.model);
-            $('div.content', this.el).html(Marked(self.model.get('content')));
-            if (this.model.get('is_op')) {
-                $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
-            }
-            if (this.model.get('submitter_role') == 'MD') {
-                $('a#comment_author', this.el).css("color", "purple").append('[M]'); 
-            } else if (this.model.get('submitter_role') == 'AD') {
-                $('a#comment_author', this.el).css("color", "red").append('[A]'); 
+            if (self.model.get('content') != '[deleted]') {
+                $('div.content', this.el).html(Marked(self.model.get('content')));
+                if (this.model.get('is_op')) {
+                    $('a#comment_author', this.el).css("font-weight", "bold").append('[S]'); 
+                }
+                if (this.model.get('submitter_role') == 'MD') {
+                    $('a#comment_author', this.el).css("color", "purple").append('[M]'); 
+                } else if (this.model.get('submitter_role') == 'AD') {
+                    $('a#comment_author', this.el).css("color", "red").append('[A]'); 
+                }
+                // delete button for Moderators and Admins
+                if (this.moderating) {
+                    $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
+                }
+            } else {
+                $('div.commentsVote', this.el).css('visibility', 'hidden'); 
+                $('ul.comments_buttons', this.el).css('display', 'none');
+                $('a#comment_author', this.el).css('display', 'none');
             }
             $('time.timeago', self.el).text($.timeago($('time.timeago', self.el)));
-            // delete button for Moderators and Admins
-            if (this.moderating) {
-                $('ul.comments_buttons', this.el).append("<li class='comments_buttons'><a href='#' class='moderating' name='delete_comment'> delete </a></li>");
-            }
+        },
+        upvote: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var self = this;
+            var vote = new Models.CommentVoteItemModel({'url_created': '/api/comments/' + this.model.id + '/upvote/'});
+
+            vote.save({comment:this.model.id}, {
+                success: function(model, response, options){
+                    console.log('Comment upvoted:', self.model.id);
+                    self.model.fetch();
+                },
+                error: function(model, xhr, options){
+                    console.log('Comment upvote error:', xhr);
+                }
+            });
+        },
+        downvote: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var self = this;
+            var vote = new Models.CommentVoteItemModel({'url_created': '/api/comments/' + this.model.id + '/downvote/'});
+
+            vote.save({comment:this.model.id}, {
+                success: function(model, response, options){
+                    console.log('Comment downvoted: ', self.model.id);
+                    self.model.fetch();
+                },
+                error: function(model, xhr, options){
+                    console.log('Comment downvote error:', xhr);
+                }
+            });
         },
         
         events: {
             'click a.expand': 'expand',
             'click a.reply': 'reply',
             'click a[name="delete_comment"]': 'delete_comment',
+            'click a[name="comment_up"]': 'upvote',
+            'click a[name="comment_down"]': 'downvote',
         },
         modelEvents: {
             'change': 'render',
@@ -102,11 +142,14 @@ define([
 			//console.log("e: ", e);
             e.preventDefault();
 			e.stopImmediatePropagation();
-            if ($('div.comments', this.el).hasClass('collapsed')) {
+            //console.log("('div.comments', this.el): ", $('div.comments', this.el).first());
+            if ($('div.comments', this.el).first().hasClass('collapsed')) {
                 $('div.comments', this.el).removeClass('collapsed');
+                $('div.commentsVote', this.el).css("visibility", 'visible');
                 $('a.expand', this.el).text("[-]");
             } else {
                 $('div.comments', this.el).addClass('collapsed');
+                $('div.commentsVote', this.el).css("visibility", 'hidden');
                 $('a.expand', this.el).text("[+]");
             }
 			
@@ -114,9 +157,9 @@ define([
         reply: function(e) {
             e.preventDefault();
 			e.stopImmediatePropagation();
-            if (!$('form', this.el)[0]) {
+            if (!$('div.comments', this.el).first().has('form').length) {
                 var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection, parentId: this.model.get('id'), reply: true });
-                $(this.el).append(commentsTextareaView.render().el);
+                $('div.comments', this.el).first().append(commentsTextareaView.render().el);
             }
         },
         delete_comment: function(e) {
@@ -162,12 +205,14 @@ define([
             var comment = this.collection.create({
                 content: $("textarea[name='content']", this.el).val(),
                 news: $("input[name='news']", this.el).val(),
+                upvotes: 0,
+                downvotes: 0,
                 "parent": this.parentId,
                 csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']", this.el).val(),
                 date_created: Date.now()
             }, {
                 success: function(resp) {
-                    console.log(resp);
+                    console.log('New comment created');
                     if (self.reply) {
                         $('form#newComment', self.el)[0].remove();
                     } else {
@@ -175,8 +220,13 @@ define([
                     }
                     $('div#topComment', self.el).append('<br><p><b>Your comment was posted. </b></p>');
                 },
-                error: function(err) {
-                    console.log(err);
+                error: function(model, xhr, options) {
+                    $('form#newComment', self.el)[0].reset();
+                    if (xhr.responseJSON) {
+                        self.dialog('Error:', xhr.responseJSON.reason); 
+                    } else {
+                        $('div#topComment', self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
+                    }
                 }
             });
         },
@@ -184,6 +234,12 @@ define([
             var self = this;
             e.preventDefault();
             $('div.markhelp', this.el).toggle();
+        },
+        dialog: function(title, body) {
+            console.log('Comments Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
@@ -197,12 +253,12 @@ define([
         childViewContainer: 'ul#comments',
         childViewOptions: function(model, index) {
 			//console.log("pass to child", model);
-			console.log("pass to child", this.collection);
+			//console.log("pass to child", this.collection);
 			var comments = new Collections.CommentsListCollection([], { newsId: this.newsId });
             var new_items = new Collections.CommentsListCollection([], { newsId: this.newsId });
 			//var new_items = $.extend(true, {}, this.collection);
 			
-			console.log("pass to child2", new_items);
+			//console.log("pass to child2", new_items);
 			
 			
 			
@@ -236,6 +292,9 @@ define([
             console.log('CommentsView onRender...');
             var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
             $(this.el).prepend(commentsTextareaView.render().el);
+            if (this.category) {
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
+            }
         },
         onShow: function() {
             if (window.location.hash) {
@@ -246,6 +305,7 @@ define([
         initialize: function(attr){			
             console.log('Initializing CommentsView...');
             this.newsId = attr.newsId;
+            this.category = attr.newsModel.get('category');
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }

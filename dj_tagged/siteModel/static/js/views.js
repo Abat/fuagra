@@ -90,7 +90,13 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    console.log('Upvote error: ', xhr);
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Upvote error:', xhr.responseJSON.reason); 
+                    } else if (xhr.responseJSON.detail) {
+                        self.dialog('Upvote error:', xhr.responseJSON.detail); 
+                    } else {
+                        console.log(xhr);
+                    }
                 }
             });
         },
@@ -105,7 +111,13 @@ define([
                     self.model.fetch();
                 },
                 error: function(model, xhr, options){
-                    console.log('Downvote error: ', xhr);
+                    if (xhr.responseJSON.reason) {
+                        self.dialog('Downvote error:', xhr.responseJSON.reason); 
+                    } else if (xhr.responseJSON.detail) {
+                        self.dialog('Downvote error:', xhr.responseJSON.detail); 
+                    } else {
+                        console.log(xhr);
+                    }
                 }
             });
         },
@@ -123,18 +135,18 @@ define([
             
             this.model.destroy({ 
                 success: function() {
-                    console.log('Successfully deleted news:', newsId);
-                    $('#myModal .modal-title').text('News deleted');
-                    $('#myModal .modal-body').text(newsTitle);
-                    $('#myModal').modal({ show: true });
+                    self.dialog('News deleted:', newsTitle); 
                 },
-                error: function(model, response, options) {
-                    console.log('Error:', response);
-                    $('#myModal .modal-title').text('Error');
-                    $('#myModal .modal-body').text(response.responseJSON.reason);
-                    $('#myModal').modal({ show: true });
+                error: function(model, xhr, options) {
+                    self.dialog('Error:', xhr.responseJSON.reason); 
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('News Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
@@ -175,6 +187,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -183,7 +196,6 @@ define([
         newPost: function(e) {
             var self = this;
             e.preventDefault();
-            console.log('New link post...');
             var post = this.collection.create({
                 title: $("input[name='title']", this.el).val(),
                 url: $("input[name='url']", this.el).val(),
@@ -193,11 +205,22 @@ define([
                     console.log("Success, a new link post: ", resp);
                     $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
                 },
-                error: function(err) {
-                    console.log("Error: ", err);
-                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                error: function(model, xhr, options) {
+                    $('form', self.el)[0].reset(); 
+                    if (xhr.responseJSON) {
+                        self.dialog('Something went wrong:', xhr.responseJSON.reason); 
+                    } else {
+                        console.log("Error: ", xhr);
+                        $(self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
+                    }
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('Submit link Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
@@ -238,6 +261,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -254,13 +278,24 @@ define([
             }, {
                 success: function(resp) {
                     console.log("Success, a new text post: ", resp);
-                    $(self.el).empty().append('<br><p><b>Thanks for your link!</b></p>');
+                    $(self.el).empty().append('<br><p><b>Thanks for your post!</b></p>');
                 },
-                error: function(err) {
-                    console.log("Error: ", err);
-                    $(self.el).empty().append('<br><p><b>Something went wrong...</b></p>');
+                error: function(model, xhr, options) {
+                    $('form', self.el)[0].reset(); 
+                    if (xhr.responseJSON) {
+                        self.dialog('Something went wrong:', xhr.responseJSON.reason); 
+                    } else {
+                        console.log("Error: ", xhr);
+                        $(self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
+                    }
                 }
             });
+        },
+        dialog: function(title, body) {
+            console.log('Submit text Dialog:', title, body);
+            $('#myModal .modal-title').text(title);
+            $('#myModal .modal-body').text(body);
+            $('#myModal').modal({ show: true });
         }
     });
 
@@ -296,6 +331,7 @@ define([
             $('select[name="category"]', this.el).append(
                 $("<option></option>").text(this.category).val(this.category)
             );
+            $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
         },
         modify: function(e) {
             var self = this;
@@ -335,15 +371,36 @@ define([
         },
 
         initialize: function(attr) {
-            console.log('Initializing NewsView...');
-            this.pageNum = 1;
+            this.pageNum = parseInt(attr.page) || 1;
+            console.log('Initializing NewsView...', this.pageNum);
             this.category = attr.category;
             this.sort = attr.sort;
+            this.fetchResponse = attr.fetchResponse;
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
         },
         onRender: function() {
+            var self = this;
+            if (this.category && this.category != "None" && this.category != undefined) {
+                $('div#bottom a[name="Hot"]').attr('href', "/f/" + this.category + "/Hot");
+                $('div#bottom a[name="Newest"]').attr('href', "/f/" + this.category + "/Newest");
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
+            } else {
+                $('div#top a').removeAttr('style');
+            }
+            $('a#prevPage', self.el).attr('href', '?page=' + (this.pageNum - 1));
+            $('a#nextPage', self.el).attr('href', '?page=' + (this.pageNum + 1));
+            if (this.pageNum == 1) {
+                $('a#prevPage', self.el).hide();
+            } else {
+                $('a#prevPage', self.el).show();
+            }
+            if (this.fetchResponse.next == null) {
+                $('a#nextPage', self.el).hide();
+            } else {
+                $('a#nextPage', self.el).show();
+            }
             if (this.sort == "Newest") {
                 $('div#bottom a[name="Newest"]').css({ "color": "red" });
             } else {
@@ -361,20 +418,12 @@ define([
 
         newsSync: function() {
             console.log('News collection synced');    
-            var self = this;
-            if (this.pageNum == 1) {
-                $('a#prevPage', self.el).hide();
-            } else {
-                $('a#prevPage', self.el).show();
-            }
         },
         nextPage: function(e) {
-            e.preventDefault();
             this.pageNum += 1;
             this.fetch();
         },
         prevPage: function(e) {
-            e.preventDefault();
             this.pageNum -= 1;
             this.fetch();
         },
@@ -382,11 +431,7 @@ define([
             var self = this;
             this.collection.fetch({data: $.param({page: this.pageNum, category: self.category, sort: self.sort }),  success: function(items, response, options) {
                 console.log('success: ', response);
-                if (response.next == null) {
-                    $('a#nextPage', self.el).hide();
-                } else {
-                    $('a#nextPage', self.el).show();
-                }
+                self.fetchResponse = response;
             }, error: function(collection, response, options) {
                 console.log('error: ', response);
                 self.pageNum = 1;
