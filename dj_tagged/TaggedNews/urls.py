@@ -21,8 +21,13 @@ news_detail = NewsViewSet.as_view({
 
 comment_list = CommentViewSet.as_view({
     'get': 'list',
-    'post': 'create'
+    'post': 'create',
 })
+
+all_comment_list = CommentViewSet.as_view({
+    'get': 'list_all',
+})
+
 comment_detail = CommentViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
@@ -88,8 +93,9 @@ urlpatterns = patterns('',
     url(r'^api/news/?$', news_list, name='news-list'),
     url(r'^api/news/(?P<pk>[0-9]+)/?$', news_detail, name='news-detail'),
     url(r'^api/users/?$', user_list, name='user-list'),
-    url(r'^api/users/(?P<pk>[0-9]+)/?$', user_detail, name='user-detail'),
-    url(r'^api/users/(?P<category>\w+)/?$', views.check_user_permission, name='check_user_permission'),
+    url(r'^api/users/(?P<username>\w+)/?$', user_detail, name='user-detail'),
+    url(r'^api/users/permissions/(?P<category>\w+)/?$', views.check_user_permission, name='check_user_permission'),
+    url(r'^api/comments/?$', all_comment_list, name='all-comment-list'),
     url(r'^api/comments/(?P<pk>[0-9]+)/(?P<comment_pk>[0-9]+)/?$', comment_detail, name='comment-detail'),
     url(r'^api/comments/(?P<pk>[0-9]+)/?$', comment_list, name='comment-list'),
     url(r'^api/permissions/', views.set_user_permission, name='set_user_permission'),

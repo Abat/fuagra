@@ -5,7 +5,8 @@ define([
     'collections',
     'models',
     'text!templates/topView.html',
-], function($, _, Marionette, Collections, Models, topT) {
+    'text!templates/userTabView.html',
+], function($, _, Marionette, Collections, Models, topT, userT) {
 
     'use strict';
 
@@ -22,8 +23,14 @@ define([
 
     });
     
+    var UserTabView = Marionette.ItemView.extend({
+        className: 'userTabContainer',
+        template: _.template(userT),
+
+    });
 
     return {
-        'SpecialTopView': SpecialTopView
+        'SpecialTopView': SpecialTopView,
+        'UserTabView': UserTabView
     };
 });

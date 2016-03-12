@@ -29,6 +29,8 @@ define([
 
             "f/:category": "subfuas",
             "comments/:newsId": "comments",
+            "user/:username": "user",
+            "user/:username/comments": "userComments",
 
             "f/:category/administer": "administer",
 
@@ -68,7 +70,7 @@ define([
 
             $.ajax({
                 type: 'GET',
-                url: "/api/users/" + category,
+                url: "/api/users/permissions/" + category,
                 success: function(data) {
                     var sideView = new Side_Views.SideView({ category: category, permission: data.permission });
                     var specialTopView = new Top_Views.SpecialTopView();
@@ -81,6 +83,48 @@ define([
                 }
             });
         },
+        user: function(username) {
+            var userModel = new Models.UserProfileItemModel({ username: username });
+            userModel.fetch({ success: function(model, response, options) {
+                var specialTopView = new Top_Views.UserTabView({ model : model});
+                App.news.fetch({ data: $.param({ username: username }), success: function(items, response, options) {
+                    var newsView = new Views.NewsView({ collection: items });
+                    App.rootLayout.getRegion('content').show(newsView);
+                    App.rootLayout.getRegion('special_top').show(specialTopView);
+                    if (response.next == null) {
+                        console.log('hiding');
+                        $('a#nextPage', newsView.el).hide();
+                    } else {
+                        console.log('not hiding');
+                        $('a#nextPage', newsView.el).show();
+                    }
+                }});
+            }});
+        },
+        userComments: function(username) {
+            var userModel = new Models.UserProfileItemModel({ username: username });
+            userModel.fetch({ success: function(model, response, options) {
+                var specialTopView = new Top_Views.UserTabView({ model : model});
+                App.rootLayout.getRegion('special_top').show(specialTopView);
+                var comments = new Collections.UserCommentsListCollection();
+                var page_size = 5;
+                comments.fetch({ data: $.param({ owner: username, page_size: page_size }), success: function(items, response, options) {
+                    var news_fetched = 0;
+                    items.each(function(item) {
+                        var news_id = item.attributes['news'];
+                        var newsModel = new Models.NewsItemModel({ id: news_id });
+                        newsModel.fetch({ success: function(model, response, options) {
+                            item.set({ news_title: model.get('title'), news_author: model.get('username'), news_category: model.get('category'), news_url: model.get('url')});
+                            news_fetched++;
+                            if (news_fetched == page_size) {
+                                var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items });
+                                App.rootLayout.getRegion('content').show(profileCommentsView);
+                            }
+                        }});
+                    });
+                }});
+            }});
+        },
         comments: function(newsId) {
             console.log("comments route triggered: ", newsId);
             var comments = new Collections.CommentsListCollection([], { newsId: newsId });
@@ -88,7 +132,6 @@ define([
             newsModel.fetch({ success: function(model, response, options) {
                 App.rootLayout.getRegion('special_top').show(new Views.NewsItemView({model: model, textPost: model.get('content')}));  
                 comments.fetch({ success: function(items, response, options) {
-				
 					console.log("items: ", items);
 					
 					var new_items = items;
@@ -135,7 +178,7 @@ define([
 
                     $.ajax({
                         type: 'GET',
-                        url: "/api/users/" + model.get('category'),
+                        url: "/api/users/permissions/" + model.get('category'),
                         success: function(data) {
                             var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: lv0, permission: data.permission });
                             

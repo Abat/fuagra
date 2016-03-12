@@ -312,7 +312,7 @@ define([
             var self = this;
             $.ajax({
                 type: 'GET',
-                url: "/api/users/" + self.category,
+                url: "/api/users/permissions/" + self.category,
                 success: function(data) {
                     // show Administer link for moderators and admins
                     if (data.permission == "Admin") {

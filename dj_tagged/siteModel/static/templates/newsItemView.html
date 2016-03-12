@@ -12,7 +12,7 @@
         <a target='<%= url ? "_blank" : "" %>' href='<%= url ? url : "/comments/" + id %>' class='title'> <%= title %> </a>
             <span class='source'> <a target='_blank' href='<%= (urlParsed.protocol=="https://") ? "https://" : "http://" + urlParsed.host %>'> ( <%= urlParsed.hostname %> ) </a> </span>
         </p>
-        <p class='meta'> submitted <time class="timeago" datetime="<%= date_created %>">January 1, 2016</time> by <a href='#' class='meta'><%= username %></a> to <a href='/f/<%= category %>' class='meta'> <%= category %> </a> </p>
+        <p class='meta'> submitted <time class="timeago" datetime="<%= date_created %>">January 1, 2016</time> by <a href='/user/<%= username %>' class='meta'><%= username %></a> to <a href='/f/<%= category %>' class='meta'> <%= category %> </a> </p>
         <p class='textPost'></p>
         <ul class='buttons'>
             <li class='comments_buttons'>
