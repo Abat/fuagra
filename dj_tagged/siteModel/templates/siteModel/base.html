@@ -10,6 +10,11 @@
         <link rel="icon" href="/images/favicon.ico">
 
         <title> Fua - {% block title %}Base{% endblock %} </title>
+        <script>
+            require = {
+                urlArgs: "v=0.0.1.6"
+            };
+        </script>
         <script data-main="/static/js/main" src="/static/js/requirejs/require.js"></script>
         <link rel="stylesheet" type="text/css" href="/static/siteModel/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/static/siteModel/style.css" />
@@ -21,22 +26,24 @@
                 <div id="top">
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                            <li><a href="/f/News">{% trans "News" %}</a></li>
-                            <li><a href="/f/Sayasat">{% trans "Politics" %}</a></li>
-                            <li><a href="/f/Tarih">{% trans "History" %}</a></li>
-                            <li><a href="/f/Funny">{% trans "Funny" %}</a></li>
-                            <li><a href="/f/Sport">{% trans "Sport" %}</a></li>
-                            <li><a href="/f/Science">{% trans "Science" %}</a></li>
-                            <li><a href="/f/Technology">{% trans "Technology" %}</a></li>
-                            <li><a href="/f/Economics">{% trans "Economics" %}</a></li>
-                            <li><a href="/f/Life_stories">{% trans "Life stories" %}</a></li>
-                            <li><a href="/f/Movies">{% trans "Movies" %}</a></li>
-                            <li><a href="/f/Inspire">{% trans "Inspire" %}</a></li>
-                            <li><a href="/f/Interviews">{% trans "Interviews" %}</a></li>
-                            <li><a href="/f/TED">{% trans "TED" %}</a></li>
-                            <li><a href="/f/Music">{% trans "Music" %}</a></li>
-                            <li><a href="/f/Raznoe">{% trans "Random" %}</a></li>
-                            <li><a href="/f/Krasota_Iskusstvo">{% trans "Beauty & art" %}</a></li>
+                            <li><a href="/f/News" name='News'>{% trans "News" %}</a></li>
+                            <li><a href="/f/Sayasat" name='Sayasat'>{% trans "Politics" %}</a></li>
+                            <li><a href="/f/Kogam" name='Kogam'>{% trans "Kogam" %}</a></li>
+                            <li><a href="/f/Tarih" name='Tarih'>{% trans "History" %}</a></li>
+                            <li><a href="/f/Funny" name='Funny'>{% trans "Funny" %}</a></li>
+                            <li><a href="/f/Sport" name='Sport'>{% trans "Sport" %}</a></li>
+                            <li><a href="/f/Science" name='Science'>{% trans "Science" %}</a></li>
+                            <li><a href="/f/Technology" name='Technology'>{% trans "Technology" %}</a></li>
+                            <li><a href="/f/Economics" name='Economics'>{% trans "Economics" %}</a></li>
+                            <li><a href="/f/Life_stories" name='Life_stories'>{% trans "Life stories" %}</a></li>
+                            <li><a href="/f/Movies" name='Movies'>{% trans "Movies" %}</a></li>
+                            <li><a href="/f/Inspire" name='Inspire'>{% trans "Inspire" %}</a></li>
+                            <li><a href="/f/Kitaphana" name='Kitaphana'>{% trans "Kitaphana" %}</a></li>
+                            <li><a href="/f/Interviews" name='Interviews'>{% trans "Interviews" %}</a></li>
+                            <li><a href="/f/TED" name='TED'>{% trans "TED" %}</a></li>
+                            <li><a href="/f/Music" name='Music'>{% trans "Music" %}</a></li>
+                            <li><a href="/f/Raznoe" name='Raznoe'>{% trans "Random" %}</a></li>
+                            <li><a href="/f/Krasota_Iskusstvo" name='Krasota_Iskusstvo'>{% trans "Beauty & art" %}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -56,8 +63,8 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-left">
-                            <li><a href="?sort=Hot" name="Hot">{% trans "Hot" %}</a></li>
-                            <li><a href="?sort=Newest" name="Newest">{% trans "Newest" %}</a></li>
+                            <li><a href="Hot" name="Hot">{% trans "Hot" %}</a></li>
+                            <li><a href="Newest" name="Newest">{% trans "Newest" %}</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}
@@ -94,7 +101,7 @@
                             <h4 class="modal-title">Modal title</h4>
                         </div>
                         <div class="modal-body">
-                            <p>One fine body&hellip;</p>
+                            <p>Something went wrong&hellip;</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>

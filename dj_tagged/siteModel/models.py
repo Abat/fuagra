@@ -46,7 +46,7 @@ class News(models.Model):
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
-    url = models.URLField(unique=True, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
     content = models.CharField(max_length=2000, null=True, blank=True)
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
@@ -57,8 +57,8 @@ class News(models.Model):
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
-    # class Meta:
-    #     ordering = ['-date_updated']
+    class Meta:
+        unique_together = (('owner', 'url'),)
 
     def __str__(self):
         return self.title
@@ -80,7 +80,9 @@ class News(models.Model):
 
         logger = logging.getLogger("django")
         thumbnail_url = None;
-        if self.url and not self.thumbnail_image and self.number_of_tries < 1:
+        if self.url and not self.thumbnail_image and self.number_of_tries < 1 and not self.category.title == "News" \
+                                                                              and not self.category.title == "Sayasat" \
+                                                                              and not self.category.title == "Raznoe":
             try:
                 self.number_of_tries += 1
                 og = IMPORTMEPLZ(self.url)
@@ -106,7 +108,12 @@ class News(models.Model):
             saved_img.close()
             
             im = Image.open(os.path.join(file_save_dir, filename))
-            im_resize = im.resize((70,70), Image.ANTIALIAS)
+
+            basewidth = 70
+            wpercent = (basewidth/float(im.size[0]))
+            hsize = int((float(im.size[1])*float(wpercent)))
+            im_resize = im.resize((basewidth,hsize), Image.ANTIALIAS)
+
             im_resize.save(os.path.join(file_save_dir, filename))
             self.thumbnail_image = os.path.join(filename)
         super(News, self).save(*args, **kwargs) # Call the "real" save() method.

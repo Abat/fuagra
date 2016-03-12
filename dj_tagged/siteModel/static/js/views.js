@@ -187,6 +187,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -260,6 +261,7 @@ define([
                         .text(self.category)
                         .val(self.category)
                 );
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
         },
         events: {
@@ -329,6 +331,7 @@ define([
             $('select[name="category"]', this.el).append(
                 $("<option></option>").text(this.category).val(this.category)
             );
+            $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
         },
         modify: function(e) {
             var self = this;
@@ -368,15 +371,36 @@ define([
         },
 
         initialize: function(attr) {
-            console.log('Initializing NewsView...');
-            this.pageNum = 1;
+            this.pageNum = parseInt(attr.page) || 1;
+            console.log('Initializing NewsView...', this.pageNum);
             this.category = attr.category;
             this.sort = attr.sort;
+            this.fetchResponse = attr.fetchResponse;
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
         },
         onRender: function() {
+            var self = this;
+            if (this.category && this.category != "None" && this.category != undefined) {
+                $('div#bottom a[name="Hot"]').attr('href', "/f/" + this.category + "/Hot");
+                $('div#bottom a[name="Newest"]').attr('href', "/f/" + this.category + "/Newest");
+                $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
+            } else {
+                $('div#top a').removeAttr('style');
+            }
+            $('a#prevPage', self.el).attr('href', '?page=' + (this.pageNum - 1));
+            $('a#nextPage', self.el).attr('href', '?page=' + (this.pageNum + 1));
+            if (this.pageNum == 1) {
+                $('a#prevPage', self.el).hide();
+            } else {
+                $('a#prevPage', self.el).show();
+            }
+            if (this.fetchResponse.next == null) {
+                $('a#nextPage', self.el).hide();
+            } else {
+                $('a#nextPage', self.el).show();
+            }
             if (this.sort == "Newest") {
                 $('div#bottom a[name="Newest"]').css({ "color": "red" });
             } else {
@@ -394,20 +418,12 @@ define([
 
         newsSync: function() {
             console.log('News collection synced');    
-            var self = this;
-            if (this.pageNum == 1) {
-                $('a#prevPage', self.el).hide();
-            } else {
-                $('a#prevPage', self.el).show();
-            }
         },
         nextPage: function(e) {
-            e.preventDefault();
             this.pageNum += 1;
             this.fetch();
         },
         prevPage: function(e) {
-            e.preventDefault();
             this.pageNum -= 1;
             this.fetch();
         },
@@ -415,11 +431,7 @@ define([
             var self = this;
             this.collection.fetch({data: $.param({page: this.pageNum, category: self.category, sort: self.sort }),  success: function(items, response, options) {
                 console.log('success: ', response);
-                if (response.next == null) {
-                    $('a#nextPage', self.el).hide();
-                } else {
-                    $('a#nextPage', self.el).show();
-                }
+                self.fetchResponse = response;
             }, error: function(collection, response, options) {
                 console.log('error: ', response);
                 self.pageNum = 1;

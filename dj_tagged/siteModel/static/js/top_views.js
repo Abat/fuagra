@@ -16,6 +16,14 @@ define([
 
         initialize: function() {
             console.log('Initializing SpecialTopView...');
+        },
+        events: {
+            'click a[name="showMore"]': 'toggleShowMore'
+        },
+        toggleShowMore: function(e) {
+            e.preventDefault();
+            $('div#hideThis', this.el).toggle();
+            $('div#showMore', this.el).toggle();
         }
 
 

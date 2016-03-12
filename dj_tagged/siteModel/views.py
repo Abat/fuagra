@@ -24,7 +24,7 @@ from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.http import Http404
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime
@@ -35,6 +35,7 @@ import logging
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 import json
+from django.db import IntegrityError
 
 #from siteModel.ranking.ranking import *
 
@@ -92,14 +93,15 @@ def register(request):
 
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
-
+    logger = logging.getLogger("django")
     if request.method == 'POST':
+        
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
 
+            user = user_form.save()
             the_username = user.username
             the_password = user.password
             new_email = user_form.cleaned_data.get('email_address')
@@ -109,7 +111,9 @@ def register(request):
                 [new_email], fail_silently=False, html_message=_create_html_email_confirmation_message(user.username, confirmation_key))
 
             user.set_password(the_password)
+            
             user.save()
+            
 
             profile = profile_form.save(commit=False)
             profile.user = user
@@ -127,6 +131,7 @@ def register(request):
             errors = user_form.errors.copy()
             errors.update(profile_form.errors)
             return render(request, 'siteModel/errors.html', {"errors": errors})
+
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
@@ -136,18 +141,18 @@ def register(request):
         'registered':registered})
 
 def _create_email_confirmation_message(user_name, confirmation_key):
-    return 'Hello {0},\n\nThanks for registering at Fuagrakz. Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagrakz Team'.format(user_name, confirmation_key)
+    return 'Hello {0},\n\nThanks for registering at Fuagra! Please visit http://www.fuagra.kz/accounts/confirmation?key={1} to confirm the creation of your account.\n\nIf you are not the owner of this account, please ignore this message.\n\nThanks,\nFuagra Team'.format(user_name, confirmation_key)
 
 #Probably want https later.
 def _create_html_email_confirmation_message(user_name, confirmation_key):
-    return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagrakz. Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team'.format(user_name, confirmation_key)
+    return 'Hello <strong>{0}</strong>,<br><br>Thanks for registering at Fuagra! Please visit this <a href="http://www.fuagra.kz/accounts/confirmation?key={1}">link</a> to confirm the creation of your account.<br><br>If you are not the owner of this account, please ignore this message.<br><br>Thanks,<br>Fuagra Team'.format(user_name, confirmation_key)
 
 def create_password_reset_message(uuid):
     return """
     Hello,<br><br> 
-    It seems that you have requested a password change for your account at Fuagrakz. 
+    It seems that you have requested a password change for your account at fuagra.kz. 
     Please visit here <a href="http://www.fuagra.kz/accounts/reset_password/?request_id={0}">http://www.fuagra.kz/accounts/reset_password/?request_id={0}</a> to change your password.<br><br>
-    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagrakz Team""".format(uuid)
+    If you did not make this request, please ignore this message.<br><br>Thanks,<br>Fuagra Team""".format(uuid)
 
 def user_login(request):
 
@@ -444,10 +449,10 @@ def confirm_email(request):
         logger.info("success")
         request.user.set_primary_email(new_email)
         request.user.email = new_email
-        return HttpResponse("good")
+        return createAPISuccessJsonReponse({'result':'Email confirmed.'})
     except:
         logger.info("fail didnt match!")
-        return HttpResponse("bad")
+        return createAPISuccessJsonReponse({'result':'Invalid confirmation link?'})
 
 @login_required
 def resend_confirmation_email(request):
@@ -456,14 +461,14 @@ def resend_confirmation_email(request):
     confirmation_key = request.user.reset_confirmation(email)
     send_mail('Confirm', 'Use http://www.fuagra.kz/accounts/confirmation?key=%s to confirm your new email' % confirmation_key, settings.EMAIL_HOST_USER,
             [email], fail_silently=False)
-    return HttpResponse("uhh ok")
+    return createAPISuccessJsonReponse({'result':'Resent confirmation!'})
 
 def list_category(request):
     if request.method == "GET":
         categories = NewsCategory.objects.all()
         data = [{'title': item.title} for item in categories]
         return HttpResponse(json.dumps(data), content_type="application/json")
-    raise Http404("Category List invalid method.")
+    raise createAPIErrorJsonReponse('Category List invalid method.', 404)
 
 @login_required
 def notifications(request):
@@ -642,6 +647,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comments.objects.all()
     model = Comments
     paginate_by = 100
+    renderer_classes = (JSONRenderer, )
+
     def list(self, request, *args, **kwargs):
         news_id = self.kwargs['pk']
         comments = Comments.objects.filter(news=news_id)
@@ -729,6 +736,7 @@ class VoteViewSet(viewsets.ModelViewSet):
     model = Vote
     serializer_class = VoteSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    renderer_classes = (JSONRenderer, )
 
     def get_queryset(self):
         news_id = self.kwargs['news_id']
@@ -837,6 +845,7 @@ class CommentVoteViewSet(viewsets.ModelViewSet):
     model = CommentVote
     serializer_class = CommentVoteSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    renderer_classes = (JSONRenderer, )
 
     def get_queryset(self):
         comment_id = self.kwargs['comment_id']

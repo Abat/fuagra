@@ -11,6 +11,17 @@ img {
     height: auto;
 }
 
+/* Pinned */
+img.pinned {
+    width: 167px;
+    height: 70px;
+}
+
+div#showMore {
+    display: none;    
+}
+/* Pinned */
+
 /* About */
 p.about {
     margin: 20px auto 30px auto;
@@ -24,6 +35,17 @@ div.about-questions {
 
 a {
     text-decoration: none;
+}
+
+a.title:link {
+    color: blue;
+}
+a.title:visited {
+    color: #551a8b;
+}
+
+a {
+    color: #369;
 }
 
 blockquote {
@@ -71,7 +93,7 @@ div#bottom {
     padding-left: 15px;
     height: 50px;
     margin: 0 auto 0 auto;
-    background-color: #F5DE74;
+    background-color: #c5e7fc;
     /*border: 1px solid black;*/
 }
 
@@ -139,7 +161,7 @@ div.collapsed {
 }
 
 p.title {
-    font-size: 1.3em;
+    font-size: 1.2em;
     margin: 0;
 }
 
