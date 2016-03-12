@@ -255,7 +255,7 @@ define([
         }
     });
 
-    var UserCommentsView = Marionette.CompositeView.extend({
+    var BaseCommentsView = Marionette.CompositeView.extend({
         tagName: 'div',
         template: _.template(commentsT),
         childCollection: [],
@@ -301,8 +301,6 @@ define([
 
         onRender: function() {
             console.log('CommentsView onRender...');
-            var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
-            $(this.el).prepend(commentsTextareaView.render().el);
             if (this.category) {
                 $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
@@ -324,7 +322,12 @@ define([
         },
     });
 
-    var CommentsView = UserCommentsView.extend({
+    var UserCommentsView = BaseCommentsView.extend({
+        childView: UserProfileCommentsItemView,
+        itemView: UserProfileCommentsItemView,
+    });
+
+    var CommentsView = BaseCommentsView.extend({
         childView: CommentsItemView,
 		itemView: CommentsItemView,
 

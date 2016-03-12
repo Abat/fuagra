@@ -89,7 +89,7 @@ define([
             userModel.fetch({ success: function(model, response, options) {
                 var specialTopView = new Top_Views.UserTabView({ model : model});
                 App.news.fetch({ data: $.param({ username: username }), success: function(items, response, options) {
-                    var newsView = new Views.NewsView({ collection: items });
+                    var newsView = new Views.NewsView({ collection: items, fetchResponse: response });
                     App.rootLayout.getRegion('content').show(newsView);
                     App.rootLayout.getRegion('special_top').show(specialTopView);
                     if (response.next == null) {
@@ -118,7 +118,7 @@ define([
                             item.set({ news_title: model.get('title'), news_author: model.get('username'), news_category: model.get('category'), news_url: model.get('url')});
                             news_fetched++;
                             if (news_fetched == page_size) {
-                                var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items });
+                                var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, newsModel: userModel });
                                 App.rootLayout.getRegion('content').show(profileCommentsView);
                             }
                         }});
