@@ -18,6 +18,7 @@ requirejs.config({
         'side_views': 'js/side_views',
         'top_views': 'js/top_views',
         'routers': 'js/routers',
+        'polyglot': 'js/polyglot/polyglot.min',
     }
 });
 

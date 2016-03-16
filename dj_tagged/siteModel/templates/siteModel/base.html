@@ -74,9 +74,9 @@
                                 <li>
                                 <a href='{% url 'fuagra_notifications' %}' {% if unread_count %} style="color:red" {% endif %}> {{ unread_count }} 
                                 {% if unread_count == 1 %}
-                                    notification 
+                                    {% trans "notification" %} 
                                 {% else %}
-                                    notifications 
+                                    {% trans "notifications" %}
                                 {% endif %}
                                 </a>
                                 </li>
@@ -120,7 +120,7 @@
                 </p>
                 <form class="language" action="{% url 'set_language' %}" method="post">{% csrf_token %}
                     <input name="next" type="hidden" value="{{ redirect_to }}" />
-                    <select name="language" onchange="this.form.submit()">
+                    <select name="language" onchange="changeLanguage()">
                         {% get_current_language as LANGUAGE_CODE %}
                         {% get_available_languages as LANGUAGES %}
                         {% get_language_info_list for LANGUAGES as languages %}
@@ -131,6 +131,14 @@
                         {% endfor %}
                     </select>
                 </form>
+                <script>
+                function changeLanguage() {
+                    var locale = document.getElementsByName("language")[0].value;
+                    localStorage.setItem('locale', locale);
+                    var form = document.getElementsByClassName("language")[0];
+                    form.submit();
+                }
+                </script>
                 <p class="text-muted credit footer_p">Use of this site constitutes acceptance of our User Agreement and Privacy Policy.</p>
                 <p class="text-muted credit footer_p">© 2016 Fuagra.kz. All rights reserved.</p>
             </div>

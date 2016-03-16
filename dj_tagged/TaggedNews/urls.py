@@ -115,6 +115,7 @@ urlpatterns = patterns('',
     url(r'^notifications/$', views.notifications, name='fuagra_notifications'),
     url(r'^inbox/notifications/', include('notifications.urls', namespace='notifications')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^locale/(?P<locale>\w+)/?$', views.locale),
     # catch all
     url(r'^.*$', views.index, name='index'),
 )

@@ -4,10 +4,11 @@ define([
     'backbone',
     'marionette',
     'collections',
+    'polyglot',
     'routers',
     'views',
     'text!templates/layout.html',
-], function($, _, Backbone, Marionette, Collections, Routers, Views, layoutT) {
+], function($, _, Backbone, Marionette, Collections, Polyglot, Routers, Views, layoutT) {
 
     var taggedApp;
 
@@ -23,6 +24,14 @@ define([
 
     var TaggedApp = Marionette.Application.extend({
         initialize: function(options) {
+            var locale = localStorage.getItem('locale') || 'kz';
+            console.log(locale);
+            $.getJSON('locale/' + locale, function(data) {
+                // Instantiates polyglot with phrases.
+                var phrases = data["phrases"];
+                self.polyglot = new Polyglot({ phrases: phrases });
+            });
+            
             console.log('App initialized...', options);
         }
     });
