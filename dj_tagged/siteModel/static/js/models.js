@@ -15,6 +15,11 @@ define([
 
     });
 
+    var UserProfileItem = Backbone.Model.extend({
+        idAttribute: 'username',
+        urlRoot: '/api/users/'
+    });
+
     var VoteItem = Backbone.Model.extend({
         urlRoot: function() { return this.get('url_created') },
     });
@@ -30,6 +35,7 @@ define([
     return {
         'NewsItemModel': NewsItem,
         'CommentsItemModel': CommentsItem,
+        'UserProfileItemModel': UserProfileItem,
         'VoteItemModel': VoteItem,
         'CommentVoteItemModel': CommentVoteItem,
         'UserRoleItemModel': UserRoleItem

@@ -80,7 +80,7 @@
                                 {% endif %}
                                 </a>
                                 </li>
-                                <li><a href="#">{% trans "Hello" %}, {{ user }} |</a></li>
+                                <li><a href="/user/{{user}}">{% trans "Hello" %}, {{ user }} |</a></li>
                                 <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
                             {% else %}
                                 <li><a href="{% url 'register' %}">{% trans "Register" %} |</a></li>

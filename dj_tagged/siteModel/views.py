@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
+from rest_framework import filters
 from siteModel.models import News
 from siteModel.models import NewsCategory
 from siteModel.models import NewsCategoryUserPermission
@@ -492,6 +493,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         """
    
         news_category = self.request.query_params.get('category', None)
+        title = self.request.query_params.get('title', None)
+        username = self.request.query_params.get('username', None)
         news_list = None
 
         #Getting news list/filtering
@@ -503,7 +506,11 @@ class NewsViewSet(viewsets.ModelViewSet):
                 news_list = News.objects.all()
         else: #If no filtering, pass in all news
             news_list = News.objects.all().exclude(category="Feedback")
-                
+        
+        if title is not None:
+            news_list = news_list.filter(title=title)
+        if username is not None:
+            news_list = news_list.filter(owner__username=username)
         #sort style
         sort_style = None
         if self.request.query_params.get('sort') is not None:
@@ -579,10 +586,20 @@ class NewsViewSet(viewsets.ModelViewSet):
             return createAPIErrorJsonReponse('Unauthorized.', 401)
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    filter_backends = (
+        filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    )
+    queryset = User.objects.order_by('-date_joined')
     serializer_class = UserSerializer
     model = User
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    search_fields = ('username',)
+    filter_fields = ('username',)
+
+    lookup_field = User.USERNAME_FIELD
+    lookup_url_kwarg = User.USERNAME_FIELD
 
     def list(self, request, *args, **kwargs):
         """
@@ -642,6 +659,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         rankAlgo = RankHelper.parse_rank_style(sort_style)
 
         self.queryset = rankAlgo.sort_list_of_news(comments)
+        return super(CommentViewSet, self).list(request, *args, **kwargs)
+
+    def list_all(self, request, *args, **kwargs):
+        owner = self.request.query_params.get('owner', None)
+
+        if owner is not None:
+            self.queryset = Comments.objects.filter(owner__username=owner)
+        else:
+            self.queryset = Comments.objects.all()
+
         return super(CommentViewSet, self).list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
