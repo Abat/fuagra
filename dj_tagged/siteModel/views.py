@@ -532,7 +532,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Create news object.
         """
         user = get_user(request)
-        category = request.DATA['category']
+        category = request.data['category']
         can_post = can_user_post(user, category)
         
         if can_post:
@@ -544,7 +544,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
-        category = self.request.DATA['category']
+        category = self.request.data['category']
         news = serializer.save(owner=user, username=user.username, upvotes=1)
         vote = Vote(user=user, news=news, vote_status=Vote.UPVOTE_STATUS)
         vote.save()
