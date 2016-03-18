@@ -24,13 +24,7 @@ define([
 
     var TaggedApp = Marionette.Application.extend({
         initialize: function(options) {
-            var locale = localStorage.getItem('locale') || 'kz';
-            console.log(locale);
-            $.getJSON('locale/' + locale, function(data) {
-                // Instantiates polyglot with phrases.
-                var phrases = data["phrases"];
-                self.polyglot = new Polyglot({ phrases: phrases });
-            });
+            
             
             console.log('App initialized...', options);
         }
@@ -53,8 +47,9 @@ define([
 
     taggedApp.router = new Routers.MyRouter();
 
-    taggedApp.on('start', function() {
+    taggedApp.on('start', function(phrases) {
         console.log('App start triggered...');
+        self.polyglot = new Polyglot({ phrases: phrases });
         Backbone.history.start({ pushState: true });
     });    
 
