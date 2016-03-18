@@ -111,7 +111,8 @@ define([
                 var page_size = 5;
                 comments.fetch({ data: $.param({ owner: username, page_size: page_size }), success: function(items, response, options) {
                     var news_fetched = 0;
-                    var num_of_items = response.count;
+                    var num_of_items = items.length;
+                    
                     items.each(function(item) {
                         var news_id = item.attributes['news'];
                         var newsModel = new Models.NewsItemModel({ id: news_id });
