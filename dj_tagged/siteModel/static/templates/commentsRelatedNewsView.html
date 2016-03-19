@@ -1,0 +1,6 @@
+<div>
+    <a href='<%= typeof(news_url) !== 'undefined' ? news_url : "/comments/" + news %>'><%= news_title %></a>
+	 by 
+	<a href='/user/<%= news_author %>'><%= news_author %></a> in 
+	<a href='/f/<%= news_category %>'><%= news_category %></a>
+</div>

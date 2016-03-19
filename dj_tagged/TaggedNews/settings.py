@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'TaggedNews.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': 'test_db',
         'NAME': 'taggednews_db',
         'USER': 'taggednews',
         'PASSWORD': 'taggednews',
@@ -98,13 +99,8 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 60, # old val 40; original 20
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    # ]
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 LOCALE_PATHS = (

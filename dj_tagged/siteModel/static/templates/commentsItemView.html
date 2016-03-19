@@ -6,7 +6,7 @@
     <div class='commentsInfo'>
         <p class='tagline'>
             <a href='#' class='comment-control expand'> [-] </a>
-            <a href='#' class='comment-control' id='comment_author'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
+            <a href='/user/<%= typeof(owner) !== "undefined" ? username : "#" %>' class='comment-control' id='comment_author'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
             <%= upvotes - downvotes %> points
             <time class="timeago" datetime='<%= date_created %>'> <%= date_created %> </time>
         </p>

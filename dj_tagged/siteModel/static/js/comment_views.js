@@ -11,7 +11,8 @@ define([
     'text!templates/commentsItemView.html',
     'text!templates/commentsView.html',
     'text!templates/commentsTextareaView.html',
-], function($, _, Backbone, Marionette, Collections, Models, Routers, Marked, Timeago, commentsItemT, commentsT, commentsTextareaT) {
+    'text!templates/commentsRelatedNewsView.html',
+], function($, _, Backbone, Marionette, Collections, Models, Routers, Marked, Timeago, commentsItemT, commentsT, commentsTextareaT, commentsRelatedNewsT) {
 
     'use strict';
     
@@ -55,17 +56,17 @@ define([
 
         initialize: function(attr) {
 			
-			console.log("CommentsItemView_attr", attr);
+			//console.log("CommentsItemView_attr", attr);
 			
             this.collection = attr.collection;			
 			
             this.newsId = attr.newsId;
-			if(attr.childColl != null)
+			if(attr.childColl != null) {
 				this.childCollection = attr.childColl;
+            }
             this.moderating = attr.moderating;
 			
-			console.log("This collection", this.collection);
-			
+			//console.log("This collection", this.collection);
 			//console.log("this.childCollection", this.childCollection);
 			//console.log("CommentsItemView_initialize_collection...", this.collection);
         },
@@ -139,10 +140,8 @@ define([
         },
 
         expand: function(e){
-			//console.log("e: ", e);
             e.preventDefault();
 			e.stopImmediatePropagation();
-            //console.log("('div.comments', this.el): ", $('div.comments', this.el).first());
             if ($('div.comments', this.el).first().hasClass('collapsed')) {
                 $('div.comments', this.el).removeClass('collapsed');
                 $('div.commentsVote', this.el).css("visibility", 'visible');
@@ -178,7 +177,17 @@ define([
             });
         }
     });
-
+    var UserProfileCommentsItemView = CommentsItemView.extend({
+        onRenderTemplate: function() {
+            var commentRelatedNewsView = new CommentsRelatedNewsView({ model: this.model});
+            $(this.el).prepend(commentRelatedNewsView.render().el);
+            CommentsItemView.prototype.onRenderTemplate.apply(this);
+        },
+    })
+    var CommentsRelatedNewsView = Marionette.ItemView.extend({
+        tagName: 'div',
+        template: _.template(commentsRelatedNewsT)
+    });
 	
     var CommentsTextareaView = Marionette.ItemView.extend({
         tagName: 'div',
@@ -243,55 +252,52 @@ define([
         }
     });
 
-    var CommentsView = Marionette.CompositeView.extend({
+    var BaseCommentsView = Marionette.CompositeView.extend({
         tagName: 'div',
         template: _.template(commentsT),
-		
-		childCollection: [],
+        childCollection: [],
 
         childView: CommentsItemView,
         childViewContainer: 'ul#comments',
         childViewOptions: function(model, index) {
-			//console.log("pass to child", model);
-			//console.log("pass to child", this.collection);
-			var comments = new Collections.CommentsListCollection([], { newsId: this.newsId });
+            //console.log("pass to child", model);
+            //console.log("pass to child", this.collection);
+            var comments = new Collections.CommentsListCollection([], { newsId: this.newsId });
             var new_items = new Collections.CommentsListCollection([], { newsId: this.newsId });
-			//var new_items = $.extend(true, {}, this.collection);
-			
-			//console.log("pass to child2", new_items);
-			
-			
-			
-			var i = 0;
-			
-			if(this.childCollection.length > 0)
-				for(i = 0; i < this.childCollection[0].length; i ++) {
-					if(this.childCollection[0][i].attributes.parent == model.id) {
-						new_items.add(this.childCollection[0][i]);
-					}
-				}
-			
-			//console.log("new_items", new_items);
-			
-			//filter out first level of child collection
-			var childcoll = this.childCollection.slice();
-			childcoll.splice(0,1);
-			
-			//console.log("childcoll", childcoll);
-			
+            //var new_items = $.extend(true, {}, this.collection);
+            
+            //console.log("pass to child2", new_items);
+            
+            
+            
+            var i = 0;
+            
+            if(this.childCollection.length > 0)
+                for(i = 0; i < this.childCollection[0].length; i ++) {
+                    if(this.childCollection[0][i].attributes.parent == model.id) {
+                        new_items.add(this.childCollection[0][i]);
+                    }
+                }
+            
+            //console.log("new_items", new_items);
+            
+            //filter out first level of child collection
+            var childcoll = this.childCollection.slice();
+            childcoll.splice(0,1);
+            
+            //console.log("childcoll", childcoll);
+            
             return {
                 collection: new_items,
                 newsId: this.newsId,
                 moderating: this.moderating,
-				childColl: childcoll,
+                childColl: childcoll,
             }
         },
-		itemView: CommentsItemView,
+        itemView: CommentsItemView,
 
         onRender: function() {
-            console.log('CommentsView onRender...');
-            var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
-            $(this.el).prepend(commentsTextareaView.render().el);
+            console.log('BaseCommentsView onRender...');
             if (this.category) {
                 $('div#top a[name="' + this.category + '"]').css({ "color": "red" });
             }
@@ -302,8 +308,8 @@ define([
             }
 
         },
-        initialize: function(attr){			
-            console.log('Initializing CommentsView...');
+        initialize: function(attr){         
+            console.log('Initializing BaseCommentsView...');
             this.newsId = attr.newsId;
             this.category = attr.newsModel.get('category');
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
@@ -312,13 +318,30 @@ define([
             $("html, body").animate({ scrollTop: 0 }, 0);
         },
     });
-	
 
+    var UserCommentsView = BaseCommentsView.extend({
+        childView: UserProfileCommentsItemView,
+        itemView: UserProfileCommentsItemView,
+    });
+
+    var CommentsView = BaseCommentsView.extend({
+        childView: CommentsItemView,
+		itemView: CommentsItemView,
+
+        onRender: function() {
+            var commentsTextareaView = new CommentsTextareaView({ newsId: this.newsId, collection: this.collection });
+            $(this.el).prepend(commentsTextareaView.render().el);
+            UserCommentsView.prototype.onRender.apply(this);
+        },
+    });
 
 
     return {
         'CommentsItemView': CommentsItemView,
         'CommentsTextareaView': CommentsTextareaView,
         'CommentsView': CommentsView,
+        'UserCommentsView': UserCommentsView,
+        'CommentsRelatedNewsView': CommentsRelatedNewsView,
+        'UserProfileCommentsItemView': UserProfileCommentsItemView,
     };
 });
