@@ -1,10 +1,10 @@
 [{
-	"pk": 23,
+	"pk": 24,
 	"fields": {
-		"category": "Funny",
+		"category": "Music",
 		"user": 1,
 		"permission": "AD",
-		"last_updated": "2016-03-16T16:32:10.932Z"
+		"last_updated": "2016-03-19T16:32:10.932Z"
 	},
 	"model": "siteModel.newscategoryuserpermission"
 }]
