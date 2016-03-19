@@ -99,8 +99,8 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY_PARAM': 'page_size',
-    'PAGINATE_BY': 60, # old val 40; original 20
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 LOCALE_PATHS = (

@@ -107,16 +107,21 @@ define([
                 var specialTopView = new Top_Views.UserTabView({ model : model});
                 App.rootLayout.getRegion('special_top').show(specialTopView);
                 var comments = new Collections.UserCommentsListCollection();
-                var page_size = 5;
+                var page_size = 25;
                 comments.fetch({ data: $.param({ owner: username, page_size: page_size }), success: function(items, response, options) {
                     var news_fetched = 0;
+                    var num_of_items = items.length;
+                    
                     items.each(function(item) {
                         var news_id = item.attributes['news'];
                         var newsModel = new Models.NewsItemModel({ id: news_id });
                         newsModel.fetch({ success: function(model, response, options) {
                             item.set({ news_title: model.get('title'), news_author: model.get('username'), news_category: model.get('category'), news_url: model.get('url')});
-                            var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, newsModel: userModel });
-                            App.rootLayout.getRegion('content').show(profileCommentsView);
+                            news_fetched++;
+                            if (news_fetched == num_of_items) {
+                                var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, newsModel: userModel });
+                                App.rootLayout.getRegion('content').show(profileCommentsView);
+                            }
                         }});
                     });
                 }});
