@@ -17,7 +17,6 @@ define([
             'date_created': '3182016',
             'username': 'unknown',
             'category': 'Test',
-            'id': 0,
             'num_comments': 0,
         }
     });
