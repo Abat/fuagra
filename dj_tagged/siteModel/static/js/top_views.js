@@ -35,6 +35,10 @@ define([
         className: 'userTabContainer',
         template: _.template(userT),
 
+        initialize: function(attr) {
+            this.model = attr.model;
+            console.log('Initializing UserTabView...');
+        },
     });
 
     return {
