@@ -1,4 +1,13 @@
 {
 	"submit_link" : "Submit a link",
-	"submit_text" : "Submit a text"
+	"submit_text" : "Submit a text",
+	"title" : "Title",
+	"content" : "Content",
+	"category" : "Category",
+	"submit" : "Submit",
+	"links" : "Links",
+	"comments" : "Comments",
+	"url_starts" : "- Please make sure url starts with http:// or https://",
+	"num_points" : "%{smart_count} point |||| %{smart_count} points",
+	"num_comments" : "%{smart_count} comment |||| %{smart_count} comments"
 }

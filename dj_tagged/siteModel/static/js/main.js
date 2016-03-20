@@ -25,14 +25,11 @@ requirejs.config({
 require(['app/taggednews'], function(App) {
     // App starts here
     window.App = App;
-    var locale = localStorage.getItem('locale') || 'kz';
-    console.log(locale);
-    $.getJSON('locale/' + locale, function(data) {
+    var locale = localStorage.getItem('locale') || 'kk';
+    $.getJSON('/locale/' + locale, function(data) {
         console.log(data);
         // Instantiates polyglot with phrases.
         var phrases = data["phrases"];
-        // self.polyglot = new Polyglot({ phrases: phrases });
         window.App.start(phrases);
     });
-    // window.App.start();
 });

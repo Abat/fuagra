@@ -7,7 +7,7 @@
         <p class='tagline'>
             <a href='#' class='comment-control expand'> [-] </a>
             <a href='/user/<%= username %>' class='comment-control' id='comment_author'> <%= typeof(owner) !== 'undefined' ? username : '404' %> </a>
-            <%= upvotes - downvotes %> points
+            <%= polyglot.t("num_points", upvotes - downvotes)  %> 
             <time class="timeago" datetime='<%= date_created %>'> <%= date_created %> </time>
         </p>
         <div class='content'> <%= content %> </div>

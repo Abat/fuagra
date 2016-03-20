@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-16 00:25-0400\n"
+"POT-Creation-Date: 2016-03-19 22:51-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,6 +146,16 @@ msgstr "помощь"
 #: siteModel/templates/siteModel/base.html:119
 msgid "feedback"
 msgstr "отзывы"
+
+#: siteModel/templates/siteModel/base.html:142
+msgid "user_agreement_base"
+msgstr ""
+"Использование данного сайта означает принятие нашего Пользовательского "
+"Соглашения и Политики Конфиденциальности."
+
+#: siteModel/templates/siteModel/base.html:143
+msgid "all_rights_reserved"
+msgstr "Все права защищены."
 
 #~ msgid "Thanks for visiting us!"
 #~ msgstr "Привет"

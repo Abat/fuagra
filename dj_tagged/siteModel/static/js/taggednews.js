@@ -25,7 +25,6 @@ define([
     var TaggedApp = Marionette.Application.extend({
         initialize: function(options) {
             
-            
             console.log('App initialized...', options);
         }
     });
@@ -49,7 +48,8 @@ define([
 
     taggedApp.on('start', function(phrases) {
         console.log('App start triggered...');
-        self.polyglot = new Polyglot({ phrases: phrases });
+        var locale = localStorage.getItem('locale')
+        self.polyglot = new Polyglot({ phrases: phrases, locale: locale });
         Backbone.history.start({ pushState: true });
     });    
 

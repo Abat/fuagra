@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-25 01:15-0500\n"
+"POT-Creation-Date: 2016-03-19 22:51-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,94 +29,128 @@ msgstr "Русский"
 msgid "English"
 msgstr "English"
 
-#: siteModel/templates/siteModel/base.html:24
+#: siteModel/templates/siteModel/base.html:29
 msgid "News"
 msgstr "News"
 
-#: siteModel/templates/siteModel/base.html:25
+#: siteModel/templates/siteModel/base.html:30
 msgid "Politics"
 msgstr "Politics"
 
-#: siteModel/templates/siteModel/base.html:26
+#: siteModel/templates/siteModel/base.html:31
+msgid "Kogam"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:32
 msgid "History"
 msgstr "History"
 
-#: siteModel/templates/siteModel/base.html:27
+#: siteModel/templates/siteModel/base.html:33
 msgid "Funny"
 msgstr "Funny"
 
-#: siteModel/templates/siteModel/base.html:28
+#: siteModel/templates/siteModel/base.html:34
 msgid "Sport"
 msgstr "Sport"
 
-#: siteModel/templates/siteModel/base.html:29
+#: siteModel/templates/siteModel/base.html:35
 msgid "Science"
 msgstr "Science"
 
-#: siteModel/templates/siteModel/base.html:30
+#: siteModel/templates/siteModel/base.html:36
 msgid "Technology"
 msgstr "Technology"
 
-#: siteModel/templates/siteModel/base.html:31
+#: siteModel/templates/siteModel/base.html:37
 msgid "Economics"
 msgstr "Economics"
 
-#: siteModel/templates/siteModel/base.html:32
+#: siteModel/templates/siteModel/base.html:38
 msgid "Life stories"
 msgstr "Life stories"
 
-#: siteModel/templates/siteModel/base.html:33
+#: siteModel/templates/siteModel/base.html:39
 msgid "Movies"
 msgstr "Movies"
 
-#: siteModel/templates/siteModel/base.html:34
+#: siteModel/templates/siteModel/base.html:40
 msgid "Inspire"
 msgstr "Inspire"
 
-#: siteModel/templates/siteModel/base.html:35
+#: siteModel/templates/siteModel/base.html:41
+msgid "Kitaphana"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:42
+msgid "Interviews"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:43
+msgid "TED"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:44
 msgid "Music"
 msgstr "Music"
 
-#: siteModel/templates/siteModel/base.html:36
+#: siteModel/templates/siteModel/base.html:45
 msgid "Random"
 msgstr "Random"
 
-#: siteModel/templates/siteModel/base.html:37
+#: siteModel/templates/siteModel/base.html:46
 msgid "Beauty & art"
 msgstr "Beauty & Art"
 
-#: siteModel/templates/siteModel/base.html:49
+#: siteModel/templates/siteModel/base.html:66
 msgid "Hot"
 msgstr "Hot"
 
-#: siteModel/templates/siteModel/base.html:50
+#: siteModel/templates/siteModel/base.html:67
 msgid "Newest"
 msgstr "Newest"
 
-#: siteModel/templates/siteModel/base.html:68
+#: siteModel/templates/siteModel/base.html:77
+msgid "notification"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:79
+msgid "notifications"
+msgstr ""
+
+#: siteModel/templates/siteModel/base.html:83
 msgid "Hello"
 msgstr "Hello"
 
-#: siteModel/templates/siteModel/base.html:69
+#: siteModel/templates/siteModel/base.html:84
 msgid "Logout"
 msgstr "Logout"
 
-#: siteModel/templates/siteModel/base.html:71
+#: siteModel/templates/siteModel/base.html:86
 msgid "Register"
 msgstr "Register"
 
-#: siteModel/templates/siteModel/base.html:72
+#: siteModel/templates/siteModel/base.html:87
 msgid "Login"
 msgstr "Login"
 
-#: siteModel/templates/siteModel/base.html:101
+#: siteModel/templates/siteModel/base.html:116
 msgid "about"
 msgstr "about"
 
-#: siteModel/templates/siteModel/base.html:103
+#: siteModel/templates/siteModel/base.html:118
 msgid "help"
 msgstr "help"
 
-#: siteModel/templates/siteModel/base.html:104
+#: siteModel/templates/siteModel/base.html:119
 msgid "feedback"
 msgstr "feedback"
+
+#: siteModel/templates/siteModel/base.html:142
+msgid "user_agreement_base"
+msgstr ""
+"Use of this site constitutes acceptance of our User Agreement and Privacy "
+"Policy."
+
+#: siteModel/templates/siteModel/base.html:143
+msgid "all_rights_reserved"
+msgstr "All rights reserved."
