@@ -7,6 +7,7 @@
 	"submit" : "Қосу",
 	"links" : "Сілтемелер",
 	"comments" : "Пікірлер",
+	"profile" : "%{username} профилі",
 	"url_starts" : "- url http:// немесе https:// - пен басталу керек",
 	"num_points" : "%{smart_count} ұпай",
 	"num_comments" : "%{smart_count} пікір"

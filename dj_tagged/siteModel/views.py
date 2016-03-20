@@ -3,6 +3,9 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from siteModel.models import News
 from siteModel.models import NewsCategory
 from siteModel.models import NewsCategoryUserPermission
@@ -24,8 +27,6 @@ from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.core.mail import send_mail
@@ -39,6 +40,16 @@ import json
 from django.db import IntegrityError
 
 #from siteModel.ranking.ranking import *
+
+class NewsPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+class CommentsPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 200
 
 # Create your views here.
 def index(request):
@@ -505,7 +516,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
     model = News
-    paginate_by = 25
+    pagination_class = NewsPagination
     def list(self, request, *args, **kwargs):
         """
         Return a list of News paginated by 20 items.
@@ -552,7 +563,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         Create news object.
         """
         user = get_user(request)
-        category = request.DATA['category']
+        category = request.data['category']
         can_post = can_user_post(user, category)
         
         if can_post:
@@ -564,7 +575,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # save the owner of the news
         user = get_user(self.request)
-        category = self.request.DATA['category']
+        category = self.request.data['category']
         news = serializer.save(owner=user, username=user.username, upvotes=1)
         vote = Vote(user=user, news=news, vote_status=Vote.UPVOTE_STATUS)
         vote.save()
@@ -666,7 +677,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comments.objects.all()
     model = Comments
-    paginate_by = 100
+    pagination_class = CommentsPagination
     renderer_classes = (JSONRenderer, )
 
     def list(self, request, *args, **kwargs):

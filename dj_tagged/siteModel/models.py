@@ -46,7 +46,7 @@ class News(models.Model):
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
-    url = models.URLField(null=True, blank=True)
+    url = models.URLField(unique=True, null=True, blank=True)
     content = models.CharField(max_length=2000, null=True, blank=True)
     num_comments = models.IntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
@@ -57,8 +57,6 @@ class News(models.Model):
     #thumbnail_url = models.URLField(unique=True, null=True, blank=True)
     ##TODO
     #thumbnail_image = models.ImageField(upload_to='news_images', null=True, blank=True)
-    class Meta:
-        unique_together = (('owner', 'url'),)
 
     def __str__(self):
         return self.title

@@ -6,7 +6,8 @@
 	"category" : "Категория",
 	"submit" : "Добавить",
 	"links" : "Ссылки",
-	"comments" : "Комментария",
+	"comments" : "Комментарии",
+	"profile" : "Профиль %{username}",
 	"url_starts" : "- url должно начинаться с http:// или https://",
 	"num_points" : "%{smart_count} очко |||| %{smart_count} очка |||| %{smart_count} очков",
 	"num_comments" : "%{smart_count} комментарий |||| %{smart_count} комментария |||| %{smart_count} комментариев"
