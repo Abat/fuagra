@@ -143,6 +143,21 @@ class Comments(models.Model):
     def get_downs(self):
         return self.downvotes
 
+    def get_news_title(self):
+        return self.news.title
+    news_title = property(get_news_title)
+
+    def get_news_username(self):
+        return self.news.username
+    news_username = property(get_news_username) 
+
+    def get_news_category(self):
+        return self.news.category.title
+    news_category = property(get_news_category) 
+
+    def get_news_url(self):
+        return self.news.url
+    news_url = property(get_news_url)
 
 
 class UserProfile(models.Model):

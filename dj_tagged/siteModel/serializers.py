@@ -69,6 +69,7 @@ class CommentSerializer(serializers.ModelSerializer):
 		
 	class Meta:
 		model = Comments
+                fields = ('id', 'news', 'parent', 'upvotes', 'downvotes', 'content', 'owner', 'username', 'isExpert', 'date_created', 'submitter_role', 'is_op',  'news_title', 'news_username', 'news_category', 'news_url')
 		read_only_fields = ('id', 'date_created', 'upvotes', 'downvotes', 'owner', 'username', 'submitter_role', 'is_op')
 
 class VoteSerializer(serializers.ModelSerializer):
