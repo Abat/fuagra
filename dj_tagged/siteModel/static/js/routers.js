@@ -89,13 +89,15 @@ define([
             });
         },
         user: function(username) {
+            var page = url('?page') ? url('?page') : 1;
             console.log("user route triggered...");
+
             var userModel = new Models.UserProfileItemModel({ username: username });
             userModel.fetch({ success: function(model, response, options) {
                 var specialTopView = new Top_Views.UserTabView({ model : model});
-                App.news.fetch({ data: $.param({ username: username }), success: function(items, response, options) {
-                    var newsView = new Views.NewsView({ collection: items, fetchResponse: response });
-                    App.rootLayout.getRegion('content').show(newsView);
+                App.news.fetch({ data: $.param({ username: username, page: page }), success: function(items, response, options) {
+                    var userNewsView = new Views.UserNewsView({ collection: items, page: page, fetchResponse: response });
+                    App.rootLayout.getRegion('content').show(userNewsView);
                     App.rootLayout.getRegion('special_top').show(specialTopView);
                 }});
             }});
@@ -107,23 +109,9 @@ define([
                 var specialTopView = new Top_Views.UserTabView({ model : model});
                 App.rootLayout.getRegion('special_top').show(specialTopView);
                 var comments = new Collections.UserCommentsListCollection();
-                var page_size = 25;
-                comments.fetch({ data: $.param({ owner: username, page_size: page_size }), success: function(items, response, options) {
-                    var news_fetched = 0;
-                    var num_of_items = items.length;
-                    
-                    items.each(function(item) {
-                        var news_id = item.attributes['news'];
-                        var newsModel = new Models.NewsItemModel({ id: news_id });
-                        newsModel.fetch({ success: function(model, response, options) {
-                            item.set({ news_title: model.get('title'), news_author: model.get('username'), news_category: model.get('category'), news_url: model.get('url')});
-                            news_fetched++;
-                            if (news_fetched == num_of_items) {
-                                var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, newsModel: userModel });
-                                App.rootLayout.getRegion('content').show(profileCommentsView);
-                            }
-                        }});
-                    });
+                comments.fetch({ data: $.param({ owner: username }), success: function(items, response, options) {
+                    var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, category: null });
+                    App.rootLayout.getRegion('content').show(profileCommentsView);
                 }});
             }});
         },
@@ -180,10 +168,9 @@ define([
                         type: 'GET',
                         url: "/api/users/permissions/" + model.get('category'),
                         success: function(data) {
-                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, newsModel: newsModel, collection: lv0, permission: data.permission });
+                            var commentsView = new Comment_Views.CommentsView({ newsId: newsId, category: newsModel.get('category'), collection: lv0, permission: data.permission });
                             
                             commentsView.childCollection = levelLists;
-                            //var commentsView = new Comment_Views.CommentsView({ newsId: newsId, collection: items});
                             App.rootLayout.getRegion('content').show(commentsView);			
                         }
                     });

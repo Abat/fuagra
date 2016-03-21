@@ -311,7 +311,7 @@ define([
         initialize: function(attr){         
             console.log('Initializing BaseCommentsView...');
             this.newsId = attr.newsId;
-            this.category = attr.newsModel.get('category');
+            this.category = attr.category;
             if (attr.permission == "Admin" || attr.permission == "Moderator") {
                 this.moderating = true;
             }
