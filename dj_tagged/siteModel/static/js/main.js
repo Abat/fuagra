@@ -18,11 +18,18 @@ requirejs.config({
         'side_views': 'js/side_views',
         'top_views': 'js/top_views',
         'routers': 'js/routers',
+        'polyglot': 'js/polyglot/polyglot.min',
     }
 });
 
 require(['app/taggednews'], function(App) {
     // App starts here
     window.App = App;
-    window.App.start();
+    var locale = localStorage.getItem('locale') || 'kk';
+    $.getJSON('/locale/' + locale, function(data) {
+        console.log(data);
+        // Instantiates polyglot with phrases.
+        var phrases = data["phrases"];
+        window.App.start(phrases);
+    });
 });

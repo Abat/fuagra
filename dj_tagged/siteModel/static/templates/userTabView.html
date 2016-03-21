@@ -1,7 +1,7 @@
-<b><%= username %>'s profile</b>
+<b><%= polyglot.t('profile', {username: username}) %></b>
 <br>
 <br>
 <ul class="tabmenu">
-    <li><a href="/user/<%=username%>">Ссылки</a></li>
-    <li><a href="/user/<%=username%>/comments">Комменты</a></li>
+    <li><a href="/user/<%=username%>"><%= polyglot.t('links') %></a></li>
+    <li><a href="/user/<%=username%>/comments"><%= polyglot.t('comments') %></a></li>
 </ul>

@@ -1,13 +1,13 @@
 <form action="/api/news/" method="post" enctype="application/json" id="newTextPost">
     <fieldset>
-        <legend>Submit a new text post</legend>
-        <b>Title:</b><br>
+        <legend><%=polyglot.t('submit_link')%></legend>
+        <b><%=polyglot.t('title')%>:</b><br>
         <input type="text" name="title">
         <br>
-        <b>Content:</b><br>
+        <b><%=polyglot.t('content')%>:</b><br>
         <textarea name='content' wrap='hard' rows='20' cols='20'></textarea>
         <br>
-        <b>Category:</b><br>
+        <b><%=polyglot.t('category')%>:</b><br>
         <select required name="category">
             <option value="News"> News </option>
             <option value="Funny"> Funny </option>
@@ -21,6 +21,6 @@
             <option value="Raznoe"> Raznoe </option>
         </select>
         <br><br>
-        <input type="submit" value="Submit">
+        <input type="submit" value="<%=polyglot.t('submit')%>">
     </fieldset>
 </form>	

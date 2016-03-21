@@ -33,6 +33,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from notifications.signals import notify
 import logging
+import os
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 import json
@@ -490,6 +491,25 @@ def notifications(request):
     context['notifications'] = user.notifications.all()
 
     return render(request, 'siteModel/notifications.html', context)
+
+def locale(request, locale):
+    filename = ""
+    print(locale)
+    if locale == "kk":
+        filename = 'kk.json'
+    elif locale == "ru":
+        filename = 'ru.json'    
+    elif locale == "en":
+        filename = 'en.json'
+    print(filename)
+    if filename:
+        file_path = os.path.join(settings.BASE_DIR, 'siteModel', 'locales', filename)
+        print(file_path)
+        with open(file_path) as data_file:
+            data = json.load(data_file)
+            return createAPISuccessJsonReponse({"phrases": data})
+    else:
+        return createAPIErrorJsonReponse('wrong locale passed', 404);
 
 class NewsViewSet(viewsets.ModelViewSet):
 
