@@ -358,7 +358,7 @@ define([
         }
     });
 
-    var NewsView = Marionette.CompositeView.extend({
+    var BaseNewsView = Marionette.CompositeView.extend({
         tagName: 'div',
         template: _.template(newsT),
 
@@ -372,7 +372,7 @@ define([
 
         initialize: function(attr) {
             this.pageNum = parseInt(attr.page) || 1;
-            console.log('Initializing NewsView...', this.pageNum);
+            console.log('Initializing BaseNewsView...', this.pageNum);
             this.category = attr.category;
             this.sort = attr.sort;
             this.fetchResponse = attr.fetchResponse;
@@ -400,11 +400,6 @@ define([
                 $('a#nextPage', self.el).hide();
             } else {
                 $('a#nextPage', self.el).show();
-            }
-            if (this.sort == "Newest") {
-                $('div#bottom a[name="Newest"]').css({ "color": "red" });
-            } else {
-                $('div#bottom a[name="Hot"]').css({ "color": "red" });
             }
         },
 
@@ -439,9 +434,25 @@ define([
         }
     });
 
+    var NewsView = BaseNewsView.extend({ 
+        onRender: function() {
+            if (this.sort == "Newest") {
+                $('div#bottom a[name="Newest"]').css({ "color": "red" });
+            } else {
+                $('div#bottom a[name="Hot"]').css({ "color": "red" });
+            }
+            BaseNewsView.prototype.onRender.apply(this);
+        }
+    });
+
+    var UserNewsView = BaseNewsView.extend({
+
+    });
+
     // export stuff
     return {
         'NewsView': NewsView,
+        'UserNewsView': UserNewsView,
         'NewsItemView': NewsItemView,
         'SubmitLinkView': SubmitLinkView,
         'SubmitTextView': SubmitTextView,

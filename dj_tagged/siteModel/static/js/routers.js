@@ -89,13 +89,15 @@ define([
             });
         },
         user: function(username) {
+            var page = url('?page') ? url('?page') : 1;
             console.log("user route triggered...");
+
             var userModel = new Models.UserProfileItemModel({ username: username });
             userModel.fetch({ success: function(model, response, options) {
                 var specialTopView = new Top_Views.UserTabView({ model : model});
-                App.news.fetch({ data: $.param({ username: username }), success: function(items, response, options) {
-                    var newsView = new Views.NewsView({ collection: items, fetchResponse: response });
-                    App.rootLayout.getRegion('content').show(newsView);
+                App.news.fetch({ data: $.param({ username: username, page: page }), success: function(items, response, options) {
+                    var userNewsView = new Views.UserNewsView({ collection: items, page: page, fetchResponse: response });
+                    App.rootLayout.getRegion('content').show(userNewsView);
                     App.rootLayout.getRegion('special_top').show(specialTopView);
                 }});
             }});
@@ -107,8 +109,7 @@ define([
                 var specialTopView = new Top_Views.UserTabView({ model : model});
                 App.rootLayout.getRegion('special_top').show(specialTopView);
                 var comments = new Collections.UserCommentsListCollection();
-                var page_size = 25;
-                comments.fetch({ data: $.param({ owner: username, page_size: page_size }), success: function(items, response, options) {
+                comments.fetch({ data: $.param({ owner: username }), success: function(items, response, options) {
                     var profileCommentsView = new Comment_Views.UserCommentsView({ collection: items, category: null });
                     App.rootLayout.getRegion('content').show(profileCommentsView);
                 }});
