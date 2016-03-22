@@ -20,7 +20,7 @@ class IMPORTMEPLZ(dict):
     """
     """
 
-    required_attrs = ['image']
+    required_attrs = ['image', 'title']
     scrape = False
 
     def __init__(self, url=None, html=None, scrape=False, **kwargs):

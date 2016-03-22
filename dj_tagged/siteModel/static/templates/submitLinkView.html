@@ -2,10 +2,12 @@
     <fieldset>
         <legend><%=polyglot.t('submit_link')%></legend>
         <b><%=polyglot.t('title')%>:</b><br>
-        <input type="text" name="title">
+        <input type="text" name="title" size="50">
         <br>
         <b>Url:</b><br>
-        <input type="text" name="url">
+        <input type="text" name="url" size="50">
+        <button type="button" id="suggest_title"><%=polyglot.t('suggest_title')%></button>
+        <span id="title_status" style="display:none"></span>
         <br>
         <b><%=polyglot.t('category')%>:</b><br>
         <select required name="category">
@@ -25,4 +27,4 @@
     </fieldset>
     <hr>
     <%=polyglot.t('url_starts')%>
-</form>	
+</form>

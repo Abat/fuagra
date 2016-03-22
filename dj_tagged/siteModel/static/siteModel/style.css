@@ -340,6 +340,10 @@ span.help {
     float: right;
 }
 
+span#title_status {
+    color: red;
+}
+
 .md td {
     border: 1px solid #C1BFBF;
 }

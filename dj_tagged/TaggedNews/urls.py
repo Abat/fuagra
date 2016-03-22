@@ -116,6 +116,7 @@ urlpatterns = patterns('',
     url(r'^inbox/notifications/', include('notifications.urls', namespace='notifications')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^locale/(?P<locale>\w+)/?$', views.locale),
+    url(r'^api/news/suggest_title/?$', views.suggest_title),
     # catch all
     url(r'^.*$', views.index, name='index'),
 )
