@@ -1,8 +1,8 @@
 <form action="/api/news/" method="post" enctype="application/json" id="newTextPost">
     <fieldset>
-        <legend><%=polyglot.t('submit_link')%></legend>
+        <legend><%=polyglot.t('submit_text')%></legend>
         <b><%=polyglot.t('title')%>:</b><br>
-        <input type="text" name="title">
+        <textarea name="title" wrap='hard' rows='2'></textarea>
         <br>
         <b><%=polyglot.t('content')%>:</b><br>
         <textarea name='content' wrap='hard' rows='20' cols='20'></textarea>

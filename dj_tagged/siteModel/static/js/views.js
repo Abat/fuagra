@@ -198,7 +198,7 @@ define([
             var self = this;
             e.preventDefault();
             var post = this.collection.create({
-                title: $("input[name='title']", this.el).val(),
+                title: $("textarea[name='title']", this.el).val(),
                 url: $("input[name='url']", this.el).val(),
                 category: $("select[name='category']", this.el).val(),
             }, {
@@ -228,13 +228,13 @@ define([
                 data: {url: encodeURI(url)},
                 success: function(data) {
                     var title = data.title;
-                    console.log(title);
-                    $("input[name='title']", this.el).val(title);
+                    console.log('Title retreived: ', title);
+                    $("textarea[name='title']", this.el).val(title);
                     $('#title_status').hide();
                 },
                 error: function(response, options) {
                     $('#title_status').text(response.responseJSON.reason);
-                    console.log(response.responseJSON.reason);
+                    console.log('Title retreival error: ', response.responseJSON.reason);
                     $('#title_status').show();
                 }
 
@@ -296,7 +296,7 @@ define([
             e.preventDefault();
             console.log('New text post...');
             var post = this.collection.create({
-                title: $("input[name='title']", this.el).val(),
+                title: $("textarea[name='title']", this.el).val(),
                 content: $("textarea[name='content']", this.el).val(),
                 category: $("select[name='category']", this.el).val(),
             }, {

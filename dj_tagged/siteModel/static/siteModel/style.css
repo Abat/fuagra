@@ -121,8 +121,17 @@ a.comment-control {
     color: #369;
 }
 
+input[name='url'] {
+    width: 500px;
+}
+
 textarea {
     width: 500px;
+}
+textarea[name='title'] {
+    height: 40px;
+}
+textarea[name='content'] {
     height: 100px;
 }
 

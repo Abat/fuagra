@@ -8,10 +8,10 @@
         <fieldset>
         <legend> Login </legend>
             {% csrf_token %}
-            <b>Username:</b><br>
-            <input type="text" name="username" value="" size="50"><br>
-            <b>Password:</b><br>
-            <input type="password" name="password" value="" size="50">
+            <label for="username"> Username: </label><br>
+            <input type="text" name="username" value="" maxlength='30'><br>
+            <label for="password"> Password: </label><br>
+            <input type="password" name="password" value="" maxlength="30">
             <br><br>
             <input type="hidden" name="next" value="{{ next }}" />
             <input type="submit" value="Login" /> or <a href='/register'> register </a>
