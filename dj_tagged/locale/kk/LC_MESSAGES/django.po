@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-21 18:52-0400\n"
+"POT-Creation-Date: 2016-03-22 16:55-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,3 +155,11 @@ msgstr ""
 #: siteModel/templates/siteModel/base.html:143
 msgid "all_rights_reserved"
 msgstr "Барлық құқықтар сақталған."
+
+#: siteModel/views.py:527 siteModel/views.py:530
+msgid "No title found"
+msgstr "Атауды таба	алмадық"
+
+#: siteModel/views.py:533
+msgid "No url provided"
+msgstr "Сілтеме берілген жоқ"

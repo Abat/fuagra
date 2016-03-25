@@ -191,7 +191,8 @@ define([
             }
         },
         events: {
-            'submit form#newLinkPost': 'newPost'
+            'submit form#newLinkPost': 'newPost',
+            'click button#suggest_title': 'suggestTitle'
         },
         newPost: function(e) {
             var self = this;
@@ -214,6 +215,29 @@ define([
                         $(self.el).append('<br><p><b>Something went wrong... Did you login?</b></p>');
                     }
                 }
+            });
+        },
+        suggestTitle: function(e) {
+            var url = $("input[name='url']", this.el).val();
+            var self = this;
+            $('#title_status').text('Loading...');
+            $('#title_status').show();
+            $.ajax({
+                type: 'GET',
+                url: "/api/news/suggest_title/",
+                data: {url: encodeURI(url)},
+                success: function(data) {
+                    var title = data.title;
+                    console.log(title);
+                    $("input[name='title']", this.el).val(title);
+                    $('#title_status').hide();
+                },
+                error: function(response, options) {
+                    $('#title_status').text(response.responseJSON.reason);
+                    console.log(response.responseJSON.reason);
+                    $('#title_status').show();
+                }
+
             });
         },
         dialog: function(title, body) {

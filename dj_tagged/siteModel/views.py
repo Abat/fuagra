@@ -38,6 +38,9 @@ from django.views.decorators.csrf import csrf_exempt
 import uuid
 import json
 from django.db import IntegrityError
+import urllib
+from siteModel.opengraph.opengraph import *
+from django.utils.translation import ugettext as _
 
 #from siteModel.ranking.ranking import *
 
@@ -509,7 +512,26 @@ def locale(request, locale):
             data = json.load(data_file)
             return createAPISuccessJsonReponse({"phrases": data})
     else:
-        return createAPIErrorJsonReponse('wrong locale passed', 404);
+        return createAPIErrorJsonReponse('wrong locale passed', 404)
+
+def suggest_title(request):
+    url_quoted = request.GET.get('url', None)
+    url = urllib.unquote(url_quoted)
+    if url:
+        try:
+            og = IMPORTMEPLZ(url)
+            if og.is_valid():
+                title = og.title
+                if title:
+                    return createAPISuccessJsonReponse({"title": title})
+            error_message = _("No title found")
+            return createAPIErrorJsonReponse(error_message, 404)
+        except:
+            error_message = _("No title found")
+            return createAPIErrorJsonReponse(error_message, 404)
+    else:
+        error_message = _("No url provided")
+        return createAPIErrorJsonReponse(error_message, 404)
 
 class NewsViewSet(viewsets.ModelViewSet):
 
